@@ -1,3 +1,0 @@
-_target_: torch.nn.Linear
-in_features: 32
-out_features: 2

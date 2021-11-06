@@ -1,5 +1,0 @@
-include requirements.txt dev-requirements.txt
-global-include *.yaml
-recursive-exclude pytorch/recipes/fb *
-recursive-exclude pytorch/recipes/github *
-global-exclude fb_*.py *_fb.py

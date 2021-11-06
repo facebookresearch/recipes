@@ -1,7 +1,0 @@
-{
-  "root_files": [
-    "pytorch",
-    ".pyre_configuration",
-    ".watchmanconfig"
-  ]
-}
