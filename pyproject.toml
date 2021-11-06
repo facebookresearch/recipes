@@ -1,0 +1,9 @@
+[tool.usort]
+first_party_detection = false
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
