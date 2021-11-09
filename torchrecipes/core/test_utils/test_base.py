@@ -5,7 +5,7 @@
 from typing import Any, Callable, Dict, List, Optional
 
 import testslide
-from hydra.experimental import compose, initialize_config_module
+from hydra import compose, initialize_config_module
 from hydra.utils import instantiate
 from omegaconf import OmegaConf
 from torchrecipes.core.base_train_app import BaseTrainApp, TrainOutput
