@@ -1,17 +1,8 @@
 import os
-from typing import Optional, Any
+from typing import Optional
 
-import fsspec
+from fsspec.core import url_to_fs
 from pytorch_lightning.callbacks import ModelCheckpoint
-
-
-def get_filesystem(path: str, **kwargs: Any) -> fsspec.AbstractFileSystem:
-    """Returns the appropriate filesystem to use when handling the given path."""
-    if "://" in path:
-        # use the fileystem from the protocol specified
-        return fsspec.filesystem(path.split(":", 1)[0], **kwargs)
-    # use local filesystem
-    return fsspec.filesystem("file", **kwargs)
 
 
 def find_last_checkpoint_path(checkpoint_dir: Optional[str]) -> Optional[str]:
@@ -30,7 +21,8 @@ def find_last_checkpoint_path(checkpoint_dir: Optional[str]) -> Optional[str]:
         f"{ModelCheckpoint.CHECKPOINT_NAME_LAST}{ModelCheckpoint.FILE_EXTENSION}"
     )
     last_checkpoint_filepath = os.path.join(checkpoint_dir, checkpoint_file_name)
-    if not get_filesystem(last_checkpoint_filepath).exists(last_checkpoint_filepath):
+    fs, _ = url_to_fs(last_checkpoint_filepath)
+    if not fs.exists(last_checkpoint_filepath):
         return None
 
     return last_checkpoint_filepath
