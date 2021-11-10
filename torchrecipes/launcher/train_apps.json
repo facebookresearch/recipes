@@ -4,7 +4,7 @@
             "name":"video_classification",
             "fbpkg":"pytorch_recipes_vision:1",
             "args":{
-                "--config-name":"video_classification_train_app_conf",
+                "--config-name":"train_app",
                 "--config-path":"../vision/video_classification/conf",
                 "--package":"torchrecipes.vision.video_classification.conf"
             },
