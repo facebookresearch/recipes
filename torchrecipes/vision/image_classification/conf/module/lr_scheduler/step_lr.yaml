@@ -1,0 +1,6 @@
+# use partial to instantiate lr scheduler callable, which returns lr scheduler
+# in configure_optimizer. See: https://fburl.com/gdoc/c4kpgvbc.
+_target_: functools.partial
+_args_: ['${get_method: torch.optim.lr_scheduler.StepLR}']
+step_size: 10
+gamma: 0.1
