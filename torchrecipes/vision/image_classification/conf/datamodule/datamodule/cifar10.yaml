@@ -1,0 +1,21 @@
+datasets:
+  train:
+    _target_: torchvision.datasets.CIFAR10
+    train: true
+    root: /tmp/resnet18/dataset/
+    download: true
+    transform:
+    - _target_: torchvision.transforms.Resize
+      size: 64
+    - _target_: torchvision.transforms.ToTensor
+  val: null
+  test:
+    _target_: torchvision.datasets.CIFAR10
+    train: false
+    root: /tmp/resnet18/dataset/
+    download: true
+    transform:
+    - _target_: torchvision.transforms.Resize
+      size: 64
+    - _target_: torchvision.transforms.ToTensor
+val_split: 0.9
