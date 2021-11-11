@@ -58,11 +58,11 @@ class BaseTrainApp:
         datamodule: Optional[DataModuleConf] = None,
     ) -> None:
         super().__init__()
-        self.module_conf = module
-        self.module = self.get_lightning_module()
-
         self.datamodule_conf = datamodule
         self.datamodule = self.get_data_module()
+
+        self.module_conf = module
+        self.module = self.get_lightning_module()
 
         self.trainer_conf = trainer
         self.log_dir = None
