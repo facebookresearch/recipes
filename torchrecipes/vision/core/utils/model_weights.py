@@ -10,7 +10,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 def load_model_weights(
     module: nn.Module, weights_path: str, strict: bool = True
-) -> None:
+) -> nn.Module:
     """
     Loads model weights from given model weights path in-place.
 
@@ -23,6 +23,7 @@ def load_model_weights(
         weights = torch.load(f, map_location="cpu")
         module.load_state_dict(weights, strict=strict)
         logger.info(f"Loaded model weights from {weights_path}.")
+    return module
 
 
 def extract_model_weights_from_checkpoint(
