@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
-from typing import Union, Any, Callable, Dict, Iterable, List, Mapping, Tuple, Optional
+from typing import Union, Any, Callable, Dict, Iterable, List, Mapping, Optional
 
 import hydra
 import pytorch_lightning as pl
@@ -33,6 +33,9 @@ class ImageClassificationModule(pl.LightningModule):
         lr_scheduler_fn: callable that returns a LR scheduler.
         apply_softmax: whether to apply softmax on prediction.
         process_weighted_labels: whether to process weighted labels.
+        norm_weight_decay: weight decay for batch norm layers.
+        lr_scheduler_interval: interval to update learning rate. It should
+            be either "epoch" or "step".
     """
 
     def __init__(
@@ -47,6 +50,7 @@ class ImageClassificationModule(pl.LightningModule):
         apply_softmax: bool = False,
         process_weighted_labels: bool = False,
         norm_weight_decay: float = 0.0,
+        lr_scheduler_interval: str = "epoch",
     ) -> None:
         super().__init__()
         self.model: torch.nn.Module = model
@@ -59,6 +63,7 @@ class ImageClassificationModule(pl.LightningModule):
         self.apply_softmax: bool = apply_softmax
         self.process_weighted_labels: bool = process_weighted_labels
         self.norm_weight_decay: float = norm_weight_decay
+        self.lr_scheduler_interval: str = lr_scheduler_interval
 
         # pyre-fixme[11]: See https://fburl.com/tvvws0an.
         self.train_metrics: torch.nn.ModuleDict = torch.nn.ModuleDict()
@@ -84,6 +89,7 @@ class ImageClassificationModule(pl.LightningModule):
         apply_softmax: bool = False,
         process_weighted_labels: bool = False,
         norm_weight_decay: float = 0.0,
+        lr_scheduler_interval: str = "epoch",
     ) -> "ImageClassificationModule":
         model = hydra.utils.instantiate(model)
         loss = hydra.utils.instantiate(loss)
@@ -96,14 +102,15 @@ class ImageClassificationModule(pl.LightningModule):
         if lr_scheduler:
             lr_scheduler_fn = hydra.utils.instantiate(lr_scheduler)
         return ImageClassificationModule(
-            model,
-            loss,
-            optim_fn,
-            metric_modules,
-            lr_scheduler_fn,
-            apply_softmax,
-            process_weighted_labels,
-            norm_weight_decay,
+            model=model,
+            loss=loss,
+            optim_fn=optim_fn,
+            metrics=metric_modules,
+            lr_scheduler_fn=lr_scheduler_fn,
+            apply_softmax=apply_softmax,
+            process_weighted_labels=process_weighted_labels,
+            norm_weight_decay=norm_weight_decay,
+            lr_scheduler_interval=lr_scheduler_interval,
         )
 
     def setup(self, stage: Optional[str] = None) -> None:
@@ -245,17 +252,19 @@ class ImageClassificationModule(pl.LightningModule):
 
     def configure_optimizers(
         self,
-    ) -> Union[
-        torch.optim.Optimizer,
-        Tuple[List[torch.optim.Optimizer], List[torch.optim.lr_scheduler._LRScheduler]],
-    ]:
+    ) -> Union[torch.optim.Optimizer, Dict[str, Any],]:
         param_groups = self.get_optimizer_param_groups()
         optim = self.optim_fn(param_groups)
         if not self.lr_scheduler_fn:
             return optim
 
-        lr = none_throws(self.lr_scheduler_fn)(optim)
-        return [optim], [lr]
+        return {
+            "optimizer": optim,
+            "lr_scheduler": {
+                "scheduler": none_throws(self.lr_scheduler_fn)(optim),
+                "interval": self.lr_scheduler_interval,
+            },
+        }
 
 
 @dataclass
@@ -274,6 +283,7 @@ class ImageClassificationModuleConf(ModuleConf):
     apply_softmax: bool = False
     process_weighted_labels: bool = False
     norm_weight_decay: float = 0.0
+    lr_scheduler_interval: str = "epoch"
 
 
 # pyre-fixme[5]: Global expression must be annotated.

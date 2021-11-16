@@ -79,6 +79,7 @@ class ImageClassificationTrainApp(BaseTrainApp):
                 apply_softmax=module.apply_softmax,
                 process_weighted_labels=module.process_weighted_labels,
                 norm_weight_decay=module.norm_weight_decay,
+                lr_scheduler_interval=module.lr_scheduler_interval,
             )
         return module
 
