@@ -12,13 +12,16 @@ from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.loggers import TensorBoardLogger
 
 # TODO: Remove stl lightning import
+import hydra
+from hydra.core.config_store import ConfigStore
+from torch.nn.modules import module
 from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.conf import TrainerConf
 from torchrecipes.core.conf.base_config import BaseTrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
-from torchrecipes.audio.datamodule import librimixDataModule
+from torchrecipes.audio.datamodule import LibriMixDataModule, LibriMixDataModuleConf
 from torchrecipes.audio.source_separation.module.conv_tasnet import (
-    ConvTasNetModule,
+    ConvTasNetModule, ConvTasNetModuleConf
 )
 
 
@@ -27,14 +30,14 @@ class SourceSeparationTrainApp(BaseTrainApp):
     This app is used to launch the image classification training / testing.
     """
 
-    module_conf: SourceSeparationModuleConf
-    datamodule_conf: VisionDataModuleConf
+    module_conf: ConvTasNetModuleConf
+    datamodule_conf: LibriMixDataModuleConf
 
     def __init__(
         self,
-        module: ImageClassificationModuleConf,
+        module: ConvTasNetModuleConf,
         trainer: TrainerConf,
-        datamodule: VisionDataModuleConf,
+        datamodule: LibriMixDataModuleConf,
         load_checkpoint_strict: bool = True,
         pretrained_checkpoint_path: Optional[str] = None,
         # pyre-fixme[2]: Parameter annotation cannot contain `Any`.
@@ -53,14 +56,10 @@ class SourceSeparationTrainApp(BaseTrainApp):
         """
         Instantiate a LightningDataModule.
         """
-        return librimixDataModule(
-            root_dir,
-            batch_size,
-            tr_split,
-            num_speakers,
-            sample_rate,
-            task,
+        datamodule = hydra.utils.instantiate(
+            self.datamodule_conf, transform=self.transform_conf, _recursive_=False
         )
+        return datamodule
 
     def get_lightning_module(self) -> LightningModule:
         """
@@ -76,12 +75,9 @@ class SourceSeparationTrainApp(BaseTrainApp):
                 strict=self.load_checkpoint_strict,
                 model=module.model,
                 loss=module.loss,
-                optim_fn=module.optim_fn,
+                optim=module.optim,
                 metrics=module.metrics,
-                lr_scheduler_fn=module.lr_scheduler_fn,
-                apply_softmax=module.apply_softmax,
-                process_weighted_labels=module.process_weighted_labels,
-                norm_weight_decay=module.norm_weight_decay,
+                lr_scheduler=module.lr_scheduler,
             )
         return module
 
@@ -107,17 +103,18 @@ class SourceSeparationTrainApp(BaseTrainApp):
 
 @dataclass
 class SourceSeparationTrainAppConf(BaseTrainAppConf):
-    _target_: str = get_class_name_str(SourceSeparationTrainAppConf)
-    datamodule: VisionDataModuleConf = MISSING
-    module: ImageClassificationModuleConf = MISSING
+    _target_: str = get_class_name_str(SourceSeparationTrainApp)
+    module: ConvTasNetModuleConf = MISSING
     trainer: TrainerConf = MISSING
-    pretrained_checkpoint_path: Optional[str] = None
+    datamodule: LibriMixDataModuleConf = MISSING
     load_checkpoint_strict: bool = True
-    # pyre-fixme[4]: Attribute annotation cannot contain `Any`.
+    pretrained_checkpoint_path: Optional[str] = None
+    # pyre-fixme[2]: Parameter annotation cannot contain `Any`.
     callbacks: Optional[List[Any]] = None
     tb_save_dir: Optional[str] = None
+
     
 
 cs: ConfigStore = ConfigStore.instance()
 
-cs.store(name="doc_classification_app", node=DocClassificationTrainAppConf)
+cs.store(name="source_separation_app", node=SourceSeparationTrainAppConf)

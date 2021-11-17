@@ -2,9 +2,11 @@
 
 from torchrecipes.audio.datamodule.librimix import (
     LibriMixDataModule,
+    LibriMixDataModuleConf,
 )
 
 
 __all__ = [
     "LibriMixDataModule",
+    "LibriMixDataModuleConf",
 ]
