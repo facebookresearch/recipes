@@ -17,6 +17,7 @@ grpcio==1.41.1
 hydra-core==1.1.1
 idna==3.3
 importlib-resources==5.4.0
+iopath==0.1.9
 Markdown==3.3.4
 mock==4.0.3
 multidict==5.2.0

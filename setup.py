@@ -21,7 +21,7 @@ def get_version() -> str:
     if version := os.getenv("BUILD_VERSION"):
         return version
     cwd = os.path.dirname(os.path.abspath(__file__))
-    version_file_path = os.path.join("pytorch", "recipes", _VERSION_FILE)
+    version_file_path = os.path.join("torchrecipes", _VERSION_FILE)
     version_regex = r"__version__: str = ['\"]([^'\"]*)['\"]"
     with open(version_file_path, "r") as f:
         search = re.search(version_regex, f.read(), re.M)
