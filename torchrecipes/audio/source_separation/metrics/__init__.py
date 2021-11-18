@@ -7,5 +7,6 @@ from torchrecipes.audio.source_separation.metrics.sdr import (
 
 
 __all__ = [
-    "si_sdr_loss",
+    "sdri_metric",
+    "sisdri_metric",
 ]

@@ -1,5 +1,4 @@
-from pathlib import Path
-from argparse import ArgumentParser
+from dataclasses import dataclass, field
 from typing import (
     Any,
     Callable,
@@ -10,19 +9,19 @@ from typing import (
     Tuple,
     Union,
 )
-from omegaconf import MISSING
-from dataclasses import dataclass, field
-from torchrecipes.core.conf import ModuleConf
-from torch.optim.lr_scheduler import _LRScheduler
+
 import hydra
 import pytorch_lightning as pl
-from hydra.core.config_store import ConfigStore
 import torch
 import torch.nn as nn
+from hydra.core.config_store import ConfigStore
+from omegaconf import MISSING
+from torch.optim.lr_scheduler import _LRScheduler
 from torchaudio.models import ConvTasNet
-from torchrecipes.utils.config_utils import get_class_config_method, config_entry
 from torchrecipes.audio.source_separation.loss import si_sdr_loss
 from torchrecipes.audio.source_separation.metrics import sdri_metric, sisdri_metric
+from torchrecipes.core.conf import ModuleConf
+from torchrecipes.utils.config_utils import get_class_config_method, config_entry
 
 
 def _get_model(

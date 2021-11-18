@@ -4,29 +4,26 @@ from typing import Any, List, Optional
 
 import hydra
 
+# TODO: Remove stl lightning import
+from hydra.core.config_store import ConfigStore
+
 # @manual "//github/third-party/omry/omegaconf:omegaconf"
 from omegaconf import MISSING
 from pyre_extensions import none_throws
 from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.loggers import TensorBoardLogger
-
-# TODO: Remove stl lightning import
-import hydra
-from hydra.core.config_store import ConfigStore
-from torch.nn.modules import module
-from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import TrainerConf
-from torchrecipes.core.conf.base_config import BaseTrainAppConf
-from torchrecipes.utils.config_utils import get_class_name_str
 from torchrecipes.audio.source_separation.datamodule import (
-    LibriMixDataModule,
     LibriMixDataModuleConf,
 )
 from torchrecipes.audio.source_separation.module.conv_tasnet import (
     ConvTasNetModule,
     ConvTasNetModuleConf,
 )
+from torchrecipes.core.base_train_app import BaseTrainApp
+from torchrecipes.core.conf import TrainerConf
+from torchrecipes.core.conf.base_config import BaseTrainAppConf
+from torchrecipes.utils.config_utils import get_class_name_str
 
 
 class SourceSeparationTrainApp(BaseTrainApp):
@@ -60,7 +57,10 @@ class SourceSeparationTrainApp(BaseTrainApp):
         """
         Instantiate a LightningDataModule.
         """
-        datamodule = hydra.utils.instantiate(self.datamodule_conf, _recursive_=False)
+        datamodule = hydra.utils.instantiate(
+            self.datamodule_conf,
+            _recursive_=False
+        )
         return datamodule
 
     def get_lightning_module(self) -> LightningModule:
@@ -91,8 +91,8 @@ class SourceSeparationTrainApp(BaseTrainApp):
 
     def get_callbacks(self) -> List[Callback]:
         """
-        Override this method to return a list of callbacks to be passed into Trainer
-        You can add additional ModelCheckpoint here
+        Override this method to return a list of callbacks to be passed
+        into Trainer. You can add additional ModelCheckpoint here
         """
         if self.callbacks is None:
             return []

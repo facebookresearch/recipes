@@ -2,7 +2,9 @@ from dataclasses import dataclass
 from typing import (
     Optional,
 )
+
 import pytorch_lightning as pl
+from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 from torch.utils.data import DataLoader
 from torchaudio.datasets import LibriMix
@@ -11,7 +13,8 @@ from torchrecipes.utils.config_utils import (
     config_entry,
     get_class_config_method,
 )
-from hydra.core.config_store import ConfigStore
+
+from .utils import get_collate_fn
 
 
 class LibriMixDataModule(pl.LightningDataModule):
@@ -58,22 +61,46 @@ class LibriMixDataModule(pl.LightningDataModule):
                 self.task,
             )
             self.val = LibriMix(
-                self.root_dir, "dev", self.num_speakers, self.sample_rate, self.task
+                self.root_dir,
+                "dev",
+                self.num_speakers,
+                self.sample_rate,
+                self.task
             )
 
         if stage == "test" or stage is None:
             self.test = LibriMix(
-                self.root_dir, "test", self.num_speakers, self.sample_rate, self.task
+                self.root_dir,
+                "test",
+                self.num_speakers,
+                self.sample_rate,
+                self.task
             )
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=self.batch_size)
+        return DataLoader(
+            self.train,
+            batch_size=self.batch_size,
+            collate_fn=get_collate_fn(
+                "train",
+                sample_rate=self.sample_rate,
+                duration=3
+            )
+        )
 
     def val_dataloader(self):
-        return DataLoader(self.val, batch_size=self.batch_size)
+        return DataLoader(
+            self.val,
+            batch_size=self.batch_size,
+            collate_fn=get_collate_fn("test", sample_rate=self.sample_rate)
+        )
 
     def test_dataloader(self):
-        return DataLoader(self.test, batch_size=self.batch_size)
+        return DataLoader(
+            self.test,
+            batch_size=self.batch_size,
+            collate_fn=get_collate_fn("test", sample_rate=self.sample_rate)
+        )
 
 
 @dataclass

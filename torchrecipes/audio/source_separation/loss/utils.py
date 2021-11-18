@@ -1,6 +1,6 @@
 import math
-from typing import Optional
 from itertools import permutations
+from typing import Optional
 
 import torch
 

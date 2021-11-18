@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 
 # pyre-strict
-import os
-from copy import deepcopy
 from typing import List, Optional
 
-import torch
-from torch import nn
 from torchrecipes.audio.source_separation.train_app import SourceSeparationTrainApp
 from torchrecipes.core.test_utils.test_base import BaseTrainAppTestCase
 from torchrecipes.utils.test import tempdir
