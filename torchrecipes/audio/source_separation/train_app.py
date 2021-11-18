@@ -19,9 +19,13 @@ from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.conf import TrainerConf
 from torchrecipes.core.conf.base_config import BaseTrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
-from torchrecipes.audio.datamodule import LibriMixDataModule, LibriMixDataModuleConf
+from torchrecipes.audio.source_separation.datamodule import (
+    LibriMixDataModule,
+    LibriMixDataModuleConf,
+)
 from torchrecipes.audio.source_separation.module.conv_tasnet import (
-    ConvTasNetModule, ConvTasNetModuleConf
+    ConvTasNetModule,
+    ConvTasNetModuleConf,
 )
 
 
@@ -35,9 +39,9 @@ class SourceSeparationTrainApp(BaseTrainApp):
 
     def __init__(
         self,
-        module: ConvTasNetModuleConf,
-        trainer: TrainerConf,
-        datamodule: LibriMixDataModuleConf,
+        module: ConvTasNetModuleConf = ConvTasNetModuleConf(),
+        trainer: TrainerConf = None,
+        datamodule: LibriMixDataModuleConf = None,
         load_checkpoint_strict: bool = True,
         pretrained_checkpoint_path: Optional[str] = None,
         # pyre-fixme[2]: Parameter annotation cannot contain `Any`.
@@ -56,18 +60,22 @@ class SourceSeparationTrainApp(BaseTrainApp):
         """
         Instantiate a LightningDataModule.
         """
-        datamodule = hydra.utils.instantiate(
-            self.datamodule_conf, transform=self.transform_conf, _recursive_=False
-        )
+        datamodule = hydra.utils.instantiate(self.datamodule_conf, _recursive_=False)
         return datamodule
 
     def get_lightning_module(self) -> LightningModule:
         """
         Instantiate a LightningModule.
         """
-        module = hydra.utils.instantiate(
-            self.module_conf,
-            _recursive_=False,
+        # module = hydra.utils.instantiate(
+        #     self.module_conf,
+        #     _recursive_=False,
+        # )
+        module = ConvTasNetModule(
+            self.module_conf.loss,
+            self.module_conf.optim,
+            self.module_conf.metrics,
+            self.module_conf.lr_scheduler,
         )
         if self.pretrained_checkpoint_path:
             return ConvTasNetModule.load_from_checkpoint(
@@ -113,8 +121,6 @@ class SourceSeparationTrainAppConf(BaseTrainAppConf):
     callbacks: Optional[List[Any]] = None
     tb_save_dir: Optional[str] = None
 
-    
 
-cs: ConfigStore = ConfigStore.instance()
-
-cs.store(name="source_separation_app", node=SourceSeparationTrainAppConf)
+# cs: ConfigStore = ConfigStore.instance()
+# cs.store(name="source_separation_app", node=SourceSeparationTrainAppConf)

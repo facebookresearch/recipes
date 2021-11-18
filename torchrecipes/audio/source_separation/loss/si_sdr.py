@@ -1,10 +1,9 @@
 import torch
-import utils
+from torchrecipes.audio.source_separation.loss import utils
+
 
 def si_sdr_loss(
-    estimate: torch.Tensor,
-    reference: torch.Tensor,
-    mask: torch.Tensor
+    estimate: torch.Tensor, reference: torch.Tensor, mask: torch.Tensor
 ) -> torch.Tensor:
     """Compute the Si-SDR loss.
     Args:

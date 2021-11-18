@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from torchrecipes.audio.datamodule.librimix import (
+from torchrecipes.audio.source_separation.datamodule.librimix import (
     LibriMixDataModule,
     LibriMixDataModuleConf,
 )

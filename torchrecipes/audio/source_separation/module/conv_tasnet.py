@@ -11,17 +11,19 @@ from typing import (
     Union,
 )
 from omegaconf import MISSING
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from torchrecipes.core.conf import ModuleConf
 from torch.optim.lr_scheduler import _LRScheduler
 import hydra
 import pytorch_lightning as pl
+from hydra.core.config_store import ConfigStore
 import torch
 import torch.nn as nn
 from torchaudio.models import ConvTasNet
 from torchrecipes.utils.config_utils import get_class_config_method, config_entry
 from torchrecipes.audio.source_separation.loss import si_sdr_loss
 from torchrecipes.audio.source_separation.metrics import sdri_metric, sisdri_metric
+
 
 def _get_model(
     num_sources=2,
@@ -46,6 +48,7 @@ def _get_model(
         msk_activate=msk_activate,
     )
     return model
+
 
 class ConvTasNetModule(pl.LightningModule):
     """
@@ -113,41 +116,37 @@ class ConvTasNetModule(pl.LightningModule):
     def training_step(
         self,
         batch: Union[List[torch.Tensor], Mapping[str, torch.Tensor]],
-        batch_idx: int,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
-        return self._step(batch, batch_idx, "train")
+        return self._step(batch, "train")
 
     def validation_step(
         self,
         batch: Union[List[torch.Tensor], Mapping[str, torch.Tensor]],
-        batch_idx: int,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """
         Operates on a single batch of data from the validation set.
         """
-        return self._step(batch, batch_idx, "val")
+        return self._step(batch, "val")
 
     def test_step(
         self,
         batch: Union[List[torch.Tensor], Mapping[str, torch.Tensor]],
-        batch_idx: int,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Optional[Dict[str, Any]]:
         """
         Operates on a single batch of data from the test set.
         """
-        return self._step(batch, batch_idx, "test")
+        return self._step(batch, "test")
 
     def _step(
         self,
         batch: Union[List[torch.Tensor], Mapping[str, torch.Tensor]],
-        batch_idx: int,
-        phase_type: str
+        phase_type: str,
     ) -> Dict[str, Any]:
         """
         Common step for training, validation, and testing.
@@ -162,23 +161,15 @@ class ConvTasNetModule(pl.LightningModule):
 
         return loss
 
-    def configure_optimizers(
-        self,
-    ) -> Tuple[Any]:
-        self.optim = self.optim(
-            self.model.parameters,
-            lr=0.001,
-        )
+    def configure_optimizers(self) -> Tuple[Any]:
+        self.optim = self.optim(self.model.parameters(), lr=0.001)
         self.lr_scheduler = self.lr_scheduler(
-            self.optim,
-            mode="min",
-            factor=0.5,
-            patience=5
+            self.optim, mode="min", factor=0.5, patience=5
         )
         epoch_schedulers = {
-            'scheduler': self.lr_scheduler,
-            'monitor': 'Losses/val_loss',
-            'interval': 'epoch'
+            "scheduler": self.lr_scheduler,
+            "monitor": "Losses/val_loss",
+            "interval": "epoch",
         }
         return [self.optim], [epoch_schedulers]
 
@@ -193,25 +184,30 @@ class ConvTasNetModule(pl.LightningModule):
         metrics_dict = getattr(self, f"{phase_type}_metrics")
         metrics_result = {}
         for name, metric in metrics_dict.items():
-            metrics_result[f"Metrics/{phase_type}/{name}"] = metric(pred, label, inputs, mask)
+            metrics_result[f"Metrics/{phase_type}/{name}"] = metric(
+                pred, label, inputs, mask
+            )
         return metrics_result
-
-    def train_dataloader(self):
-        """Training dataloader"""
-        return self.train_loader
-
-    def val_dataloader(self):
-        """Validation dataloader"""
-        return self.val_loader
 
 
 @dataclass
 class ConvTasNetModuleConf(ModuleConf):
     _target_: str = get_class_config_method(ConvTasNetModule)
-    loss: Any =  si_sdr_loss
+    loss: Any = si_sdr_loss
     optim: Any = torch.optim.Adam
-    metrics: Any = {
-        "sdri": sdri_metric,
-        "sisdri": sisdri_metric,
-    }
+    metrics: Any = field(
+        default_factory=lambda: {
+            "sdri": sdri_metric,
+            "sisdri": sisdri_metric,
+        }
+    )
     lr_scheduler: Any = torch.optim.lr_scheduler.ReduceLROnPlateau
+
+
+# cs = ConfigStore().instance()
+# cs.store(
+#     group="schema/module",
+#     name="conv_tasnet_module_conf",
+#     node=ConvTasNetModuleConf,
+#     package="module",
+# )

@@ -11,6 +11,7 @@ from torchrecipes.utils.config_utils import (
     config_entry,
     get_class_config_method,
 )
+from hydra.core.config_store import ConfigStore
 
 
 class LibriMixDataModule(pl.LightningDataModule):
@@ -42,12 +43,7 @@ class LibriMixDataModule(pl.LightningDataModule):
         task: str = "sep_clean",
     ) -> "LibriMixDataModule":
         return LibriMixDataModule(
-            root_dir,
-            batch_size,
-            tr_split,
-            num_speakers,
-            sample_rate,
-            task
+            root_dir, batch_size, tr_split, num_speakers, sample_rate, task
         )
 
     def setup(self, stage: Optional[str] = None):
@@ -59,23 +55,15 @@ class LibriMixDataModule(pl.LightningDataModule):
                 self.tr_split,
                 self.num_speakers,
                 self.sample_rate,
-                self.task
+                self.task,
             )
             self.val = LibriMix(
-                self.root_dir,
-                "dev",
-                self.num_speakers,
-                self.sample_rate,
-                self.task
+                self.root_dir, "dev", self.num_speakers, self.sample_rate, self.task
             )
 
         if stage == "test" or stage is None:
             self.test = LibriMix(
-                self.root_dir,
-                "test",
-                self.num_speakers,
-                self.sample_rate,
-                self.task
+                self.root_dir, "test", self.num_speakers, self.sample_rate, self.task
             )
 
     def train_dataloader(self):
@@ -98,3 +86,12 @@ class LibriMixDataModuleConf(DataModuleConf):
     num_speakers: int = 2
     sample_rate: int = 16000
     task: str = "sep_clean"
+
+
+cs = ConfigStore().instance()
+cs.store(
+    group="schema/datamodule",
+    name="librimix_datamodule_conf",
+    node=LibriMixDataModuleConf,
+    package="datamodule",
+)
