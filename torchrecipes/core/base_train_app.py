@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional, TypedDict, List, Tuple
 
 import hydra
+import torch
 from omegaconf import OmegaConf
 from pytorch_lightning import LightningDataModule, LightningModule
 from pytorch_lightning.callbacks import Callback
@@ -21,7 +22,6 @@ from torchrecipes.core.conf import ModuleConf, DataModuleConf, TrainerConf
 from torchrecipes.core.logger import JobStatus
 from torchrecipes.utils.checkpoint import find_last_checkpoint_path
 from torchrecipes.utils.trainer_plugins import get_trainer_params
-
 
 OmegaConf.register_new_resolver("get_method", hydra.utils.get_method)
 
@@ -67,6 +67,7 @@ class BaseTrainApp:
         self.trainer_conf = trainer
         self.log_dir = None
         self.root_dir = None
+        torch._C._log_api_usage_once(f"torchrecipes.{self.__class__.__name__}")
 
     def get_lightning_module(self) -> LightningModule:
         """
