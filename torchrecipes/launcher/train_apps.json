@@ -19,10 +19,10 @@
             "args":{
                 "--config-name":"doc_classification_app",
                 "--config-path":"../text/conf",
-                "--package":"torchrecipes.text.conf"
+                "--package":"torchrecipes.text.doc_classification.conf"
             },
             "envs":{
-                "CONFIG_MODULE":"torchrecipes.text.conf",
+                "CONFIG_MODULE":"torchrecipes.text.doc_classification.conf",
                 "ENV":"prod"
             }
         },
