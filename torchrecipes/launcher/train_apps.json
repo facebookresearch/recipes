@@ -17,7 +17,7 @@
             "name":"doc_classification",
             "fbpkg":"pytorch_recipes_text:1",
             "args":{
-                "--config-name":"doc_classification_app",
+                "--config-name":"train_app",
                 "--config-path":"../text/conf",
                 "--package":"torchrecipes.text.doc_classification.conf"
             },
