@@ -77,7 +77,6 @@ class TrainerConf:
     num_nodes: int = 1
     num_processes: int = 1
     num_sanity_val_steps: int = 2
-    reload_dataloaders_every_epoch: bool = False
     reload_dataloaders_every_n_epochs: int = 0
     replace_sampler_ddp: bool = False
     resume_from_checkpoint: Optional[str] = None
