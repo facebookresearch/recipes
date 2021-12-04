@@ -1,0 +1,3 @@
+_target_: torchrecipes.vision.image_generation.models.dcgan.Discriminator
+feature_maps: 28
+image_channels: 1

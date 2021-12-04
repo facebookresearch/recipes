@@ -1,0 +1,16 @@
+resize: 64
+train:
+  transforms_config:
+    - _target_: torchvision.transforms.Resize
+      size: ${datamodule.transforms.resize}
+    - _target_: torchvision.transforms.ToTensor
+val:
+  transforms_config:
+    - _target_: torchvision.transforms.Resize
+      size: ${datamodule.transforms.resize}
+    - _target_: torchvision.transforms.ToTensor
+test:
+  transforms_config:
+    - _target_: torchvision.transforms.Resize
+      size: ${datamodule.transforms.resize}
+    - _target_: torchvision.transforms.ToTensor

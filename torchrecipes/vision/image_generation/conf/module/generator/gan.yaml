@@ -1,0 +1,7 @@
+_target_: torchrecipes.vision.image_generation.models.gan.Generator
+latent_dim: 32
+img_shape:
+  - 1
+  - 28
+  - 28
+hidden_dim: 256

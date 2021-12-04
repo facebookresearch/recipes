@@ -1,0 +1,4 @@
+_target_: torchrecipes.vision.image_generation.models.dcgan.Generator
+latent_dim: 32
+feature_maps: 28
+image_channels: 1

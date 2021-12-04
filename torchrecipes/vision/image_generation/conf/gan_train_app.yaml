@@ -1,0 +1,20 @@
+_target_: torchrecipes.vision.image_generation.train_app.GANTrainApp
+
+defaults:
+  - _self_
+  # module
+  - schema/module: gan_module_conf
+  - module/generator: gan
+  - module/discriminator: gan
+  - module/criterion: bce_loss
+  - module/optim: default
+  # datamodule
+  - schema/datamodule: vision_module_conf
+  - datamodule/datamodule: mnist
+  # trainer
+  - schema/trainer: trainer
+  - trainer: cpu
+
+hydra:
+  searchpath:
+    - pkg://torchrecipes.core.conf
