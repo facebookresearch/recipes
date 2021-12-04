@@ -1,0 +1,5 @@
+_target_: torchrecipes.vision.image_generation.models.gan.Discriminator
+img_shape:
+  - 1
+  - 28
+  - 28

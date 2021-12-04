@@ -1,0 +1,11 @@
+{
+  "exclude": [
+    ".*/build/.*",
+    ".*/docs/.*"
+  ],
+  "source_directories": [
+    "."
+  ],
+  "strict": true,
+  "version": "0.0.101638274202"
+}

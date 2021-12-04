@@ -1,0 +1,6 @@
+_target_: torchrecipes.vision.image_generation.models.infogan.Generator
+latent_dim: 62
+n_classes: 10
+code_dim: 2
+img_size: 32
+channels: 1

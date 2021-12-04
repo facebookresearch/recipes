@@ -1,0 +1,23 @@
+_target_: torchrecipes.vision.image_classification.train_app.ImageClassificationTrainApp
+
+defaults:
+  - _self_
+  # module
+  - schema/module: image_classification_module_conf
+  - module/model: resnet18
+  - module/loss: cross_entropy
+  - module/optim: sgd_partial
+  - module/metrics: accuracy
+  # datamodule
+  - schema/datamodule: vision_module_conf
+  - schema/datamodule/datamodule: torchvision_datamodule_conf
+  - datamodule/datamodule: cifar10
+  # trainer
+  - schema/trainer: trainer
+  - trainer: cpu
+  # callbacks
+  - callbacks: default
+
+hydra:
+  searchpath:
+    - pkg://torchrecipes.core.conf

@@ -1,0 +1,1 @@
+_target_: torchrecipes.vision.data.modules.mnist_data_module.MNISTDataModule

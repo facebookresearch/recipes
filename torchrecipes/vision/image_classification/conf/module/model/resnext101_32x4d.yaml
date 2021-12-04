@@ -1,0 +1,5 @@
+_target_: torchvision.models.ResNet
+block: '${get_method: torchvision.models.resnet.Bottleneck}'
+layers: [3, 4, 23, 3]
+groups: 32
+width_per_group: 4

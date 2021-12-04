@@ -1,0 +1,19 @@
+_target_: torchrecipes.vision.image_generation.train_app.GANTrainApp
+
+defaults:
+  - _self_
+  # module
+  - schema/module: infogan_module_conf
+  - module/generator: infogan
+  - module/discriminator: infogan
+  - module/optim: infogan_default
+  # datamodule
+  - schema/datamodule: vision_module_conf
+  - datamodule/datamodule: mnist
+  # trainer
+  - schema/trainer: trainer
+  - trainer: cpu
+
+hydra:
+  searchpath:
+    - pkg://torchrecipes.core.conf

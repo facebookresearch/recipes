@@ -1,0 +1,8 @@
+# use partial to instantiate optimizer callable, which returns optimizer
+# in configure_optimizer. See: https://fburl.com/gdoc/c4kpgvbc.
+_target_: functools.partial
+_args_: ['${get_method: torch.optim.SGD}']
+lr: 0.1
+weight_decay: 1e-4
+momentum: 0.9
+nesterov: False

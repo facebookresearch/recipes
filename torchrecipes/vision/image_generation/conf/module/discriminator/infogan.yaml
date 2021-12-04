@@ -1,0 +1,5 @@
+_target_: torchrecipes.vision.image_generation.models.infogan.Discriminator
+n_classes: ${module.generator.n_classes}
+code_dim: ${module.generator.code_dim}
+img_size: ${module.generator.img_size}
+channels: ${module.generator.channels}
