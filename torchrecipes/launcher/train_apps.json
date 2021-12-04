@@ -43,7 +43,7 @@
             "name":"eval_inference",
             "fbpkg":"pytorch_recipes_vision:1",
             "args":{
-                "--config-name":"eval_inference_train_app_conf",
+                "--config-name":"train_app",
                 "--config-path":"../vision/eval_inference/conf",
                 "--package":"torchrecipes.vision.eval_inference.conf"
             },
