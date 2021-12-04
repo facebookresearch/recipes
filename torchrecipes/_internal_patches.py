@@ -1,3 +1,9 @@
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 """
 If you change the symbols exported in this file, you very likely want to change
 the symbols expoerted in ./fb/_internal_patches.py as well.
