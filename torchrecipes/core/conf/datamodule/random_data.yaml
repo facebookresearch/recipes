@@ -1,3 +1,0 @@
-_target_: torchrecipes.core.test_utils.test_module.TestDataModule
-size: 32
-length: 64
