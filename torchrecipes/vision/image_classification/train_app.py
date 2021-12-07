@@ -16,11 +16,8 @@ from pyre_extensions import none_throws
 from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.loggers import TensorBoardLogger
-
-# TODO: Remove stl lightning import
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import TrainerConf
-from torchrecipes.core.conf.base_config import BaseTrainAppConf
+from torchrecipes.core.conf import TrainerConf, TrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchrecipes.vision.core.datamodule import VisionDataModuleConf
 from torchrecipes.vision.image_classification.module.image_classification import (
@@ -110,7 +107,7 @@ class ImageClassificationTrainApp(BaseTrainApp):
 
 
 @dataclass
-class ImageClassificationTrainAppConf(BaseTrainAppConf):
+class ImageClassificationTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(ImageClassificationTrainApp)
     datamodule: VisionDataModuleConf = MISSING
     module: ImageClassificationModuleConf = MISSING

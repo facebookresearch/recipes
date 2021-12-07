@@ -15,8 +15,7 @@ from omegaconf import MISSING
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import TrainerConf
-from torchrecipes.core.conf.base_config import BaseTrainAppConf
+from torchrecipes.core.conf import TrainerConf, TrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchrecipes.vision.core.datamodule import VisionDataModuleConf
 from torchrecipes.vision.image_generation.callbacks import (
@@ -53,7 +52,7 @@ class GANTrainApp(BaseTrainApp):
 
 
 @dataclass
-class GANTrainAppConf(BaseTrainAppConf):
+class GANTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(GANTrainApp)
     datamodule: VisionDataModuleConf = MISSING
     module: GANModuleConf = MISSING
@@ -61,7 +60,7 @@ class GANTrainAppConf(BaseTrainAppConf):
 
 
 @dataclass
-class InfoGANTrainAppConf(BaseTrainAppConf):
+class InfoGANTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(GANTrainApp)
     datamodule: VisionDataModuleConf = MISSING
     module: InfoGANModuleConf = MISSING

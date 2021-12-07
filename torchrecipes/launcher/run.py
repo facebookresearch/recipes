@@ -18,7 +18,7 @@ from pytorch_lightning.utilities.types import _EVALUATE_OUTPUT, _PREDICT_OUTPUT
 from torch.distributed.elastic.multiprocessing import errors
 from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.base_train_app import TrainOutput
-from torchrecipes.core.conf.base_config import BaseTrainAppConf
+from torchrecipes.core.conf import TrainAppConf
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ def run_in_certain_mode(
 
 @hydra.main()
 def run_with_hydra(
-    cfg: BaseTrainAppConf,
+    cfg: TrainAppConf,
 ) -> Union[TrainOutput, _EVALUATE_OUTPUT, Optional[_PREDICT_OUTPUT]]:
     logger.info(OmegaConf.to_yaml(cfg))
     app = hydra.utils.instantiate(cfg, _recursive_=False)
