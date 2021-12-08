@@ -14,7 +14,7 @@ from torchrecipes.utils.config_utils import (
     get_class_config_method,
 )
 
-from .utils import get_collate_fn
+from .utils import collate_fn
 
 
 class LibriMixDataModule(pl.LightningDataModule):
@@ -28,6 +28,21 @@ class LibriMixDataModule(pl.LightningDataModule):
         task: str = "sep_clean",
         num_workers: int = 4,
     ) -> None:
+        """The LightningDataModule for LibriMix Dataset.
+        Args:
+            root_dir (str): the root directory of the dataset.
+            batch_size (int, optional): the batch size of the dataset. (Default: 6)
+            tr_split (str, optional): the training split in LibriMix dataset.
+                Options: [``train-360`, ``train-100``] (Default: ``train-360``)
+            num_speakers (int, optional): The number of speakers, which determines the directories
+                to traverse. The datamodule will traverse ``s1`` to ``sN`` directories to collect
+                N source audios. (Default: 2)
+            sample_rate (int, optional): the sample rate of the audio. (Default: 8000)
+            task (str, optional): the task of LibriMix.
+                Options: [``enh_single``, ``enh_both``, ``sep_clean``, ``sep_noisy``]
+                (Default: ``sep_clean``)
+            num_workers (int, optional): the number of workers for each dataloader. (Default: 4)
+        """
         super().__init__()
         self.root_dir = root_dir
         self.batch_size = batch_size
@@ -83,8 +98,7 @@ class LibriMixDataModule(pl.LightningDataModule):
         return DataLoader(
             self.train,
             batch_size=self.batch_size,
-            collate_fn=get_collate_fn(
-                "train",
+            collate_fn=collate_fn(
                 sample_rate=self.sample_rate,
                 duration=3
             ),
@@ -96,7 +110,7 @@ class LibriMixDataModule(pl.LightningDataModule):
         return DataLoader(
             self.val,
             batch_size=self.batch_size,
-            collate_fn=get_collate_fn("test", sample_rate=self.sample_rate),
+            collate_fn=collate_fn(sample_rate=self.sample_rate, duration=-1),
             num_workers=self.num_workers,
             drop_last=True,
         )
@@ -105,7 +119,7 @@ class LibriMixDataModule(pl.LightningDataModule):
         return DataLoader(
             self.test,
             batch_size=self.batch_size,
-            collate_fn=get_collate_fn("test", sample_rate=self.sample_rate),
+            collate_fn=collate_fn(sample_rate=self.sample_rate, duration=-1),
             num_workers=self.num_workers,
         )
 
