@@ -1,0 +1,16 @@
+_target_: torchrecipes.audio.source_separation.train_app.SourceSeparationTrainApp
+
+defaults:
+  - _self_
+  # module
+  # - schema/module: conv_tasnet_module_conf
+  # datamodule
+  - schema/datamodule: librimix_datamodule_conf
+  - datamodule: librimix
+  # trainer
+  - schema/trainer: trainer
+  - trainer: gpu
+
+hydra:
+  searchpath:
+    - pkg://torchrecipes.core.conf
