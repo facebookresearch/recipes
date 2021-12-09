@@ -73,7 +73,9 @@ class BaseTrainApp:
         self.trainer_conf = trainer
         self.log_dir = None
         self.root_dir = None
-        torch._C._log_api_usage_once(f"torchrecipes.{self.__class__.__name__}")
+        torch._C._log_api_usage_once(
+            f"torchrecipes.{self.__module__}.{self.__class__.__name__}"
+        )
 
     def get_lightning_module(self) -> LightningModule:
         """
