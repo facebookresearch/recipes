@@ -116,7 +116,7 @@ class ConvTasNetModule(pl.LightningModule):
         *args: Any,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        return self._step(batch, "train")
+        return self._step(batch, subset="train")
 
     def validation_step(
         self,
@@ -127,7 +127,7 @@ class ConvTasNetModule(pl.LightningModule):
         """
         Operates on a single batch of data from the validation set.
         """
-        return self._step(batch, "val")
+        return self._step(batch, subset="val")
 
     def test_step(
         self,
@@ -138,12 +138,12 @@ class ConvTasNetModule(pl.LightningModule):
         """
         Operates on a single batch of data from the test set.
         """
-        return self._step(batch, "test")
+        return self._step(batch, subset="test")
 
     def _step(
         self,
         batch: Union[List[torch.Tensor], Mapping[str, torch.Tensor]],
-        phase_type: str,
+        subset: str,
     ) -> Dict[str, Any]:
         """
         Common step for training, validation, and testing.
@@ -151,9 +151,9 @@ class ConvTasNetModule(pl.LightningModule):
         mix, src, mask = batch
         pred = self.model(mix)
         loss = self.loss(pred, src, mask)
-        self.log(f"Losses/{phase_type}_loss", loss.item(), on_step=True, on_epoch=True)
+        self.log(f"Losses/{subset}_loss", loss.item(), on_step=True, on_epoch=True)
 
-        metrics_result = self._compute_metrics(pred, src, mix, mask, phase_type)
+        metrics_result = self._compute_metrics(pred, src, mix, mask, subset)
         self.log_dict(metrics_result, on_epoch=True)
 
         return loss
@@ -176,12 +176,12 @@ class ConvTasNetModule(pl.LightningModule):
         label: torch.Tensor,
         inputs: torch.Tensor,
         mask: torch.Tensor,
-        phase_type: str,
+        subset: str,
     ) -> Dict[str, torch.Tensor]:
-        metrics_dict = getattr(self, f"{phase_type}_metrics")
+        metrics_dict = getattr(self, f"{subset}_metrics")
         metrics_result = {}
         for name, metric in metrics_dict.items():
-            metrics_result[f"Metrics/{phase_type}/{name}"] = metric(
+            metrics_result[f"Metrics/{subset}/{name}"] = metric(
                 pred, label, inputs, mask
             )
         return metrics_result
