@@ -24,7 +24,7 @@ class LibriMixDataModule(pl.LightningDataModule):
         batch_size: int = 6,
         tr_split: str = "train-360",
         num_speakers: int = 2,
-        sample_rate: int = 16000,
+        sample_rate: int = 8000,
         task: str = "sep_clean",
         num_workers: int = 4,
     ) -> None:
@@ -59,7 +59,7 @@ class LibriMixDataModule(pl.LightningDataModule):
         batch_size: int = 6,
         tr_split: str = "train-360",
         num_speakers: int = 2,
-        sample_rate: int = 16000,
+        sample_rate: int = 8000,
         task: str = "sep_clean",
     ) -> "LibriMixDataModule":
         return LibriMixDataModule(
@@ -132,7 +132,7 @@ class LibriMixDataModuleConf(DataModuleConf):
     batch_size: int = 6
     tr_split: str = "train-360"
     num_speakers: int = 2
-    sample_rate: int = 16000
+    sample_rate: int = 8000
     task: str = "sep_clean"
 
 
