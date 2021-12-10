@@ -20,6 +20,7 @@ from torchrecipes.audio.source_separation.loss import si_sdr_loss
 from torchrecipes.audio.source_separation.metrics import sdri_metric, sisdri_metric
 from torchrecipes.core.conf import ModuleConf
 from torchrecipes.utils.config_utils import get_class_config_method, config_entry
+from omegaconf import MISSING
 
 
 def _get_model(
@@ -60,15 +61,16 @@ class ConvTasNetModule(pl.LightningModule):
 
     def __init__(
         self,
-        loss: Any,
-        optim: Any,
-        metrics: List[Any],
-        lr_scheduler: Optional[Any] = None,
+        model: torch.nn.Module,
+        loss: Callable,
+        optim: torch.optim.Optimizer,
+        metrics: Mapping[str, Callable],
+        lr_scheduler: Optional[_LRScheduler] = None,
     ) -> None:
         super().__init__()
 
         self.model: nn.Module = _get_model()
-        self.loss: nn.Module = loss
+        self.loss: Callable = loss
         self.optim: torch.optim.Optimizer = optim
         self.lr_scheduler: Optional[_LRScheduler] = None
         if lr_scheduler:
@@ -85,10 +87,11 @@ class ConvTasNetModule(pl.LightningModule):
     @config_entry
     @staticmethod
     def from_config(
-        loss: Any,
-        optim: Any,
-        metrics: List[Any],
-        lr_scheduler: Optional[Any] = None,
+        model: torch.nn.Module,
+        loss: Callable,
+        optim: torch.optim.Optimizer,
+        metrics: Mapping[str, Callable],
+        lr_scheduler: Optional[_LRScheduler] = None,
     ) -> "ConvTasNetModule":
         model = _get_model()
         optim = hydra.utils.instantiate(
@@ -190,6 +193,7 @@ class ConvTasNetModule(pl.LightningModule):
 @dataclass
 class ConvTasNetModuleConf(ModuleConf):
     _target_: str = get_class_config_method(ConvTasNetModule)
+    model: Any = _get_model()
     loss: Any = si_sdr_loss
     optim: Any = torch.optim.Adam
     metrics: Any = field(

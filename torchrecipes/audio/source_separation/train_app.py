@@ -58,10 +58,7 @@ class SourceSeparationTrainApp(BaseTrainApp):
         """
         Instantiate a LightningDataModule.
         """
-        datamodule = hydra.utils.instantiate(
-            self.datamodule_conf,
-            _recursive_=False
-        )
+        datamodule = hydra.utils.instantiate(self.datamodule_conf, _recursive_=False)
         return datamodule
 
     def get_lightning_module(self) -> LightningModule:
@@ -69,6 +66,7 @@ class SourceSeparationTrainApp(BaseTrainApp):
         Instantiate a LightningModule.
         """
         module = ConvTasNetModule(
+            self.module_conf.model,
             self.module_conf.loss,
             self.module_conf.optim,
             self.module_conf.metrics,
@@ -98,14 +96,18 @@ class SourceSeparationTrainApp(BaseTrainApp):
             mode="min",
             save_top_k=5,
             save_weights_only=True,
-            verbose=True
+            verbose=True,
         )
         callbacks = [
             checkpoint,
-            EarlyStopping(monitor="Losses/val_loss", mode="min", patience=30, verbose=True),
+            EarlyStopping(
+                monitor="Losses/val_loss", mode="min", patience=30, verbose=True
+            ),
         ]
         callbacks = [
-            EarlyStopping(monitor="Losses/val_loss", mode="min", patience=30, verbose=True),
+            EarlyStopping(
+                monitor="Losses/val_loss", mode="min", patience=30, verbose=True
+            ),
         ]
         return callbacks
 

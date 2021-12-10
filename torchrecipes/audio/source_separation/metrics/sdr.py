@@ -7,7 +7,7 @@ def sisdri_metric(
     estimate: torch.Tensor,
     reference: torch.Tensor,
     mix: torch.Tensor,
-    mask: torch.Tensor
+    mask: torch.Tensor,
 ) -> torch.Tensor:
     """Compute the improvement of scale-invariant SDR. (SI-SDRi).
     Args:

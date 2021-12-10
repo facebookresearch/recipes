@@ -70,7 +70,14 @@ class LibriMixDataModule(pl.LightningDataModule):
         testing: bool = False,
     ) -> "LibriMixDataModule":
         return LibriMixDataModule(
-            root_dir, batch_size, tr_split, num_speakers, sample_rate, task, num_workers, testing
+            root_dir,
+            batch_size,
+            tr_split,
+            num_speakers,
+            sample_rate,
+            task,
+            num_workers,
+            testing,
         )
 
     def setup(self, stage: Optional[str] = None):
@@ -89,11 +96,7 @@ class LibriMixDataModule(pl.LightningDataModule):
                     self.task,
                 )
                 self.val = LibriMix(
-                    self.root_dir,
-                    "dev",
-                    self.num_speakers,
-                    self.sample_rate,
-                    self.task
+                    self.root_dir, "dev", self.num_speakers, self.sample_rate, self.task
                 )
 
         if stage == "test" or stage is None:
@@ -105,7 +108,7 @@ class LibriMixDataModule(pl.LightningDataModule):
                     "test",
                     self.num_speakers,
                     self.sample_rate,
-                    self.task
+                    self.task,
                 )
 
     def train_dataloader(self):

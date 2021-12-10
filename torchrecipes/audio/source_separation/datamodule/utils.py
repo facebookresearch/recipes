@@ -16,6 +16,7 @@ class CollateFn:
         sample_rate (int): The sample rate of audio.
         duration (int): The duration of the waveform in the mini-batch (in seconds).
     """
+
     def __init__(self, sample_rate: int, duration: int):
         self.sample_rate = sample_rate
         self.duration = duration
@@ -39,7 +40,9 @@ class CollateFn:
 
         mixes, srcs, masks = [], [], []
         for sample in samples:
-            mix, src, mask = self._fix_num_frames(sample, target_num_frames, self.sample_rate, random_start=True)
+            mix, src, mask = self._fix_num_frames(
+                sample, target_num_frames, self.sample_rate, random_start=True
+            )
 
             mixes.append(mix)
             srcs.append(src)
@@ -47,17 +50,27 @@ class CollateFn:
 
         return (torch.stack(mixes, 0), torch.stack(srcs, 0), torch.stack(masks, 0))
 
-    def _fix_num_frames(self, sample: torch.Tensor, target_num_frames: int, sample_rate: int, random_start=False):
+    def _fix_num_frames(
+        self,
+        sample: torch.Tensor,
+        target_num_frames: int,
+        sample_rate: int,
+        random_start=False,
+    ):
         """Ensure waveform has exact number of frames by slicing or padding"""
         mix = sample[1]  # [1, time]
         src = torch.cat(sample[2], 0)  # [num_sources, time]
 
         num_channels, num_frames = src.shape
-        num_seconds = torch.div(num_frames, sample_rate, rounding_mode='floor')
-        target_seconds = torch.div(target_num_frames, sample_rate, rounding_mode='floor')
+        num_seconds = torch.div(num_frames, sample_rate, rounding_mode="floor")
+        target_seconds = torch.div(
+            target_num_frames, sample_rate, rounding_mode="floor"
+        )
         if num_frames >= target_num_frames:
             if random_start and num_frames > target_num_frames:
-                start_frame = torch.randint(num_seconds - target_seconds + 1, [1]) * sample_rate
+                start_frame = (
+                    torch.randint(num_seconds - target_seconds + 1, [1]) * sample_rate
+                )
                 mix = mix[:, start_frame:]
                 src = src[:, start_frame:]
             mix = mix[:, :target_num_frames]

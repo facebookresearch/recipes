@@ -8,10 +8,7 @@ SampleType = Tuple[int, torch.Tensor, List[torch.Tensor]]
 
 
 class TestDataset(Dataset):
-    def __init__(
-        self,
-        root_dir: str = "test"
-    ):
+    def __init__(self, root_dir: str = "test"):
         self.root_dir = root_dir
 
     def __len__(self) -> int:

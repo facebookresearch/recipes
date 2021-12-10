@@ -16,6 +16,7 @@ class TestTrainApp(BaseTrainAppTestCase):
             "datamodule=test_data",
             "trainer.max_epochs=2",
             f"trainer.default_root_dir={tb_save_dir}",
+            "trainer.gpus=0",
             f"+tb_save_dir={tb_save_dir}",
         ]
         app = self.create_app_from_hydra(
