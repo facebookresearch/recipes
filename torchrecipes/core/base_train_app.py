@@ -115,8 +115,7 @@ class BaseTrainApp:
         dirpath: Optional[str] = None
         root_dir = self.root_dir
         if root_dir:
-            dirpath = os.path.join(root_dir, ModelCheckpoint.CHECKPOINT_PATH_SUFFIX)
-
+            dirpath = os.path.join(root_dir, "checkpoints")
         return ModelCheckpoint(
             # will auto generate dirpath if not provided
             dirpath=dirpath,
