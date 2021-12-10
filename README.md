@@ -6,9 +6,7 @@
 
 `torchrecipes` is a prototype is built on top of PyTORCH and provides a set of reproduci-able, re-usable, ready-to-run RECIPES for training different types of models, across multiple domains, on PyTorch Lightning.
 
-It aims to provide reproduci-able "applications" built on top of PyTorch with good performance and easy reproduciability. Because this project builds on the pytorch ecosystem and requires significant investment, we'd love to hear from and work with
-early adopters to shape the design. Please reach out on the issue tracker
-if you're interested in using this for your project.
+It aims to provide reproduci-able "applications" built on top of PyTorch with good performance and easy reproduciability. Because this project builds on the pytorch ecosystem and requires significant investment, we'd love to hear from and work with early adopters to shape the design. Please reach out on the issue tracker if you're interested in using this for your project.
 
 
 ## Why `torchrecipes`?
