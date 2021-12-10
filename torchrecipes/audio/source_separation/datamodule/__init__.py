@@ -5,7 +5,6 @@ from torchrecipes.audio.source_separation.datamodule.librimix import (
     LibriMixDataModuleConf,
 )
 
-
 __all__ = [
     "LibriMixDataModule",
     "LibriMixDataModuleConf",

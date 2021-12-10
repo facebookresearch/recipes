@@ -2,8 +2,6 @@ _target_: torchrecipes.audio.source_separation.train_app.SourceSeparationTrainAp
 
 defaults:
   - _self_
-  # module
-  # - schema/module: conv_tasnet_module_conf
   # datamodule
   - schema/datamodule: librimix_datamodule_conf
   - datamodule: librimix

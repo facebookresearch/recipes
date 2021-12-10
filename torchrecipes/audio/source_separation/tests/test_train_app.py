@@ -13,7 +13,9 @@ class TestTrainApp(BaseTrainAppTestCase):
         self, tb_save_dir: str, test_overrides: Optional[List[str]] = None
     ) -> SourceSeparationTrainApp:
         overrides: List[str] = [
+            "datamodule=test_data",
             "trainer.max_epochs=2",
+            f"trainer.default_root_dir={tb_save_dir}",
             f"+tb_save_dir={tb_save_dir}",
         ]
         app = self.create_app_from_hydra(

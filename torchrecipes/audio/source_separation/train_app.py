@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 from dataclasses import dataclass
 from typing import Any, List, Optional
 
@@ -12,7 +13,7 @@ from omegaconf import MISSING
 from pyre_extensions import none_throws
 from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.callbacks import Callback
-from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 from torchrecipes.audio.source_separation.datamodule import (
     LibriMixDataModuleConf,
@@ -90,6 +91,19 @@ class SourceSeparationTrainApp(BaseTrainApp):
         Override this method to return a list of callbacks to be passed
         into Trainer. You can add additional ModelCheckpoint here
         """
+        checkpoint_dir = os.path.join(self.root_dir, "checkpoints")
+        checkpoint = ModelCheckpoint(
+            checkpoint_dir,
+            monitor="Losses/val_loss",
+            mode="min",
+            save_top_k=5,
+            save_weights_only=True,
+            verbose=True
+        )
+        callbacks = [
+            checkpoint,
+            EarlyStopping(monitor="Losses/val_loss", mode="min", patience=30, verbose=True),
+        ]
         callbacks = [
             EarlyStopping(monitor="Losses/val_loss", mode="min", patience=30, verbose=True),
         ]

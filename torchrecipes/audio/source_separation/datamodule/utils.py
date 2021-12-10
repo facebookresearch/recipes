@@ -10,7 +10,7 @@ from torch import Tensor
 SampleType = Tuple[int, torch.Tensor, List[torch.Tensor]]
 
 
-class collate_fn:
+class CollateFn:
     """Collate the waveforms to have the same size.
     Args:
         sample_rate (int): The sample rate of audio.
