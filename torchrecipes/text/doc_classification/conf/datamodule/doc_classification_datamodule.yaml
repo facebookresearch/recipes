@@ -1,0 +1,5 @@
+_target_: torchrecipes.text.doc_classification.datamodule.doc_classification.DocClassificationDataModule.from_config
+batch_size: 16
+num_workers: 0
+drop_last: False
+pin_memory: False
