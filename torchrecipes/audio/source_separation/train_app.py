@@ -27,6 +27,9 @@ from torchrecipes.core.conf import TrainerConf, TrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
 
 
+DEFAULT_MODULE_CONF = ConvTasNetModuleConf()
+
+
 class SourceSeparationTrainApp(BaseTrainApp):
     """
     This app is used to launch the image classification training / testing.
@@ -37,7 +40,7 @@ class SourceSeparationTrainApp(BaseTrainApp):
 
     def __init__(
         self,
-        module: ConvTasNetModuleConf = ConvTasNetModuleConf(),
+        module: ConvTasNetModuleConf = DEFAULT_MODULE_CONF,
         trainer: TrainerConf = None,
         datamodule: LibriMixDataModuleConf = None,
         load_checkpoint_strict: bool = True,

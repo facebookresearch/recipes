@@ -20,7 +20,6 @@ from torchrecipes.audio.source_separation.loss import si_sdr_loss
 from torchrecipes.audio.source_separation.metrics import sdri_metric, sisdri_metric
 from torchrecipes.core.conf import ModuleConf
 from torchrecipes.utils.config_utils import get_class_config_method, config_entry
-from omegaconf import MISSING
 
 
 def _get_model(
@@ -69,7 +68,7 @@ class ConvTasNetModule(pl.LightningModule):
     ) -> None:
         super().__init__()
 
-        self.model: nn.Module = _get_model()
+        self.model: nn.Module = model
         self.loss: Callable = loss
         self.optim: torch.optim.Optimizer = optim
         self.lr_scheduler: Optional[_LRScheduler] = None
