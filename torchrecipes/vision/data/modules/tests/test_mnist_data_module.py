@@ -57,9 +57,7 @@ class TestMNISTDataModule(unittest.TestCase):
         module = MNISTDataModule(data_dir=self.data_path, val_split=100)
         module.prepare_data()
         module.setup()
-        # pyre-ignore[6]: dataset has length
         self.assertEqual(len(module.datasets["train"]), 59900)
-        # pyre-ignore[6]: dataset has length
         self.assertEqual(len(module.datasets["val"]), 100)
 
     def test_transforms(self) -> None:

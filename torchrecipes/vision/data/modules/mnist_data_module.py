@@ -111,7 +111,7 @@ class MNISTDataModule(LightningDataModule):
 
     def _split_dataset(self, dataset: Dataset, train: bool = True) -> Dataset:
         """Splits the full dataset into train and validation set."""
-        splits = self._get_splits(len(dataset))  # pyre-ignore[6]: dataset length
+        splits = self._get_splits(len(dataset))
         dataset_train, dataset_val = random_split(
             dataset,
             splits,
