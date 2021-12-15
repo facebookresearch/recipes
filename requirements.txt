@@ -48,12 +48,12 @@ tensorboard-plugin-wit==1.8.0
 TestSlide==2.7.0
 torchdata @ git+https://github.com/pytorch/data.git@6309113
 -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-torch==1.11.0.dev20211108+cpu
+torch==1.11.0.dev20211215+cpu
 torchmetrics==0.6.0
 -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-torchtext==0.12.0.dev20211108
+torchtext==0.12.0.dev20211215
 -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-torchvision==0.12.0.dev20211108+cpu
+torchvision==0.12.0.dev20211215+cpu
 tqdm==4.62.3
 typeguard==2.13.0
 typing-extensions==4.0.0
