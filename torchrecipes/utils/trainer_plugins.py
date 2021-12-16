@@ -7,7 +7,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from omegaconf import OmegaConf  # @manual
+from omegaconf import DictConfig, OmegaConf  # @manual
 from pytorch_lightning.plugins import PLUGIN, PLUGIN_INPUT
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
 from pytorch_lightning.plugins.training_type import DDPFullyShardedPlugin, DDPPlugin
@@ -269,6 +269,9 @@ def convert_trainer_plugins(
 
 
 def get_trainer_params(trainer_conf: TrainerConf) -> Dict[str, Any]:
+    if not isinstance(trainer_conf, DictConfig):
+        # pyre-fixme[6]: Expected `str` for 1st param but got `TrainerConf`.
+        trainer_conf = OmegaConf.create(trainer_conf)
     trainer_params = OmegaConf.to_container(trainer_conf, resolve=True) or {}
     assert isinstance(trainer_params, Dict)
     plugins = trainer_params.get("plugins", []) or []
