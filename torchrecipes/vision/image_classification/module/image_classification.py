@@ -71,7 +71,6 @@ class ImageClassificationModule(pl.LightningModule):
         self.norm_weight_decay: float = norm_weight_decay
         self.lr_scheduler_interval: str = lr_scheduler_interval
 
-        # pyre-fixme[11]: See https://fburl.com/tvvws0an.
         self.train_metrics: torch.nn.ModuleDict = torch.nn.ModuleDict()
         self.val_metrics: torch.nn.ModuleDict = torch.nn.ModuleDict()
         self.test_metrics: torch.nn.ModuleDict = torch.nn.ModuleDict()
