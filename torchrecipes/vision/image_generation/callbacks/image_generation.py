@@ -97,7 +97,7 @@ class TensorboardGenerativeModelImageSampler(Callback):
 
     @rank_zero_only
     def on_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        # pyre-ignore[16]: Trainer does have `logger`.
+        # pyre-ignore[16]: Attribute exists.
         if not (logger := trainer.logger):
             rank_zero_warn("Trainer must have a logger configured.")
             return
