@@ -16,6 +16,6 @@ head:
   num_classes: 2
   input_dim: 768
   inner_dim: 1024
-  dropout: 0
+  dropout: 0.4
 freeze_encoder: False
 checkpoint: https://download.pytorch.org/models/text/xlmr.base.encoder.pt
