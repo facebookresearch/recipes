@@ -15,7 +15,7 @@ from hydra.experimental import compose, initialize
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
 from pytorch_lightning.plugins.training_type import (
     Strategy,
-    DDPFullyShardedPlugin,
+    DDPFullyShardedStrategy,
     DDPPlugin,
 )
 from pytorch_lightning.trainer import Trainer
@@ -229,7 +229,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 1)
             plugin = plugins[0]
-            self.assertIsInstance(plugin, DDPFullyShardedPlugin)
+            self.assertIsInstance(plugin, DDPFullyShardedStrategy)
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
@@ -255,7 +255,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 2)
             training_type_plugin = plugins[0]
-            self.assertIsInstance(training_type_plugin, DDPFullyShardedPlugin)
+            self.assertIsInstance(training_type_plugin, DDPFullyShardedStrategy)
             precision_plugin = plugins[1]
             self.assertIsInstance(
                 precision_plugin, FullyShardedNativeMixedPrecisionPlugin

@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 from omegaconf import DictConfig, OmegaConf  # @manual
 from pytorch_lightning.plugins import PLUGIN, PLUGIN_INPUT
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
-from pytorch_lightning.plugins.training_type import DDPFullyShardedPlugin, DDPPlugin
+from pytorch_lightning.plugins.training_type import DDPFullyShardedStrategy, DDPPlugin
 from torch.distributed.algorithms.ddp_comm_hooks import (
     default_hooks as default,
     powerSGD_hook as powerSGD,
@@ -193,7 +193,7 @@ def get_fully_sharded_plugins(
 ) -> List[PLUGIN]:
     # training type plugin
     fully_sharded_plugins: List[PLUGIN] = [
-        DDPFullyShardedPlugin(
+        DDPFullyShardedStrategy(
             cpu_offload=cpu_offload,
             reshard_after_forward=reshard_after_forward,
         )
@@ -214,7 +214,7 @@ def convert_trainer_plugins(
     Util function to convert the plugin short name to corresponding Plugin instance.
 
     Traversing and processing the given ``plugins`` list as follows:
-        1. plugin is `ddp_fully_sharded` ==> ``DDPFullyShardedPlugin``
+        1. plugin is `ddp_fully_sharded` ==> ``DDPFullyShardedStrategy``
             if ``precision`` is 16, will also add ``FullyShardedNativeMixedPrecisionPlugin``
         2. plugin is map key for ``DDP_CUSTOMIZED_PLUGIN_CONF`` ==> corresponding ``DDPPlugin``
             if there are multiple plugins match keys in ``DDP_CUSTOMIZED_PLUGIN_CONF``, will use
