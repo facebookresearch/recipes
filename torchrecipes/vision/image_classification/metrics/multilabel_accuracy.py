@@ -34,6 +34,7 @@ class MultilabelAccuracy(Metric):
         self.add_state("correct", default=torch.tensor(0), dist_reduce_fx="sum")
         self.add_state("total", default=torch.tensor(0), dist_reduce_fx="sum")
 
+    # pyre-fixme[14]: `update` overrides method defined in `Metric` inconsistently.
     def update(self, preds: torch.Tensor, target: torch.Tensor) -> None:
         """Updates the state with predictions and target.
         Args:
