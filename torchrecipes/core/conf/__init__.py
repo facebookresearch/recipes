@@ -83,7 +83,7 @@ class TrainerConf:
     reload_dataloaders_every_n_epochs: int = 0
     replace_sampler_ddp: bool = False
     resume_from_checkpoint: Optional[str] = None
-    # Union[str, TrainingTypePlugin]
+    # Union[str, Strategy]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     strategy: Optional[Any] = None
     sync_batchnorm: bool = False

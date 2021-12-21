@@ -14,7 +14,7 @@ from hydra.core.config_store import ConfigStore
 from hydra.experimental import compose, initialize
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
 from pytorch_lightning.plugins.training_type import (
-    TrainingTypePlugin,
+    Strategy,
     DDPFullyShardedPlugin,
     DDPPlugin,
 )
@@ -24,7 +24,7 @@ from torchrecipes.utils.trainer_plugins import get_trainer_params
 
 
 def check_training_type_plugin_attribute(
-    training_type_plugin: TrainingTypePlugin,
+    training_type_plugin: Strategy,
     attr_name: str,
     expected_val: Union[int, bool],
 ) -> None:
