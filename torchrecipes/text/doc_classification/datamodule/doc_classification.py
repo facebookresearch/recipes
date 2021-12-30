@@ -12,8 +12,8 @@ import torch.nn as nn
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 from torch.utils.data import DataLoader
+from torch.utils.data import IterDataPipe
 from torch.utils.data.backward_compatibility import worker_init_fn
-from torch.utils.data.dataset import IterableDataset
 from torchrecipes.core.conf import DataModuleConf
 from torchrecipes.text.doc_classification.conf.common import (
     DatasetConf,
@@ -30,9 +30,9 @@ from torchtext.functional import to_tensor
 class DocClassificationDataModule(pl.LightningDataModule):
     def __init__(
         self,
-        train_dataset: IterableDataset[Tuple[str, str]],
-        val_dataset: IterableDataset[Tuple[str, str]],
-        test_dataset: IterableDataset[Tuple[str, str]],
+        train_dataset: IterDataPipe[Tuple[str, str]],
+        val_dataset: IterDataPipe[Tuple[str, str]],
+        test_dataset: IterDataPipe[Tuple[str, str]],
         transform: nn.Module,
         label_transform: nn.Module,
         batch_size: int,
@@ -87,7 +87,7 @@ class DocClassificationDataModule(pl.LightningDataModule):
             batch_size,
         )
 
-    def _get_data_loader(self, dataset: IterableDataset[Tuple[str, str]]) -> DataLoader:
+    def _get_data_loader(self, dataset: IterDataPipe[Tuple[str, str]]) -> DataLoader:
         dataset = dataset.batch(self.batch_size).rows2columnar(["text", "label"])
         dataset = dataset.map(self.transform)
         dataset = dataset.map(
