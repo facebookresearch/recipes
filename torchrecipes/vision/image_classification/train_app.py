@@ -59,7 +59,6 @@ class ImageClassificationTrainApp(BaseTrainApp):
         """
         return hydra.utils.instantiate(
             self.datamodule_conf.datamodule,
-            _recursive_=False,
         )
 
     def get_lightning_module(self) -> LightningModule:

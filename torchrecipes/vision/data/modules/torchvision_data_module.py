@@ -8,7 +8,6 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, Optional, Union
 
-import hydra
 import torch
 from hydra.core.config_store import ConfigStore
 
@@ -18,10 +17,7 @@ from pyre_extensions import none_throws
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, random_split
 from torchrecipes.core.conf import DataModuleConf
-from torchrecipes.utils.config_utils import get_class_config_method, config_entry
-from torchrecipes.vision.data.transforms.builder import (
-    build_transforms_from_dataset_config,
-)
+from torchrecipes.utils.config_utils import get_class_name_str
 from torchvision.datasets.vision import VisionDataset
 
 
@@ -63,42 +59,6 @@ class TorchVisionDataModule(LightningDataModule):
         self.pin_memory = pin_memory
         self.seed = seed
         self.val_split = val_split
-
-    @config_entry
-    @staticmethod
-    def from_config(
-        datasets: Dict[str, Any],
-        batch_size: int = 32,
-        drop_last: bool = False,
-        normalize: bool = False,
-        num_workers: int = 16,
-        pin_memory: bool = False,
-        seed: int = 42,
-        val_split: Optional[Union[int, float]] = None,
-    ) -> "TorchVisionDataModule":
-        datasets_module: Dict[str, Optional[VisionDataset]] = {}
-        for split in datasets:
-            assert split in ["train", "val", "test"]
-            dataset_conf = datasets[split]
-            if dataset_conf:
-                dataset_conf = dict(dataset_conf)
-                dataset_conf = build_transforms_from_dataset_config(dataset_conf)
-                datasets_module[split] = hydra.utils.instantiate(
-                    dataset_conf, _recursive_=False
-                )
-            else:
-                datasets_module[split] = None
-
-        return TorchVisionDataModule(
-            datasets_module,
-            batch_size,
-            drop_last,
-            normalize,
-            num_workers,
-            pin_memory,
-            seed,
-            val_split,
-        )
 
     def setup(self, stage: Optional[str] = None) -> None:
         """Creates train, val and test dataset."""
@@ -183,7 +143,7 @@ class TorchVisionDataModule(LightningDataModule):
 
 @dataclass
 class TorchVisionDataModuleConf(DataModuleConf):
-    _target_: str = get_class_config_method(TorchVisionDataModule)
+    _target_: str = get_class_name_str(TorchVisionDataModule)
     datasets: Dict[str, Any] = MISSING
     batch_size: int = 32
     drop_last: bool = False

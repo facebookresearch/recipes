@@ -6,7 +6,7 @@ datasets:
       - 28
       - 28
     transform:
-    - _target_: torchvision.transforms.ToTensor
+      _target_: torchvision.transforms.ToTensor
   val:
     _target_: torchvision.datasets.FakeData
     image_size:
@@ -14,7 +14,7 @@ datasets:
       - 28
       - 28
     transform:
-    - _target_: torchvision.transforms.ToTensor
+      _target_: torchvision.transforms.ToTensor
   test:
     _target_: torchvision.datasets.FakeData
     image_size:
@@ -22,4 +22,4 @@ datasets:
       - 28
       - 28
     transform:
-    - _target_: torchvision.transforms.ToTensor
+      _target_: torchvision.transforms.ToTensor

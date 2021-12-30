@@ -43,7 +43,6 @@ class GANTrainApp(BaseTrainApp):
         """
         return hydra.utils.instantiate(
             self.datamodule_conf.datamodule,
-            _recursive_=False,
         )
 
     def get_callbacks(self) -> List[Callback]:
