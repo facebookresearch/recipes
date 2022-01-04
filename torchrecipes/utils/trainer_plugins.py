@@ -201,7 +201,7 @@ def get_fully_sharded_plugins(
     if precision == 16:
         # precision plugin
         fully_sharded_plugins.append(
-            FullyShardedNativeMixedPrecisionPlugin(precision=16, device="gpu")
+            FullyShardedNativeMixedPrecisionPlugin(precision=16, device="cuda")
         )
     return fully_sharded_plugins
 
