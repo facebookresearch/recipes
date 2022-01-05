@@ -7,18 +7,30 @@
 #!/usr/bin/env python3
 
 # pyre-strict
+import os.path
 
 import torchrecipes.text.doc_classification.conf  # noqa
 from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.test_utils.test_base import BaseTrainAppTestCase
 from torchrecipes.text.doc_classification.tests.common.assets import (
     copy_partial_sst2_dataset,
+    get_asset_path,
+    copy_asset,
 )
 from torchrecipes.utils.test import tempdir
 
 
 class TestDocClassificationTrainApp(BaseTrainAppTestCase):
     def get_train_app(self, root_dir: str) -> BaseTrainApp:
+        # copy the asset files into their expected download locations
+        # note we need to do this anywhere we use hydra overrides
+        # otherwise we get a `LexerNoViableAltException`
+        vocab_path = os.path.join(root_dir, "xlmr.vocab.pt")
+        spm_model_path = os.path.join(root_dir, "xlmr.sentencepiece.bpe.model")
+        copy_asset(get_asset_path("xlmr.vocab.pt"), vocab_path)
+        copy_asset(get_asset_path("xlmr.sentencepiece.bpe.model"), spm_model_path)
+        copy_partial_sst2_dataset(root_dir)
+
         app = self.create_app_from_hydra(
             config_module="torchrecipes.text.doc_classification.conf",
             config_name="train_app",
@@ -30,11 +42,10 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
                 f"trainer.default_root_dir={root_dir}",
                 "trainer.logger=False",
                 "trainer.checkpoint_callback=False",
+                f"transform.transform.vocab_path={vocab_path}",
+                f"transform.transform.spm_model_path={spm_model_path}",
             ],
         )
-
-        # copy the asset file into the expected download location
-        copy_partial_sst2_dataset(root_dir)
         self.mock_trainer_params(app)
         return app
 

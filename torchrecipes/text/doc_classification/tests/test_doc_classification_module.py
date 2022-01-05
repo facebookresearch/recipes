@@ -27,6 +27,7 @@ from torchrecipes.text.doc_classification.module.doc_classification import (
     DocClassificationModuleConf,
 )
 from torchrecipes.text.doc_classification.tests.common.assets import _DATA_DIR_PATH
+from torchrecipes.text.doc_classification.tests.common.assets import get_asset_path
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransformConf,
 )
@@ -39,8 +40,8 @@ class TestDocClassificationModule(TaskTestCaseBase):
 
     def get_transform_conf(self) -> DocClassificationTransformConf:
         doc_transform_conf = DocClassificationTextTransformConf(
-            vocab_path="https://download.pytorch.org/models/text/xlmr.vocab.pt",
-            spm_model_path="https://download.pytorch.org/models/text/xlmr.sentencepiece.bpe.model",
+            vocab_path=get_asset_path("xlmr.vocab.pt"),
+            spm_model_path=get_asset_path("xlmr.sentencepiece.bpe.model"),
         )
         label_transform_conf = LabelTransformConf(label_names=["0", "1"])
         return DocClassificationTransformConf(
@@ -56,7 +57,6 @@ class TestDocClassificationModule(TaskTestCaseBase):
                     input_dim=768,
                 ),
                 freeze_encoder=True,
-                checkpoint="https://download.pytorch.org/models/text/xlmr.base.encoder.pt",
             ),
             optim=AdamWConf(),
         )

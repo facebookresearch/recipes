@@ -5,6 +5,7 @@
 
 
 # pyre-strict
+import os.path
 from typing import Tuple
 
 import hydra
@@ -18,30 +19,40 @@ from pytorch_lightning import LightningDataModule, LightningModule
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.text.doc_classification.tests.common.assets import (
     copy_partial_sst2_dataset,
+    get_asset_path,
+    copy_asset,
 )
 from torchrecipes.utils.test import tempdir
 
 
 class TestDocClassificationConfig(testslide.TestCase):
     @tempdir
-    def test_doc_classification_task(self, tmpdir: str) -> None:
+    def test_doc_classification_task(self, root_dir: str) -> None:
+        # copy the asset files into their expected download locations
+        # note we need to do this anywhere we use hydra overrides
+        # otherwise we get a `LexerNoViableAltException`
+        vocab_path = os.path.join(root_dir, "xlmr.vocab.pt")
+        spm_model_path = os.path.join(root_dir, "xlmr.sentencepiece.bpe.model")
+        copy_asset(get_asset_path("xlmr.vocab.pt"), vocab_path)
+        copy_asset(get_asset_path("xlmr.sentencepiece.bpe.model"), spm_model_path)
+        copy_partial_sst2_dataset(root_dir)
+
         with initialize_config_module("torchrecipes.text.doc_classification.conf"):
             cfg = compose(
                 config_name="train_app",
                 overrides=[
                     "module.model.checkpoint=null",
                     "module.model.freeze_encoder=True",
-                    f"datamodule.dataset.root={tmpdir}",
+                    f"datamodule.dataset.root={root_dir}",
                     "datamodule.dataset.validate_hash=False",
-                    f"trainer.default_root_dir={tmpdir}",
+                    f"trainer.default_root_dir={root_dir}",
                     "trainer.logger=False",
                     "trainer.checkpoint_callback=False",
+                    f"transform.transform.vocab_path={vocab_path}",
+                    f"transform.transform.spm_model_path={spm_model_path}",
                 ],
             )
-        # copy the asset file into the expected download location
-        copy_partial_sst2_dataset(tmpdir)
         task, datamodule = self._instantiate_config(cfg)
-
         trainer = Trainer(**cfg.trainer)
         trainer.fit(task, datamodule=datamodule)
 
@@ -56,24 +67,32 @@ class TestDocClassificationConfig(testslide.TestCase):
         self.assertIsNotNone(pred2)
 
     @tempdir
-    def test_doc_classification_task_torchscript(self, tmpdir: str) -> None:
+    def test_doc_classification_task_torchscript(self, root_dir: str) -> None:
+        # copy the asset files into their expected download locations
+        # note we need to do this anywhere we use hydra overrides
+        # otherwise we get a `LexerNoViableAltException`
+        vocab_path = os.path.join(root_dir, "xlmr.vocab.pt")
+        spm_model_path = os.path.join(root_dir, "xlmr.sentencepiece.bpe.model")
+        copy_asset(get_asset_path("xlmr.vocab.pt"), vocab_path)
+        copy_asset(get_asset_path("xlmr.sentencepiece.bpe.model"), spm_model_path)
+        copy_partial_sst2_dataset(root_dir)
+
         with initialize_config_module("torchrecipes.text.doc_classification.conf"):
             cfg = compose(
                 config_name="train_app",
                 overrides=[
                     "module.model.checkpoint=null",
                     "module.model.freeze_encoder=True",
-                    f"datamodule.dataset.root={tmpdir}",
+                    f"datamodule.dataset.root={root_dir}",
                     "datamodule.dataset.validate_hash=False",
-                    f"trainer.default_root_dir={tmpdir}",
+                    f"trainer.default_root_dir={root_dir}",
                     "trainer.logger=False",
                     "trainer.checkpoint_callback=False",
+                    f"transform.transform.vocab_path={vocab_path}",
+                    f"transform.transform.spm_model_path={spm_model_path}",
                 ],
             )
-        # copy the asset file into the expected download location
-        copy_partial_sst2_dataset(tmpdir)
         task, datamodule = self._instantiate_config(cfg)
-
         trainer = Trainer(**cfg.trainer)
         trainer.fit(task, datamodule=datamodule)
 

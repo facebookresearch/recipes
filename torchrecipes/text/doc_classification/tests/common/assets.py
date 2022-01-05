@@ -20,10 +20,14 @@ def get_asset_path(*paths: Union[str, Tuple[str]]) -> str:
     return os.path.join(_DATA_DIR_PATH, *paths)
 
 
+def copy_asset(cur_path: str, new_path: str) -> None:
+    new_path_dir = os.path.dirname(new_path)
+    if not os.path.exists(new_path_dir):
+        os.makedirs(new_path_dir)
+    shutil.copy(cur_path, new_path)
+
+
 def copy_partial_sst2_dataset(root_dir: str) -> None:
-    asset_path = get_asset_path(sst2.DATASET_NAME, sst2._PATH)
-    data_folder = os.path.join(root_dir, sst2.DATASET_NAME)
-    data_path = os.path.join(data_folder, sst2._PATH)
-    if not os.path.exists(data_folder):
-        os.makedirs(data_folder)
-    shutil.copy(asset_path, data_path)
+    cur_path = get_asset_path(sst2.DATASET_NAME, sst2._PATH)
+    new_path = os.path.join(root_dir, sst2.DATASET_NAME, sst2._PATH)
+    copy_asset(cur_path, new_path)
