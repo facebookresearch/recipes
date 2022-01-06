@@ -73,12 +73,12 @@ class TestTrainerParams(unittest.TestCase):
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 3,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 True,
             )
@@ -104,12 +104,12 @@ class TestTrainerParams(unittest.TestCase):
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 1,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 False,
             )
@@ -135,12 +135,12 @@ class TestTrainerParams(unittest.TestCase):
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 1,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 False,
             )
@@ -171,12 +171,12 @@ class TestTrainerParams(unittest.TestCase):
             self.assertEqual(plugin._ddp_kwargs, {"find_unused_parameters": True})
             trainer = Trainer(**trainer_params)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 1,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 False,
             )
@@ -207,12 +207,12 @@ class TestTrainerParams(unittest.TestCase):
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 1,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 False,
             )
@@ -233,12 +233,12 @@ class TestTrainerParams(unittest.TestCase):
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 1,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 False,
             )
@@ -263,12 +263,12 @@ class TestTrainerParams(unittest.TestCase):
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "num_nodes",
                 1,
             )
             check_training_type_plugin_attribute(
-                trainer.training_type_plugin,
+                trainer.strategy,
                 "sync_batchnorm",
                 False,
             )
