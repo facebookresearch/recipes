@@ -30,8 +30,8 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
 class TestDocClassificationDataModule(testslide.TestCase):
     def get_datamodule(self) -> DocClassificationDataModule:
         doc_transform_conf = DocClassificationTextTransformConf(
-            vocab_path=get_asset_path("xlmr.vocab.pt"),
-            spm_model_path=get_asset_path("xlmr.sentencepiece.bpe.model"),
+            vocab_path=get_asset_path("vocab_example.pt"),
+            spm_model_path=get_asset_path("spm_example.model"),
         )
         label_transform_conf = LabelTransformConf(label_names=["0", "1"])
 
@@ -62,4 +62,4 @@ class TestDocClassificationDataModule(testslide.TestCase):
         self.assertTrue(torch.is_tensor(batch["token_ids"]))
 
         self.assertEqual(batch["label_ids"].size(), torch.Size([8]))
-        self.assertEqual(batch["token_ids"].size(), torch.Size([8, 33]))
+        self.assertEqual(batch["token_ids"].size(), torch.Size([8, 35]))

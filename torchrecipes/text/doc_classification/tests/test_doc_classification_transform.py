@@ -18,8 +18,8 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
 class TestDocClassificationTransform(testslide.TestCase):
     def test_doc_classification_transform(self) -> None:
         transform_conf = DocClassificationTextTransformConf(
-            vocab_path=get_asset_path("xlmr.vocab.pt"),
-            spm_model_path=get_asset_path("xlmr.sentencepiece.bpe.model"),
+            vocab_path=get_asset_path("vocab_example.pt"),
+            spm_model_path=get_asset_path("spm_example.model"),
         )
         transform = hydra.utils.instantiate(transform_conf, _recursive_=False)
 
@@ -29,6 +29,6 @@ class TestDocClassificationTransform(testslide.TestCase):
         test_input = {"text": ["XLMR base Model Comparison"]}
         actual = transform(test_input)
         expected_token_ids = torch.tensor(
-            [[0, 43523, 52005, 3647, 13293, 113307, 40514, 2]], dtype=torch.long
+            [[0, 6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2]], dtype=torch.long
         )
         self.assertTrue(torch.all(actual["token_ids"].eq(expected_token_ids)))

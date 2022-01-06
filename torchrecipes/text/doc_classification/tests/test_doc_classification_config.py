@@ -31,10 +31,10 @@ class TestDocClassificationConfig(testslide.TestCase):
         # copy the asset files into their expected download locations
         # note we need to do this anywhere we use hydra overrides
         # otherwise we get a `LexerNoViableAltException`
-        vocab_path = os.path.join(root_dir, "xlmr.vocab.pt")
-        spm_model_path = os.path.join(root_dir, "xlmr.sentencepiece.bpe.model")
-        copy_asset(get_asset_path("xlmr.vocab.pt"), vocab_path)
-        copy_asset(get_asset_path("xlmr.sentencepiece.bpe.model"), spm_model_path)
+        vocab_path = os.path.join(root_dir, "vocab_example.pt")
+        spm_model_path = os.path.join(root_dir, "spm_example.model")
+        copy_asset(get_asset_path("vocab_example.pt"), vocab_path)
+        copy_asset(get_asset_path("spm_example.model"), spm_model_path)
         copy_partial_sst2_dataset(root_dir)
 
         with initialize_config_module("torchrecipes.text.doc_classification.conf"):
@@ -71,10 +71,10 @@ class TestDocClassificationConfig(testslide.TestCase):
         # copy the asset files into their expected download locations
         # note we need to do this anywhere we use hydra overrides
         # otherwise we get a `LexerNoViableAltException`
-        vocab_path = os.path.join(root_dir, "xlmr.vocab.pt")
-        spm_model_path = os.path.join(root_dir, "xlmr.sentencepiece.bpe.model")
-        copy_asset(get_asset_path("xlmr.vocab.pt"), vocab_path)
-        copy_asset(get_asset_path("xlmr.sentencepiece.bpe.model"), spm_model_path)
+        vocab_path = os.path.join(root_dir, "vocab_example.pt")
+        spm_model_path = os.path.join(root_dir, "spm_example.model")
+        copy_asset(get_asset_path("vocab_example.pt"), vocab_path)
+        copy_asset(get_asset_path("spm_example.model"), spm_model_path)
         copy_partial_sst2_dataset(root_dir)
 
         with initialize_config_module("torchrecipes.text.doc_classification.conf"):

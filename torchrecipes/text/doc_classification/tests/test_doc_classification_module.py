@@ -40,8 +40,8 @@ class TestDocClassificationModule(TaskTestCaseBase):
 
     def get_transform_conf(self) -> DocClassificationTransformConf:
         doc_transform_conf = DocClassificationTextTransformConf(
-            vocab_path=get_asset_path("xlmr.vocab.pt"),
-            spm_model_path=get_asset_path("xlmr.sentencepiece.bpe.model"),
+            vocab_path=get_asset_path("vocab_example.pt"),
+            spm_model_path=get_asset_path("spm_example.model"),
         )
         label_transform_conf = LabelTransformConf(label_names=["0", "1"])
         return DocClassificationTransformConf(
