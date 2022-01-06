@@ -57,6 +57,7 @@ class TestDocClassificationModule(TaskTestCaseBase):
                     input_dim=768,
                 ),
                 freeze_encoder=True,
+                checkpoint=None,
             ),
             optim=AdamWConf(),
         )
