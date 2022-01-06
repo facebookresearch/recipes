@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 from omegaconf import DictConfig, OmegaConf  # @manual
 from pytorch_lightning.plugins import PLUGIN, PLUGIN_INPUT
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
-from pytorch_lightning.plugins.training_type import DDPFullyShardedStrategy, DDPPlugin
+from pytorch_lightning.plugins.training_type import DDPFullyShardedStrategy, DDPStrategy
 from torch.distributed.algorithms.ddp_comm_hooks import (
     default_hooks as default,
     powerSGD_hook as powerSGD,
@@ -19,7 +19,7 @@ from torchrecipes.core.conf import TrainerConf
 
 
 @dataclass
-class DDPPluginConf:
+class DDPStrategyConf:
     # DDP communication setting for contorlling gradients commnication
     # state for passed into hook which is used to maintain and update state info
     ddp_comm_state: Optional[object] = None
@@ -34,11 +34,11 @@ class DDPPluginConf:
 
 
 DDP_CUSTOMIZED_PLUGIN_CONF = {
-    "ddp_find_unused_parameters_false": DDPPluginConf(
+    "ddp_find_unused_parameters_false": DDPStrategyConf(
         find_unused_parameters=False,
     ),
-    "ddp_fp16_compress": DDPPluginConf(ddp_comm_hook=default.fp16_compress_hook),
-    "ddp_power_sgd_1k": DDPPluginConf(
+    "ddp_fp16_compress": DDPStrategyConf(ddp_comm_hook=default.fp16_compress_hook),
+    "ddp_power_sgd_1k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=1000,
@@ -46,7 +46,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.powerSGD_hook,
     ),
-    "ddp_power_sgd_3k": DDPPluginConf(
+    "ddp_power_sgd_3k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=3000,
@@ -54,7 +54,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.powerSGD_hook,
     ),
-    "ddp_power_sgd_5k": DDPPluginConf(
+    "ddp_power_sgd_5k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=5000,
@@ -62,7 +62,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.powerSGD_hook,
     ),
-    "ddp_power_sgd_7k": DDPPluginConf(
+    "ddp_power_sgd_7k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=7000,
@@ -70,7 +70,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.powerSGD_hook,
     ),
-    "ddp_power_sgd_10k": DDPPluginConf(
+    "ddp_power_sgd_10k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=10000,
@@ -78,7 +78,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.powerSGD_hook,
     ),
-    "ddp_fp16_compress_wrapper_power_sgd_1k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_power_sgd_1k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=1000,
@@ -87,7 +87,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_fp16_compress_wrapper_power_sgd_3k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_power_sgd_3k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=3000,
@@ -96,7 +96,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_fp16_compress_wrapper_power_sgd_5k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_power_sgd_5k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=5000,
@@ -105,7 +105,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_fp16_compress_wrapper_power_sgd_7k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_power_sgd_7k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=7000,
@@ -114,7 +114,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_fp16_compress_wrapper_power_sgd_10k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_power_sgd_10k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=10000,
@@ -123,7 +123,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_batched_power_sgd_1k": DDPPluginConf(
+    "ddp_batched_power_sgd_1k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=1000,
@@ -131,7 +131,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.batched_powerSGD_hook,
     ),
-    "ddp_batched_power_sgd_3k": DDPPluginConf(
+    "ddp_batched_power_sgd_3k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=3000,
@@ -139,7 +139,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.batched_powerSGD_hook,
     ),
-    "ddp_batched_power_sgd_5k": DDPPluginConf(
+    "ddp_batched_power_sgd_5k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=5000,
@@ -147,7 +147,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ),
         ddp_comm_hook=powerSGD.batched_powerSGD_hook,
     ),
-    "ddp_fp16_compress_wrapper_batched_power_sgd_1k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_batched_power_sgd_1k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=1000,
@@ -156,7 +156,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.batched_powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_fp16_compress_wrapper_batched_power_sgd_3k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_batched_power_sgd_3k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=3000,
@@ -165,7 +165,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
         ddp_comm_hook=powerSGD.batched_powerSGD_hook,
         ddp_comm_wrapper=default.fp16_compress_wrapper,
     ),
-    "ddp_fp16_compress_wrapper_batched_power_sgd_5k": DDPPluginConf(
+    "ddp_fp16_compress_wrapper_batched_power_sgd_5k": DDPStrategyConf(
         ddp_comm_state=powerSGD.PowerSGDState(
             process_group=None,
             start_powerSGD_iter=5000,
@@ -178,8 +178,10 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
 
 # to allow flexible combination of different techniques, like whether to
 # find unused parameters or whether to apply communication hook etc.
-def merge_ddp_plugin_conf(ddp_plugin_conf_list: List[DDPPluginConf]) -> DDPPluginConf:
-    merged_ddp_plugin_conf = DDPPluginConf()
+def merge_ddp_plugin_conf(
+    ddp_plugin_conf_list: List[DDPStrategyConf],
+) -> DDPStrategyConf:
+    merged_ddp_plugin_conf = DDPStrategyConf()
     for ddp_plugin_conf in ddp_plugin_conf_list:
         for attr, val in ddp_plugin_conf.__dict__.items():
             if val is not None:
@@ -216,9 +218,9 @@ def convert_trainer_plugins(
     Traversing and processing the given ``plugins`` list as follows:
         1. plugin is `ddp_fully_sharded` ==> ``DDPFullyShardedStrategy``
             if ``precision`` is 16, will also add ``FullyShardedNativeMixedPrecisionPlugin``
-        2. plugin is map key for ``DDP_CUSTOMIZED_PLUGIN_CONF`` ==> corresponding ``DDPPlugin``
+        2. plugin is map key for ``DDP_CUSTOMIZED_PLUGIN_CONF`` ==> corresponding ``DDPStrategy``
             if there are multiple plugins match keys in ``DDP_CUSTOMIZED_PLUGIN_CONF``, will use
-            ``merge_ddp_plugin_conf`` to merge to one ``DDPPlugin``
+            ``merge_ddp_plugin_conf`` to merge to one ``DDPStrategy``
         3. otherwise, remain as original short name
     """
 
@@ -249,7 +251,7 @@ def convert_trainer_plugins(
                 )
             )
         elif plugin in DDP_CUSTOMIZED_PLUGIN_CONF:
-            # get customized DDPPlugin if applicable
+            # get customized DDPStrategy if applicable
             ddp_plugin_conf_list.append(DDP_CUSTOMIZED_PLUGIN_CONF[plugin])
         else:
             # remain as short name
@@ -258,7 +260,7 @@ def convert_trainer_plugins(
     # merge ddp_plugin_conf_list
     if len(ddp_plugin_conf_list) > 0:
         ddp_plugin_conf = merge_ddp_plugin_conf(ddp_plugin_conf_list)
-        ddp_plugin = DDPPlugin(
+        ddp_plugin = DDPStrategy(
             ddp_comm_state=ddp_plugin_conf.ddp_comm_state,
             ddp_comm_hook=ddp_plugin_conf.ddp_comm_hook,
             ddp_comm_wrapper=ddp_plugin_conf.ddp_comm_wrapper,

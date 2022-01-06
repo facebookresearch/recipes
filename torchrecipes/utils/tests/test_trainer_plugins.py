@@ -16,7 +16,7 @@ from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecision
 from pytorch_lightning.plugins.training_type import (
     Strategy,
     DDPFullyShardedStrategy,
-    DDPPlugin,
+    DDPStrategy,
 )
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.core.conf import TrainerConf
@@ -65,7 +65,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 1)
             plugin = plugins[0]
-            self.assertIsInstance(plugin, DDPPlugin)
+            self.assertIsInstance(plugin, DDPStrategy)
             self.assertIsNone(plugin._ddp_comm_hook)
             self.assertIsNone(plugin._ddp_comm_state)
             self.assertIsNone(plugin._ddp_comm_wrapper)
@@ -92,7 +92,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 1)
             plugin = plugins[0]
-            self.assertIsInstance(plugin, DDPPlugin)
+            self.assertIsInstance(plugin, DDPStrategy)
             self.assertIsNotNone(plugin._ddp_comm_hook)
             self.assertEqual(
                 plugin._ddp_comm_hook.__qualname__,
@@ -123,7 +123,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 1)
             plugin = plugins[0]
-            self.assertIsInstance(plugin, DDPPlugin)
+            self.assertIsInstance(plugin, DDPStrategy)
             self.assertIsNotNone(plugin._ddp_comm_hook)
             self.assertEqual(
                 plugin._ddp_comm_hook.__qualname__,
@@ -157,7 +157,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 1)
             plugin = plugins[0]
-            self.assertIsInstance(plugin, DDPPlugin)
+            self.assertIsInstance(plugin, DDPStrategy)
             self.assertIsNotNone(plugin._ddp_comm_hook)
             self.assertEqual(
                 plugin._ddp_comm_hook.__qualname__,
@@ -195,7 +195,7 @@ class TestTrainerParams(unittest.TestCase):
             plugins = trainer_params.get("plugins", [])
             self.assertEqual(len(plugins), 1)
             plugin = plugins[0]
-            self.assertIsInstance(plugin, DDPPlugin)
+            self.assertIsInstance(plugin, DDPStrategy)
             self.assertIsNotNone(plugin._ddp_comm_hook)
             self.assertEqual(
                 plugin._ddp_comm_hook.__qualname__,
