@@ -13,11 +13,7 @@ from typing import Union
 from hydra.core.config_store import ConfigStore
 from hydra.experimental import compose, initialize
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
-from pytorch_lightning.plugins.training_type import (
-    Strategy,
-    DDPFullyShardedStrategy,
-    DDPStrategy,
-)
+from pytorch_lightning.strategies import Strategy, DDPFullyShardedStrategy, DDPStrategy
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.core.conf import TrainerConf
 from torchrecipes.utils.trainer_plugins import get_trainer_params

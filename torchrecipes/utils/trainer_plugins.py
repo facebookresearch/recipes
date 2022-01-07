@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 from omegaconf import DictConfig, OmegaConf  # @manual
 from pytorch_lightning.plugins import PLUGIN, PLUGIN_INPUT
 from pytorch_lightning.plugins.precision import FullyShardedNativeMixedPrecisionPlugin
-from pytorch_lightning.plugins.training_type import DDPFullyShardedStrategy, DDPStrategy
+from pytorch_lightning.strategies import DDPFullyShardedStrategy, DDPStrategy
 from torch.distributed.algorithms.ddp_comm_hooks import (
     default_hooks as default,
     powerSGD_hook as powerSGD,
