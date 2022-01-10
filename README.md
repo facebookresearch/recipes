@@ -115,11 +115,20 @@ PyTorch Recipes (torchrecipes):
 * python3 (3.8+)
 * torch
 
-### Release
+## Installation
+
+We recommend Anaconda as Python package management system. Please refer to pytorch.org for the detail of PyTorch (torch) installation.
 
 ```bash
 # install torchrecipes
 pip install torchrecipes
+```
+
+To install `torchrecipes` from source, please run the following commands:
+
+```bash
+git clone https://github.com/facebookresearch/recipes.git && cd recipes
+pip install . -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
 ```
 
 ## Contributing
