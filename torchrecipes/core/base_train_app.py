@@ -49,7 +49,7 @@ class BaseTrainApp:
     You also need to subclass YourTaskConfig from ModuleConf.
     """
 
-    module_conf: ModuleConf
+    module_conf: Optional[ModuleConf]
     module: LightningModule
     datamodule_conf: Optional[DataModuleConf]
     datamodule: Optional[LightningDataModule]
@@ -59,7 +59,7 @@ class BaseTrainApp:
 
     def __init__(
         self,
-        module: ModuleConf,
+        module: Optional[ModuleConf],
         trainer: TrainerConf,
         datamodule: Optional[DataModuleConf] = None,
     ) -> None:
