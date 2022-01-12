@@ -128,7 +128,7 @@ To install `torchrecipes` from source, please run the following commands:
 
 ```bash
 git clone https://github.com/facebookresearch/recipes.git && cd recipes
-pip install . -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
+pip install -e .
 ```
 
 ## Contributing

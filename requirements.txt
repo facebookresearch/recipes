@@ -46,11 +46,7 @@ tensorboard==2.7.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
 TestSlide==2.7.0
-torchdata @ git+https://github.com/pytorch/data.git@6309113
-torch==1.11.0.dev20211215+cpu
 torchmetrics==0.6.0
-torchtext==0.12.0.dev20211215
-torchvision==0.12.0.dev20211215+cpu
 tqdm==4.62.3
 typeguard==2.13.0
 typing-extensions==4.0.0
