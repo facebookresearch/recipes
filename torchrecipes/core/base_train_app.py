@@ -35,6 +35,7 @@ OmegaConf.register_new_resolver("get_method", hydra.utils.get_method)
 @dataclass
 class TrainOutput:
     tensorboard_log_dir: Optional[str] = None
+    best_model_path: Optional[str] = None
 
 
 class TestOutput(TypedDict):
@@ -56,6 +57,7 @@ class BaseTrainApp:
     trainer_conf: TrainerConf
     log_dir: Optional[str]
     root_dir: Optional[str]
+    _checkpoint_callback: Optional[OSSModelCheckpoint]
 
     def __init__(
         self,
@@ -73,6 +75,7 @@ class BaseTrainApp:
         self.trainer_conf = trainer
         self.log_dir = None
         self.root_dir = None
+        self._checkpoint_callback = None
         torch._C._log_api_usage_once(
             f"torchrecipes.{self.__module__}.{self.__class__.__name__}"
         )
@@ -155,16 +158,22 @@ class BaseTrainApp:
         callbacks = trainer_params.get("callbacks", [])
         callbacks.extend(self.get_callbacks())
 
+        ckpt_callbacks = [c for c in callbacks if isinstance(c, OSSModelCheckpoint)]
+
         # create default model checkpoint callback unless disabled
         if trainer_params.get("checkpoint_callback", True):
-            checkpoint_callback = self.get_default_model_checkpoint()
-            callbacks.append(checkpoint_callback)
+            if len(ckpt_callbacks) > 0:
+                self._checkpoint_callback = ckpt_callbacks[0]
+            else:
+                self._checkpoint_callback = self.get_default_model_checkpoint()
+                callbacks.append(self._checkpoint_callback)
 
             # auto-resume from last default checkpoint
-            ckpt_path = checkpoint_callback.dirpath
-            if not trainer_params.get("resume_from_checkpoint") and ckpt_path:
-                last_checkpoint = find_last_checkpoint_path(ckpt_path)
-                trainer_params["resume_from_checkpoint"] = last_checkpoint
+            if self._checkpoint_callback:
+                ckpt_path = self._checkpoint_callback.dirpath
+                if not trainer_params.get("resume_from_checkpoint") and ckpt_path:
+                    last_checkpoint = find_last_checkpoint_path(ckpt_path)
+                    trainer_params["resume_from_checkpoint"] = last_checkpoint
 
         trainer_params["callbacks"] = callbacks
 
@@ -192,8 +201,10 @@ class BaseTrainApp:
             log_params["run_status"] = JobStatus.FAILED.value
             log_run(**log_params)
             raise got_exception
-
-        return TrainOutput(tensorboard_log_dir=self.log_dir)
+        best_model_path = getattr(self._checkpoint_callback, "best_model_path", None)
+        return TrainOutput(
+            tensorboard_log_dir=self.log_dir, best_model_path=best_model_path
+        )
 
     def test(self) -> _EVALUATE_OUTPUT:
         trainer, _ = self._get_trainer()

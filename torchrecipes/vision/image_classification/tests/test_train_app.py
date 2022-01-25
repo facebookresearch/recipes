@@ -46,7 +46,10 @@ class TestTrainApp(BaseTrainAppTestCase):
     def test_train_model(self, root_dir: str) -> None:
         train_app = self._get_train_app(tb_save_dir=root_dir)
         # Train the model with the config
-        train_app.train()
+        output = train_app.train()
+        self.assertIsNotNone(output.tensorboard_log_dir)
+        # we don't save checkpoints for tests, because it would make the tests flaky
+        self.assertIsNone(output.best_model_path)
 
     @tempdir
     def test_fine_tuning(self, root_dir: str) -> None:
