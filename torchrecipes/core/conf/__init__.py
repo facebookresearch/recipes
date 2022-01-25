@@ -36,17 +36,26 @@ class TrainerConf:
     auto_select_gpus: bool = False
     benchmark: bool = False
     check_val_every_n_epoch: int = 1
-    checkpoint_callback: bool = True
+    checkpoint_callback: Optional[bool] = None
     default_root_dir: Optional[str] = None
+    detect_anomaly: bool = False
     deterministic: bool = False
+    devices: Optional[int] = None
+    enable_checkpointing: bool = True
+    enable_model_summary: bool = True
+    enable_progress_bar: bool = True
     # Union[int, bool]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     fast_dev_run: Any = False
-    flush_logs_every_n_steps: int = 100
+    flush_logs_every_n_steps: Optional[int] = None
     # Optional[Union[List[int], str, int]]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     gpus: Any = None
-    gradient_clip_val: float = 0.0
+    # Optional[Union[int, float]]
+    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
+    gradient_clip_val: Optional[Any] = None
+    gradient_clip_algorithm: Optional[str] = None
+    ipus: Optional[int] = None
     # Union[int, float]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     limit_train_batches: Any = 1.0
@@ -62,32 +71,37 @@ class TrainerConf:
     # pyre-fixme[4]: Missing attribute annotation
     logger: Any = True
     plugins: Optional[List[str]] = None
-    prepare_data_per_node: bool = True
+    prepare_data_per_node: Optional[bool] = None
     process_position: int = 0
     profiler: Optional[str] = None
-    progress_bar_refresh_rate: int = 1
+    progress_bar_refresh_rate: Optional[int] = None
     # Union[int, float]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     overfit_batches: Any = 0.0
     # Union[float, str], precision can be "bf16"
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     precision: Any = 32
-    max_epochs: int = 1000
-    min_epochs: int = 1
-    max_steps: Optional[int] = None
+    max_epochs: Optional[int] = None
+    min_epochs: Optional[int] = None
+    max_steps: int = -1
     min_steps: Optional[int] = None
+    # Optional[Union[str, timedelta, Dict[str, int]]]
+    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
+    max_time: Any = None
     move_metrics_to_cpu: bool = False
+    multiple_trainloader_mode: str = "max_size_cycle"
     num_nodes: int = 1
     num_processes: int = 1
     num_sanity_val_steps: int = 2
     reload_dataloaders_every_n_epochs: int = 0
     replace_sampler_ddp: bool = False
     resume_from_checkpoint: Optional[str] = None
+    stochastic_weight_avg: bool = False
     # Union[str, Strategy]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     strategy: Optional[Any] = None
     sync_batchnorm: bool = False
-    terminate_on_nan: bool = False
+    terminate_on_nan: Optional[bool] = None
     tpu_cores: Optional[int] = None
     # Union[int, float, str]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
@@ -97,10 +111,6 @@ class TrainerConf:
     val_check_interval: Any = 1.0
     weights_save_path: Optional[str] = None
     weights_summary: Optional[str] = "top"
-    # Optional[Union[str, timedelta, Dict[str, int]]]
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    max_time: Any = None
-    detect_anomaly: bool = False
 
 
 @dataclass
