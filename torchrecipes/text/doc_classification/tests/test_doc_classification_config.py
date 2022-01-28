@@ -7,6 +7,7 @@
 # pyre-strict
 import os.path
 from typing import Tuple
+from unittest.mock import patch
 
 import hydra
 import testslide
@@ -26,6 +27,18 @@ from torchrecipes.utils.test import tempdir
 
 
 class TestDocClassificationConfig(testslide.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        # patch the _hash_check() fn output to make it work with the dummy dataset
+        self.patcher = patch(
+            "torchdata.datapipes.iter.util.cacheholder._hash_check", return_value=True
+        )
+        self.patcher.start()
+
+    def tearDown(self) -> None:
+        self.patcher.stop()
+        super().tearDown()
+
     @tempdir
     def test_doc_classification_task(self, root_dir: str) -> None:
         # copy the asset files into their expected download locations
@@ -44,7 +57,6 @@ class TestDocClassificationConfig(testslide.TestCase):
                     "module.model.checkpoint=null",
                     "module.model.freeze_encoder=True",
                     f"datamodule.dataset.root={root_dir}",
-                    "datamodule.dataset.validate_hash=False",
                     f"trainer.default_root_dir={root_dir}",
                     "trainer.logger=False",
                     "trainer.checkpoint_callback=False",
@@ -84,7 +96,6 @@ class TestDocClassificationConfig(testslide.TestCase):
                     "module.model.checkpoint=null",
                     "module.model.freeze_encoder=True",
                     f"datamodule.dataset.root={root_dir}",
-                    "datamodule.dataset.validate_hash=False",
                     f"trainer.default_root_dir={root_dir}",
                     "trainer.logger=False",
                     "trainer.checkpoint_callback=False",

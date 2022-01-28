@@ -1,3 +1,2 @@
 _target_: torchtext.experimental.datasets.sst2.SST2
 root: ~/.torchtext/cache
-validate_hash: True

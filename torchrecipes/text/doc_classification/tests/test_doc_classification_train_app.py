@@ -8,6 +8,7 @@
 
 # pyre-strict
 import os.path
+from unittest.mock import patch
 
 import torchrecipes.text.doc_classification.conf  # noqa
 from torchrecipes.core.base_train_app import BaseTrainApp
@@ -21,6 +22,18 @@ from torchrecipes.utils.test import tempdir
 
 
 class TestDocClassificationTrainApp(BaseTrainAppTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        # patch the _hash_check() fn output to make it work with the dummy dataset
+        self.patcher = patch(
+            "torchdata.datapipes.iter.util.cacheholder._hash_check", return_value=True
+        )
+        self.patcher.start()
+
+    def tearDown(self) -> None:
+        self.patcher.stop()
+        super().tearDown()
+
     def get_train_app(self, root_dir: str) -> BaseTrainApp:
         # copy the asset files into their expected download locations
         # note we need to do this anywhere we use hydra overrides
@@ -38,7 +51,6 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
                 "module.model.checkpoint=null",
                 "module.model.freeze_encoder=True",
                 f"datamodule.dataset.root={root_dir}",
-                "datamodule.dataset.validate_hash=False",
                 f"trainer.default_root_dir={root_dir}",
                 "trainer.logger=False",
                 "trainer.checkpoint_callback=False",

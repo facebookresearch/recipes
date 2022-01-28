@@ -8,6 +8,8 @@
 
 # pyre-strict
 
+from unittest.mock import patch
+
 import hydra
 import testslide
 import torch
@@ -28,6 +30,18 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
 
 
 class TestDocClassificationDataModule(testslide.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        # patch the _hash_check() fn output to make it work with the dummy dataset
+        self.patcher = patch(
+            "torchdata.datapipes.iter.util.cacheholder._hash_check", return_value=True
+        )
+        self.patcher.start()
+
+    def tearDown(self) -> None:
+        self.patcher.stop()
+        super().tearDown()
+
     def get_datamodule(self) -> DocClassificationDataModule:
         doc_transform_conf = DocClassificationTextTransformConf(
             vocab_path=get_asset_path("vocab_example.pt"),
@@ -40,10 +54,12 @@ class TestDocClassificationDataModule(testslide.TestCase):
             label_transform=label_transform_conf,
         )
 
-        dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH, validate_hash=False)
+        dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH)
         datamodule_conf = DocClassificationDataModuleConf(
             transform=transform_conf,
             dataset=dataset_conf,
+            columns=["text", "label"],
+            label_column="label",
             batch_size=8,
         )
         return hydra.utils.instantiate(

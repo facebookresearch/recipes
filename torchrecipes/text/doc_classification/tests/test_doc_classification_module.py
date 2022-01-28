@@ -6,6 +6,7 @@
 
 # pyre-strict
 import os
+from unittest.mock import patch
 
 import hydra
 from pytorch_lightning.trainer import Trainer
@@ -37,6 +38,15 @@ from torchrecipes.utils.task_test_base import TaskTestCaseBase
 class TestDocClassificationModule(TaskTestCaseBase):
     def setUp(self) -> None:
         self.base_dir = os.path.join(os.path.dirname(__file__), "data")
+        # patch the _hash_check() fn output to make it work with the dummy dataset
+        self.patcher = patch(
+            "torchdata.datapipes.iter.util.cacheholder._hash_check", return_value=True
+        )
+        self.patcher.start()
+
+    def tearDown(self) -> None:
+        self.patcher.stop()
+        super().tearDown()
 
     def get_transform_conf(self) -> DocClassificationTransformConf:
         doc_transform_conf = DocClassificationTextTransformConf(
@@ -72,7 +82,7 @@ class TestDocClassificationModule(TaskTestCaseBase):
 
     def get_datamodule(self) -> DocClassificationDataModule:
         transform_conf = self.get_transform_conf()
-        dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH, validate_hash=False)
+        dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH)
         datamodule_conf = DocClassificationDataModuleConf(
             transform=transform_conf,
             dataset=dataset_conf,

@@ -3,8 +3,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from dataclasses import dataclass
-from typing import Tuple
+from dataclasses import dataclass, field
+from typing import List, Tuple
 
 import hydra
 import pytorch_lightning as pl
@@ -23,7 +23,6 @@ from torchrecipes.utils.config_utils import (
     config_entry,
     get_class_config_method,
 )
-from torchtext.experimental.datasets.sst2 import SST2Dataset
 from torchtext.functional import to_tensor
 
 
@@ -35,6 +34,8 @@ class DocClassificationDataModule(pl.LightningDataModule):
         test_dataset: IterDataPipe[Tuple[str, str]],
         transform: nn.Module,
         label_transform: nn.Module,
+        columns: List[str],
+        label_column: str,
         batch_size: int,
         num_workers: int = 0,
         drop_last: bool = False,
@@ -48,6 +49,9 @@ class DocClassificationDataModule(pl.LightningDataModule):
         self.transform = transform
         self.label_transform = label_transform
 
+        self.columns = columns
+        self.label_column = label_column
+
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.drop_last = drop_last
@@ -58,42 +62,43 @@ class DocClassificationDataModule(pl.LightningDataModule):
     def from_config(
         transform: DocClassificationTransformConf,
         dataset: DatasetConf,
+        columns: List[str],
+        label_column: str,
         batch_size: int,
         num_workers: int = 0,
         drop_last: bool = False,
         pin_memory: bool = False,
     ) -> "DocClassificationDataModule":
         train_dataset, val_dataset, test_dataset = hydra.utils.call(dataset)
-
-        # check if all datasets belongs to a subset of supported datasets
-        for dataset in (train_dataset, val_dataset, test_dataset):
-            if not isinstance(dataset, (SST2Dataset)):
-                raise NotImplementedError(f"{type(dataset)} not supported")
-
         text_transform = hydra.utils.instantiate(transform.transform, _recursive_=False)
         label_transform = hydra.utils.instantiate(
             transform.label_transform,
             _recursive_=False,
         )
         return DocClassificationDataModule(
-            train_dataset,
-            val_dataset,
+            train_dataset=train_dataset,
+            val_dataset=val_dataset,
             # TODO: Note that the following line should be replaced by
             # `test_dataset` once we update the lightning module to support
             # test data with and without labels
-            val_dataset,
-            text_transform,
-            label_transform,
-            batch_size,
+            test_dataset=val_dataset,
+            transform=text_transform,
+            label_transform=label_transform,
+            columns=columns,
+            label_column=label_column,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            drop_last=drop_last,
+            pin_memory=pin_memory,
         )
 
     def _get_data_loader(self, dataset: IterDataPipe[Tuple[str, str]]) -> DataLoader:
-        dataset = dataset.batch(self.batch_size).rows2columnar(["text", "label"])
+        dataset = dataset.batch(self.batch_size).rows2columnar(self.columns)
         dataset = dataset.map(self.transform)
         dataset = dataset.map(
             lambda x: {
                 **x,
-                "label_ids": to_tensor(self.label_transform(x["label"])),
+                "label_ids": to_tensor(self.label_transform(x[self.label_column])),
             }
         )
         dataset = dataset.add_index()
@@ -123,6 +128,8 @@ class DocClassificationDataModuleConf(DataModuleConf):
     _target_: str = get_class_config_method(DocClassificationDataModule)
     transform: DocClassificationTransformConf = MISSING
     dataset: DatasetConf = MISSING
+    columns: List[str] = field(default_factory=lambda: ["text", "label"])
+    label_column: str = "label"
     batch_size: int = 16
     num_workers: int = 0
     drop_last: bool = False

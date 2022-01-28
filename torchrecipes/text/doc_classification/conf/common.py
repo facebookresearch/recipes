@@ -27,7 +27,6 @@ class DatasetConf:
 class SST2DatasetConf(DatasetConf):
     _target_: str = get_class_name_str(SST2)
     root: str = MISSING
-    validate_hash: Optional[bool] = True
 
 
 @dataclass
