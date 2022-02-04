@@ -100,10 +100,11 @@ class TensorboardGenerativeModelImageSampler(Callback):
         if not (logger := trainer.logger):
             rank_zero_warn("Trainer must have a logger configured.")
             return
-        if not (experiment := logger.experiment):
+        if not hasattr(logger, "experiment"):
             rank_zero_warn("Trainer must have a logger configured that can log images.")
             return
-
+        # pyre-ignore[16]: `pytorch_lightning.loggers.base.LightningLoggerBase` has no attribute `experiment`.
+        experiment = logger.experiment
         dim = (self.num_samples, pl_module.latent_dim)
         z = torch.normal(mean=0.0, std=1.0, size=dim, device=pl_module.device)
 
