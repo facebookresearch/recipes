@@ -53,13 +53,11 @@ class DocClassificationTrainApp(BaseTrainApp):
 
     def get_lightning_module(self) -> LightningModule:
         # check whether this is the OSS or internal transform
-        # the OSS TransformConf has a `label_transform` field whereas the
+        # the OSS TransformConf has a `num_labels` field whereas the
         # internal transforms don't
-        if hasattr(self.transform_conf, "label_transform"):
-            num_classes = len(
-                # pyre-ignore[16]: Subclass of `TransformConf` has relevant attribute
-                self.transform_conf.label_transform.label_names
-            )
+        if hasattr(self.transform_conf, "num_labels"):
+            # pyre-ignore[16]: Subclass of `TransformConf` has relevant attribute
+            num_classes = self.transform_conf.num_labels
             transform_conf = (
                 # pyre-ignore[16]: Subclass of `TransformConf` has relevant attribute
                 self.transform_conf.transform

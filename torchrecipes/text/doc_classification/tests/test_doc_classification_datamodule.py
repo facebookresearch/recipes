@@ -47,11 +47,9 @@ class TestDocClassificationDataModule(testslide.TestCase):
             vocab_path=get_asset_path("vocab_example.pt"),
             spm_model_path=get_asset_path("spm_example.model"),
         )
-        label_transform_conf = LabelTransformConf(label_names=["0", "1"])
-
         transform_conf = DocClassificationTransformConf(
             transform=doc_transform_conf,
-            label_transform=label_transform_conf,
+            num_labels=2,
         )
 
         dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH)

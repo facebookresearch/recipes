@@ -14,7 +14,7 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
     DocClassificationTextTransformConf,
 )
 from torchrecipes.utils.config_utils import get_class_name_str
-from torchtext.experimental.datasets.sst2 import SST2
+from torchtext.datasets.sst2 import SST2
 from torchtext.transforms import LabelToIndex
 
 
@@ -45,7 +45,8 @@ class TransformConf:
 @dataclass
 class DocClassificationTransformConf(TransformConf):
     transform: DocClassificationTextTransformConf = MISSING
-    label_transform: LabelTransformConf = MISSING
+    label_transform: Optional[LabelTransformConf] = None
+    num_labels: int = MISSING
 
 
 @dataclass

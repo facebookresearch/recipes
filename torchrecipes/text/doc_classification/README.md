@@ -37,6 +37,7 @@ doc_classification_args = [
     "train_app",
     "--config-path",
     "torchrecipes/text/doc_classification/conf",
+    "transform.num_labels=2",
 ]
 
 def torchx_app(image: str = "run.py:latest", *job_args: str) -> specs.AppDef:

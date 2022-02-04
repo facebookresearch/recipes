@@ -2,8 +2,5 @@ transform:
   _target_: torchrecipes.text.doc_classification.transform.doc_classification_text_transform.DocClassificationTextTransform
   vocab_path: https://download.pytorch.org/models/text/xlmr.vocab.pt
   spm_model_path: https://download.pytorch.org/models/text/xlmr.sentencepiece.bpe.model
-label_transform:
-  _target_: torchtext.transforms.LabelToIndex
-  label_names:
-  - 0
-  - 1
+label_transform: null
+num_labels: ???

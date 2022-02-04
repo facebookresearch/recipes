@@ -56,6 +56,7 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
                 "trainer.checkpoint_callback=False",
                 f"transform.transform.vocab_path={vocab_path}",
                 f"transform.transform.spm_model_path={spm_model_path}",
+                "transform.num_labels=2",
             ],
         )
         self.mock_trainer_params(app)

@@ -62,6 +62,7 @@ class TestDocClassificationConfig(testslide.TestCase):
                     "trainer.checkpoint_callback=False",
                     f"transform.transform.vocab_path={vocab_path}",
                     f"transform.transform.spm_model_path={spm_model_path}",
+                    "transform.num_labels=2",
                 ],
             )
         task, datamodule = self._instantiate_config(cfg)
@@ -101,6 +102,7 @@ class TestDocClassificationConfig(testslide.TestCase):
                     "trainer.checkpoint_callback=False",
                     f"transform.transform.vocab_path={vocab_path}",
                     f"transform.transform.spm_model_path={spm_model_path}",
+                    "transform.num_labels=2",
                 ],
             )
         task, datamodule = self._instantiate_config(cfg)
@@ -119,7 +121,7 @@ class TestDocClassificationConfig(testslide.TestCase):
     def _instantiate_config(
         self, cfg: DictConfig
     ) -> Tuple[LightningModule, LightningDataModule]:
-        num_classes = len(cfg.transform.label_transform.label_names)
+        num_classes = cfg.transform.num_labels
         datamodule = hydra.utils.instantiate(
             cfg.datamodule,
             transform=cfg.transform,

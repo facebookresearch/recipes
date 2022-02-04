@@ -17,7 +17,6 @@ from torchrecipes.text.doc_classification.conf.common import (
     XLMREncoderConf,
     XLMRClassificationModelConf,
     SST2DatasetConf,
-    LabelTransformConf,
 )
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
@@ -53,9 +52,8 @@ class TestDocClassificationModule(TaskTestCaseBase):
             vocab_path=get_asset_path("vocab_example.pt"),
             spm_model_path=get_asset_path("spm_example.model"),
         )
-        label_transform_conf = LabelTransformConf(label_names=["0", "1"])
         return DocClassificationTransformConf(
-            transform=doc_transform_conf, label_transform=label_transform_conf
+            transform=doc_transform_conf, num_labels=2
         )
 
     def get_standard_task(self) -> DocClassificationModule:
@@ -72,7 +70,7 @@ class TestDocClassificationModule(TaskTestCaseBase):
             optim=AdamWConf(),
         )
         transform_conf = self.get_transform_conf()
-        num_classes = len(transform_conf.label_transform.label_names)  # pyre-ignore
+        num_classes = transform_conf.num_labels
         return hydra.utils.instantiate(
             module_conf,
             transform=transform_conf.transform,

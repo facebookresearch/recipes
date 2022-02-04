@@ -8,7 +8,7 @@ import os.path
 import shutil
 from typing import Tuple, Union
 
-from torchtext.experimental.datasets import sst2
+from torchtext.datasets import sst2
 
 _DATA_DIR_PATH: str = os.path.realpath(
     os.path.join(os.path.dirname(__file__), "..", "data")
