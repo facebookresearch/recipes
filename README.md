@@ -104,7 +104,7 @@ ln -s torchrecipes/launcher/run.py ./run.py
 Then we are ready-to-go! Simply launch the image_classification recipe with the following command:
 
 ```
-torchx run --scheduler local_cwd torchrecipes/launcher/torchx_app.py:torchx_app trainer.fast_dev_run=True trainer.checkpoint_callback=False +tb_save_dir=/tmp/
+torchx run --scheduler local_cwd torchrecipes/launcher/torchx_app.py:torchx_app trainer.fast_dev_run=True trainer.enable_checkpointing=False +tb_save_dir=/tmp/
 ```
 
 

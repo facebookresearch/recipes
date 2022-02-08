@@ -161,7 +161,7 @@ class BaseTrainApp:
         ckpt_callbacks = [c for c in callbacks if isinstance(c, OSSModelCheckpoint)]
 
         # create default model checkpoint callback unless disabled
-        if trainer_params.get("checkpoint_callback", True):
+        if trainer_params.get("enable_checkpointing", True):
             if len(ckpt_callbacks) > 0:
                 self._checkpoint_callback = ckpt_callbacks[0]
             else:

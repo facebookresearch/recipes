@@ -53,7 +53,7 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
                 f"datamodule.dataset.root={root_dir}",
                 f"trainer.default_root_dir={root_dir}",
                 "trainer.logger=False",
-                "trainer.checkpoint_callback=False",
+                "trainer.enable_checkpointing=False",
                 f"transform.transform.vocab_path={vocab_path}",
                 f"transform.transform.spm_model_path={spm_model_path}",
                 "transform.num_labels=2",
