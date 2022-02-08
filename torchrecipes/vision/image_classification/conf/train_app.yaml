@@ -18,6 +18,12 @@ defaults:
   # callbacks
   - callbacks: default
 
+trainer:
+  # benchmark flag is likely to increase the training speed if input sizes don’t
+  # change. However, if it does, then it will likely make training slower.
+  # NOTE: turn off this flag if training is expected to be deterministic.
+  benchmark: true
+
 hydra:
   searchpath:
     - pkg://torchrecipes.core.conf
