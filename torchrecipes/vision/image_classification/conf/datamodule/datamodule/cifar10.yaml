@@ -6,9 +6,10 @@ datasets:
     download: true
     transform:
       _target_: torchvision.transforms.Compose
-      - _target_: torchvision.transforms.Resize
-        size: 64
-      - _target_: torchvision.transforms.ToTensor
+      transforms:
+        - _target_: torchvision.transforms.Resize
+          size: 64
+        - _target_: torchvision.transforms.ToTensor
   val: null
   test:
     _target_: torchvision.datasets.CIFAR10
@@ -17,6 +18,7 @@ datasets:
     download: true
     transform:
       _target_: torchvision.transforms.Compose
+      transforms:
       - _target_: torchvision.transforms.Resize
         size: 64
       - _target_: torchvision.transforms.ToTensor
