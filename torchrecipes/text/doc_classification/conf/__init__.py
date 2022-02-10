@@ -5,4 +5,4 @@
 
 
 #!/usr/bin/env python3
-import torchrecipes.text.doc_classification.train_app  # noqa
+# import torchrecipes.text.doc_classification.train_app  # noqa

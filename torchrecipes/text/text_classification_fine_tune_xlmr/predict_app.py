@@ -22,9 +22,9 @@ from torchrecipes.text.text_classification_fine_tune_xlmr.module import DocClass
 
 
 class PredictApp(BaseApp):
-    def __init__(self, args):
+    def __init__(self, config):
         super().__init__()
-        self.args = args
+        self.config = config
 
         self.model = torchtext.models.RobertaModelBundle.build_model(
             encoder_conf=torchtext.models.RobertaEncoderConf(
@@ -37,7 +37,7 @@ class PredictApp(BaseApp):
             head=torchtext.models.RobertaClassificationHead(
                 num_classes=2, input_dim=32
             ),
-            checkpoint=args.checkpoint_path,
+            checkpoint=config.checkpoint_path,
         )
         self.text_transform = DocClassificationTextTransform(
             vocab_path="https://download.pytorch.org/models/text/xlmr.vocab.pt",
@@ -63,10 +63,10 @@ def main():
         help="input example to predict",
     )
 
-    args = parser.parse_args()
+    config = parser.parse_args()
 
-    app = PredictApp(args)
-    result = app.run(args.input_example)
+    app = PredictApp(config)
+    result = app.run(config.input_example)
     print(result)
 
 
