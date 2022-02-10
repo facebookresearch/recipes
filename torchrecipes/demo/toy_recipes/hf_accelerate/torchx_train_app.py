@@ -1,7 +1,7 @@
 import torchx.specs as specs
 
 
-def train(image: str = "hf_train_app:latest", *args: str) -> specs.AppDef:
+def train(image: str = "train_app:latest", *args: str) -> specs.AppDef:
     return specs.AppDef(
         name="toy_recipe_hf_accelerate_train_app",
         roles=[

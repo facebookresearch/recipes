@@ -1,5 +1,7 @@
+import argparse
+import sys
 from argparse import ArgumentParser
-from typing import Any
+from typing import Any, List
 
 import torch
 from accelerate import Accelerator
@@ -33,7 +35,7 @@ class TrainApp(BaseApp):
             print(f"epoch: {epoch}: loss: {loss}")
 
 
-def main():
+def get_config(argv: List[str]) -> argparse.Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "--num_epochs",
@@ -54,11 +56,14 @@ def main():
         type=int,
         help="batch size for training data",
     )
-    args = parser.parse_args()
+    return parser.parse_args(argv)
 
-    app = TrainApp(args)
+
+def main(argv: List[str]) -> None:
+    config = get_config(argv)
+    app = TrainApp(config)
     app.run()
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
