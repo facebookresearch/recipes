@@ -1,5 +1,7 @@
+import argparse
+import sys
 from argparse import ArgumentParser
-from typing import Any
+from typing import Any, List
 
 import torch
 from pytorch_lightning.lite import LightningLite
@@ -32,7 +34,7 @@ class TrainApp(BaseApp, LightningLite):
             print(f"epoch: {epoch}: loss: {loss}")
 
 
-def main():
+def get_config(argv: List[str]) -> argparse.Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "--num_epochs",
@@ -53,11 +55,14 @@ def main():
         type=int,
         help="batch size for training data",
     )
-    config = parser.parse_args()
+    return parser.parse_args(argv)
 
+
+def main(argv: List[str]) -> None:
+    config = get_config(argv)
     app = TrainApp(config)
     app.run()
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
