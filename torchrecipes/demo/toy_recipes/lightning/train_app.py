@@ -1,5 +1,7 @@
+import sys
+import argparse
 from argparse import ArgumentParser
-from typing import Any
+from typing import Any, List
 
 import torch
 from pytorch_lightning import LightningModule, LightningDataModule, Trainer
@@ -57,19 +59,21 @@ class TrainApp(BaseApp):
         super().__init__()
         self.config = config
 
-        self.module = ToyModule(lr=self.config.lr)
-        self.data_module = ToyDataModule(batch_size=self.config.batch_size)
+        self.module = ToyModule(lr=config.lr)
+        self.data_module = ToyDataModule(batch_size=config.batch_size)
 
         self.trainer = Trainer(
-            max_epochs=self.config.num_epochs,
+            max_epochs=config.num_epochs,
             logger=None,
+            gpus=config.gpus,
+            num_nodes=config.num_nodes,
         )
 
     def run(self):
         self.trainer.fit(model=self.module, datamodule=self.data_module)
 
 
-def main():
+def get_config(argv: List[str]) -> argparse.Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "--num_epochs",
@@ -83,18 +87,32 @@ def main():
         type=float,
         help="learning rate",
     )
-
     parser.add_argument(
         "--batch_size",
         default=8,
         type=int,
         help="batch size for training data",
     )
-    config = parser.parse_args()
+    parser.add_argument(
+        "--gpus",
+        default=0,
+        type=int,
+        help="num of GPUs",
+    )
+    parser.add_argument(
+        "--num_nodes",
+        default=1,
+        type=int,
+        help="num of nodes",
+    )
+    return parser.parse_args(argv)
 
+
+def main(argv: List[str]) -> None:
+    config = get_config(argv)
     app = TrainApp(config)
     app.run()
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
