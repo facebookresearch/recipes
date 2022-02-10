@@ -1,11 +1,14 @@
+import argparse
+import sys
 from argparse import ArgumentParser
+from typing import List
 
 import torch
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 
 from torchrecipes.core.base_app import BaseApp
-from torchrecipes.demo.toy_recipe.common import ToyModel, RandomDataset
+from torchrecipes.demo.toy_recipes.common import ToyModel, RandomDataset
 
 
 class TrainApp(BaseApp):
@@ -29,7 +32,7 @@ class TrainApp(BaseApp):
             print(f"epoch: {epoch}: loss: {loss}")
 
 
-def main():
+def get_config(argv: List[str]) -> argparse.Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "--num_epochs",
@@ -50,11 +53,14 @@ def main():
         type=int,
         help="batch size for training data",
     )
-    args = parser.parse_args()
+    return parser.parse_args(argv)
 
-    app = TrainApp(args)
+
+def main(argv: List[str]) -> None:
+    config = get_config(argv)
+    app = TrainApp(config)
     app.run()
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

@@ -3,7 +3,7 @@ import torchx.specs as specs
 
 def train(image: str = "train_app:latest", *args: str) -> specs.AppDef:
     return specs.AppDef(
-        name="toy_recipe_train_app",
+        name="toy_recipe_basic_train_app",
         roles=[
             specs.Role(
                 name="train_app",
