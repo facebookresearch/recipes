@@ -2,6 +2,12 @@ import torchx.specs as specs
 
 
 def train(image: str = "train_app:latest", *args: str) -> specs.AppDef:
+    """
+    Specify the entry point for torchx
+
+    Example CLI:
+        $ torchx run --scheduler local_cwd torchx_train_app.py:train "--num_epochs 10"
+    """
     return specs.AppDef(
         name="toy_recipe_basic_train_app",
         roles=[

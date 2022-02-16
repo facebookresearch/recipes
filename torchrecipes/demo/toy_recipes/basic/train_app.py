@@ -1,35 +1,30 @@
 import argparse
 import sys
 from argparse import ArgumentParser
-from typing import List
+from typing import Any, Dict, List
 
 import torch
-from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 
 from torchrecipes.core.base_app import BaseApp
 from torchrecipes.demo.toy_recipes.common import ToyModel, RandomDataset
 
 
-class TrainApp(BaseApp):
-    def __init__(self, config: DictConfig):
-        super().__init__()
-        self.config = config
+def train(config: Any) -> Dict[str, Any]:
+    model = ToyModel()
+    optimizer = torch.optim.SGD(model.parameters(), lr=config.lr)
+    dataloader = DataLoader(RandomDataset(32, 64), batch_size=config.batch_size)
 
-        self.model = ToyModel()
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=config.lr)
-        self.dataloader = DataLoader(RandomDataset(32, 64), batch_size=config.batch_size)
-
-    def run(self):
-        self.model.train()
-        for epoch in range(self.config.num_epochs):
-            for batch in self.dataloader:
-                self.optimizer.zero_grad()
-                logits = self.model(batch)
-                loss = logits.sum()  # mock the loss for demo purpose
-                loss.backward()
-                self.optimizer.step()
-            print(f"epoch: {epoch}: loss: {loss}")
+    model.train()
+    for epoch in range(config.num_epochs):
+        for batch in dataloader:
+            optimizer.zero_grad()
+            logits = model(batch)
+            loss = logits.sum()  # mock the loss for demo purpose
+            loss.backward()
+            optimizer.step()
+        print(f"epoch: {epoch}: loss: {loss}")
+    return {"loss": loss}
 
 
 def get_config(argv: List[str]) -> argparse.Namespace:
@@ -58,8 +53,8 @@ def get_config(argv: List[str]) -> argparse.Namespace:
 
 def main(argv: List[str]) -> None:
     config = get_config(argv)
-    app = TrainApp(config)
-    app.run()
+    result = train(config)
+    print(f"result: {result}")
 
 
 if __name__ == '__main__':
