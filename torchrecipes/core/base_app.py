@@ -1,6 +1,7 @@
 # (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
 
 from abc import ABC, abstractmethod
+from enum import auto, unique, Enum
 from typing import Any
 
 import torch
@@ -14,8 +15,46 @@ class BaseApp(ABC):
         )
 
     @abstractmethod
-    def run(self, *args: Any, **kwargs: Any) -> None:
+    def get_data(self) -> Any:
         """
-        The main method to run a recipe. It could be any script like
-        training, testing, predicting or any combination of them
+        Return data
         """
+
+    @abstractmethod
+    def get_model(self) -> Any:
+        """
+        Return model
+        """
+
+    @abstractmethod
+    def train(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        Train a model
+        """
+
+    @abstractmethod
+    def test(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        Train a model
+        """
+
+    @abstractmethod
+    def predict(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        Predict with a trained model
+        """
+
+
+@unique
+class Mode(Enum):
+    TRAIN = auto()
+    TEST = auto()
+    PREDICT = auto()
+
+
+def get_mode(mode_key) -> Mode:
+    mode_key = mode_key.upper()
+    try:
+        return Mode[mode_key]
+    except KeyError:
+        return Mode.TRAIN

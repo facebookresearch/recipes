@@ -7,8 +7,9 @@ import torch
 from pytorch_lightning import LightningModule, LightningDataModule, Trainer
 from torch.utils.data import DataLoader
 
-from torchrecipes.core.base_app import BaseApp
+from torchrecipes.core.base_app import BaseApp, Mode, get_mode
 from torchrecipes.demo.toy_recipes.common import RandomDataset
+from pytorch_lightning.utilities.types import _EVALUATE_OUTPUT, _PREDICT_OUTPUT
 
 
 class ToyModule(LightningModule):
@@ -59,7 +60,7 @@ class TrainApp(BaseApp):
         super().__init__()
         self.config = config
 
-        self.module = ToyModule(lr=config.lr)
+        self.lightning_module = ToyModule(lr=config.lr)
         self.data_module = ToyDataModule(batch_size=config.batch_size)
 
         self.trainer = Trainer(
@@ -69,12 +70,30 @@ class TrainApp(BaseApp):
             num_nodes=config.num_nodes,
         )
 
-    def run(self):
-        self.trainer.fit(model=self.module, datamodule=self.data_module)
+    def get_data(self) -> LightningDataModule:
+        return self.data_module
+
+    def get_model(self) -> LightningModule:
+        return self.lightning_module
+
+    def train(self) -> None:
+        self.trainer.fit(model=self.lightning_module, datamodule=self.data_module)
+
+    def test(self) -> _EVALUATE_OUTPUT:
+        self.trainer.test(model=self.lightning_module, datamodule=self.data_module)
+
+    def predict(self) -> _PREDICT_OUTPUT:
+        self.trainer.predict(model=self.lightning_module, datamodule=self.data_module)
 
 
 def get_config(argv: List[str]) -> argparse.Namespace:
     parser = ArgumentParser()
+    parser.add_argument(
+        "--mode",
+        default='train',
+        type=str,
+        help="mode to run, available mode: train, test, predict",
+    )
     parser.add_argument(
         "--num_epochs",
         default=1,
@@ -111,7 +130,13 @@ def get_config(argv: List[str]) -> argparse.Namespace:
 def main(argv: List[str]) -> None:
     config = get_config(argv)
     app = TrainApp(config)
-    app.run()
+    mode = get_mode(config.mode)
+    if mode == Mode.TRAIN:
+        app.train()
+    elif mode == Mode.TEST:
+        app.test()
+    elif mode == Mode.PREDICT:
+        app.predict()
 
 
 if __name__ == '__main__':
