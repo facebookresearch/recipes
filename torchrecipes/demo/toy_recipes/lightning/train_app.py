@@ -3,87 +3,24 @@ import argparse
 from argparse import ArgumentParser
 from typing import Any, List
 
-import torch
-from pytorch_lightning import LightningModule, LightningDataModule, Trainer
-from torch.utils.data import DataLoader
-
-from torchrecipes.core.base_app import BaseApp, Mode, get_mode
-from torchrecipes.demo.toy_recipes.common import RandomDataset
-from pytorch_lightning.utilities.types import _EVALUATE_OUTPUT, _PREDICT_OUTPUT
+from pytorch_lightning import Trainer
+from torchrecipes.demo.toy_recipes.lightning.lightning_module import ToyModule
+from torchrecipes.demo.toy_recipes.lightning.data_module import ToyDataModule
+from pytorch_lightning.utilities.types import _EVALUATE_OUTPUT
 
 
-class ToyModule(LightningModule):
-    def __init__(self, lr):
-        super().__init__()
-        self.lr = lr
-        self.layer = torch.nn.Linear(32, 2)
+def train(config: Any) -> _EVALUATE_OUTPUT:
+    lightning_module = ToyModule(lr=config.lr)
+    data_module = ToyDataModule(batch_size=config.batch_size)
 
-    def forward(self, x):
-        return self.layer(x)
-
-    def training_step(self, batch, batch_idx):
-        loss = self(batch).sum()
-        self.log("train_loss", loss)
-        return {"loss": loss}
-
-    def validation_step(self, batch, batch_idx):
-        loss = self(batch).sum()
-        self.log("valid_loss", loss)
-
-    def test_step(self, batch, batch_idx):
-        loss = self(batch).sum()
-        self.log("test_loss", loss)
-
-    def configure_optimizers(self):
-        return torch.optim.SGD(self.layer.parameters(), lr=self.lr)
-
-
-class ToyDataModule(LightningDataModule):
-    def __init__(self, batch_size: int):
-        self.batch_size = batch_size
-
-    def train_dataloader(self):
-        return DataLoader(RandomDataset(32, 64), batch_size=self.batch_size)
-
-    def val_dataloader(self):
-        return DataLoader(RandomDataset(32, 64), batch_size=self.batch_size)
-
-    def test_dataloader(self):
-        return DataLoader(RandomDataset(32, 64), batch_size=self.batch_size)
-
-    def prepare_data_per_node(self):
-        pass
-
-
-class TrainApp(BaseApp):
-    def __init__(self, config: Any):
-        super().__init__()
-        self.config = config
-
-        self.lightning_module = ToyModule(lr=config.lr)
-        self.data_module = ToyDataModule(batch_size=config.batch_size)
-
-        self.trainer = Trainer(
-            max_epochs=config.num_epochs,
-            logger=None,
-            gpus=config.gpus,
-            num_nodes=config.num_nodes,
-        )
-
-    def get_data(self) -> LightningDataModule:
-        return self.data_module
-
-    def get_model(self) -> LightningModule:
-        return self.lightning_module
-
-    def train(self) -> None:
-        self.trainer.fit(model=self.lightning_module, datamodule=self.data_module)
-
-    def test(self) -> _EVALUATE_OUTPUT:
-        self.trainer.test(model=self.lightning_module, datamodule=self.data_module)
-
-    def predict(self) -> _PREDICT_OUTPUT:
-        self.trainer.predict(model=self.lightning_module, datamodule=self.data_module)
+    trainer = Trainer(
+        max_epochs=config.num_epochs,
+        logger=None,
+        gpus=config.gpus,
+        num_nodes=config.num_nodes,
+    )
+    trainer.fit(model=lightning_module, datamodule=data_module)
+    return trainer.test(model=lightning_module, datamodule=data_module)
 
 
 def get_config(argv: List[str]) -> argparse.Namespace:
@@ -129,14 +66,8 @@ def get_config(argv: List[str]) -> argparse.Namespace:
 
 def main(argv: List[str]) -> None:
     config = get_config(argv)
-    app = TrainApp(config)
-    mode = get_mode(config.mode)
-    if mode == Mode.TRAIN:
-        app.train()
-    elif mode == Mode.TEST:
-        app.test()
-    elif mode == Mode.PREDICT:
-        app.predict()
+    result = train(config)
+    print(f"result: {result}")
 
 
 if __name__ == '__main__':
