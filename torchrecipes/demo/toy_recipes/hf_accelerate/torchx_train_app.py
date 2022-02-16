@@ -10,8 +10,8 @@ def train(image: str = "train_app:latest", *args: str) -> specs.AppDef:
                 image=image,
                 entrypoint="python",
                 args=[
-                    "-m", "train_app",
-                ] + [v for arg in args for v in arg.split()],
+                         "-m", "train_app",
+                     ] + [v for arg in args for v in arg.split()],
             )
         ],
     )
