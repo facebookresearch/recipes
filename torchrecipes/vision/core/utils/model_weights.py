@@ -56,7 +56,10 @@ def extract_model_weights_from_checkpoint(
     prefix_len = 0 if not model_name else len(model_name) + 1  # e.g. "model."
     weights: Dict[str, torch.Tensor] = {}
     for k, v in state_dict.items():
-        if model_name and not k.startswith(model_name):
-            raise ValueError(f"invalid key={k} doesn't start with {model_name}")
-        weights[k[prefix_len:]] = v
+        if model_name and k.startswith(model_name):
+            weights[k[prefix_len:]] = v
+    if not weights:
+        raise ValueError(
+            f"No model weights found with prefix '{model_name}' in provided state dict"
+        )
     return weights
