@@ -6,7 +6,7 @@
 
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Tuple, Any, Dict, List, Mapping, Optional, Union
 
 import torch
 from hydra.core.config_store import ConfigStore
@@ -15,7 +15,13 @@ from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 from pyre_extensions import none_throws
 from pytorch_lightning import LightningDataModule
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, random_split
+from torch.utils.data import (
+    Subset,
+    DataLoader,
+    RandomSampler,
+    SequentialSampler,
+    random_split,
+)
 from torchrecipes.core.conf import DataModuleConf
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchvision.datasets.vision import VisionDataset
@@ -85,8 +91,9 @@ class TorchVisionDataModule(LightningDataModule):
             raise ValueError(f"Unsupported type {type(self.val_split)}")
         return [dataset_len - val_len, val_len]
 
-    # pyre-fixme[3]: Return annotation cannot contain `Any`.
-    def _split_dataset(self, dataset: VisionDataset) -> Any:
+    def _split_dataset(
+        self, dataset: VisionDataset
+    ) -> Tuple[Subset[VisionDataset], Subset[VisionDataset]]:
         """Splits the full dataset into train and validation set."""
         splits = self._get_splits(len(dataset))
         dataset_train, dataset_val = random_split(
