@@ -6,7 +6,7 @@
 
 import logging
 from dataclasses import dataclass
-from typing import Tuple, Any, Dict, List, Mapping, Optional, Union
+from typing import Tuple, Any, Dict, List, Optional, Union
 
 import torch
 from hydra.core.config_store import ConfigStore
@@ -46,7 +46,7 @@ class TorchVisionDataModule(LightningDataModule):
 
     def __init__(
         self,
-        datasets: Mapping[str, Optional[VisionDataset]],
+        datasets: Dict[str, Optional[Union[Subset[VisionDataset], VisionDataset]]],
         batch_size: int = 32,
         drop_last: bool = False,
         normalize: bool = False,
@@ -76,7 +76,6 @@ class TorchVisionDataModule(LightningDataModule):
                 dataset_train, dataset_val = self._split_dataset(
                     none_throws(self.datasets["train"])
                 )
-                # pyre-fixme[16]: `Mapping` has no attribute `__setitem__`.
                 self.datasets["train"] = dataset_train
                 self.datasets["val"] = dataset_val
                 logging.info("We have split part of the train set into val set!")
@@ -92,19 +91,20 @@ class TorchVisionDataModule(LightningDataModule):
         return [dataset_len - val_len, val_len]
 
     def _split_dataset(
-        self, dataset: VisionDataset
+        self, dataset: Union[Subset[VisionDataset], VisionDataset]
     ) -> Tuple[Subset[VisionDataset], Subset[VisionDataset]]:
         """Splits the full dataset into train and validation set."""
         splits = self._get_splits(len(dataset))
         dataset_train, dataset_val = random_split(
             dataset,
             splits,
-            # pyre-ignore[16]: Generator has manual_seed
-            generator=torch.Generator().manual_seed(self.seed),
+            generator=torch.manual_seed(self.seed),
         )
         return dataset_train, dataset_val
 
-    def _get_data_loader(self, dataset: VisionDataset, phase: str) -> DataLoader:
+    def _get_data_loader(
+        self, dataset: Union[Subset[VisionDataset], VisionDataset], phase: str
+    ) -> DataLoader:
         if phase == "train":
             sampler = RandomSampler(dataset)
         else:
@@ -158,7 +158,7 @@ class TorchVisionDataModuleConf(DataModuleConf):
     num_workers: int = 16
     pin_memory: bool = False
     seed: int = 42
-    val_split: Any = None  # pyre-ignore[4]: Union[int, float]
+    val_split: Any = None  # pyre-ignore[4]: Union[int, float] # Omegaconf doesn't support Union types, although there are plans https://github.com/omry/omegaconf/issues/144
 
 
 cs = ConfigStore()

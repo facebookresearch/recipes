@@ -14,6 +14,7 @@ import torch
 from hydra.core.config_store import ConfigStore
 from hydra.experimental import compose, initialize
 from hydra.utils import instantiate
+from torch.utils.data import Subset
 from torchrecipes.vision.data.modules.torchvision_data_module import (
     TorchVisionDataModule,
     TorchVisionDataModuleConf,
@@ -73,7 +74,9 @@ class TestTorchVisionDataModule(unittest.TestCase):
         # pyre-ignore[6]: dataset has length
         self.assertEqual(len(torchvision_data_module.datasets["val"]), 6000)
 
-    def get_datasets_from_config(self) -> Dict[str, VisionDataset]:
+    def get_datasets_from_config(
+        self,
+    ) -> Dict[str, Optional[Union[Subset[VisionDataset], VisionDataset]]]:
         datasets_conf = self._get_datasets_config(download=False)
         datasets = {}
         for split, dataset_conf in datasets_conf.items():
