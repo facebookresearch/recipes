@@ -51,7 +51,6 @@ class TestTrainerParams(unittest.TestCase):
             name="trainer",
             node=TrainerConf(
                 num_nodes=3,
-                sync_batchnorm=True,
                 plugins=["ddp_find_unused_parameters_false"],
             ),
         )
@@ -68,16 +67,7 @@ class TestTrainerParams(unittest.TestCase):
             self.assertEqual(plugin._ddp_kwargs, {"find_unused_parameters": False})
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "num_nodes",
-                3,
-            )
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "sync_batchnorm",
-                True,
-            )
+            check_training_type_plugin_attribute(trainer.strategy, "num_nodes", 3)
 
     def test_trainer_conf_with_ddp_fp16_compress_plugin(self) -> None:
         cs = ConfigStore.instance()
@@ -99,16 +89,7 @@ class TestTrainerParams(unittest.TestCase):
             self.assertEqual(plugin._ddp_kwargs, {"find_unused_parameters": True})
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "num_nodes",
-                1,
-            )
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "sync_batchnorm",
-                False,
-            )
+            check_training_type_plugin_attribute(trainer.strategy, "num_nodes", 1)
 
     def test_trainer_conf_with_ddp_multiple(self) -> None:
         cs = ConfigStore.instance()
@@ -135,16 +116,7 @@ class TestTrainerParams(unittest.TestCase):
             self.assertEqual(plugin._ddp_kwargs, {"find_unused_parameters": False})
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "num_nodes",
-                1,
-            )
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "sync_batchnorm",
-                False,
-            )
+            check_training_type_plugin_attribute(trainer.strategy, "num_nodes", 1)
 
     def test_trainer_conf_with_ddp_fully_sharded_precision_32(self) -> None:
         cs = ConfigStore.instance()
@@ -161,16 +133,7 @@ class TestTrainerParams(unittest.TestCase):
             self.assertIsInstance(plugin, DDPFullyShardedStrategy)
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "num_nodes",
-                1,
-            )
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "sync_batchnorm",
-                False,
-            )
+            check_training_type_plugin_attribute(trainer.strategy, "num_nodes", 1)
 
     def test_trainer_conf_with_ddp_fully_sharded_precision_16(self) -> None:
         cs = ConfigStore.instance()
@@ -191,13 +154,4 @@ class TestTrainerParams(unittest.TestCase):
             )
             trainer = Trainer(**trainer_params)
             self.assertIsInstance(trainer, Trainer)
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "num_nodes",
-                1,
-            )
-            check_training_type_plugin_attribute(
-                trainer.strategy,
-                "sync_batchnorm",
-                False,
-            )
+            check_training_type_plugin_attribute(trainer.strategy, "num_nodes", 1)
