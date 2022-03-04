@@ -91,7 +91,7 @@ class TrainerConf:
     move_metrics_to_cpu: bool = False
     multiple_trainloader_mode: str = "max_size_cycle"
     num_nodes: int = 1
-    num_processes: int = 1
+    num_processes: Optional[int] = None
     num_sanity_val_steps: int = 2
     reload_dataloaders_every_n_epochs: int = 0
     replace_sampler_ddp: bool = False
