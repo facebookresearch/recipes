@@ -85,7 +85,7 @@ class ModelConf:
 
 @dataclass
 class XLMRClassificationModelConf(ModelConf):
-    _target_: str = "torchtext.models.RobertaModelBundle.build_model"
+    _target_: str = "torchtext.models.RobertaBundle.build_model"
     encoder_conf: XLMREncoderConf = XLMREncoderConf()
     head: HeadConf = ClassificationHeadConf()
     freeze_encoder: bool = False

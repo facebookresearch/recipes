@@ -1,4 +1,4 @@
-_target_: torchtext.models.RobertaModelBundle.build_model
+_target_: torchtext.models.RobertaBundle.build_model
 encoder_conf:
   _target_: torchtext.models.RobertaEncoderConf
   vocab_size: 250002
