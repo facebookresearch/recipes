@@ -65,7 +65,6 @@ class TrainerConf:
     # Union[int, float]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     limit_test_batches: Any = 1.0
-    log_gpu_memory: Optional[str] = None
     log_every_n_steps: int = 50
     # Union[bool, LightningLoggerBase]
     # pyre-fixme[4]: Missing attribute annotation
