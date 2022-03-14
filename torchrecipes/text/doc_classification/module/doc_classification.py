@@ -58,7 +58,7 @@ class DocClassificationModule(
 
         self.loss = CrossEntropyLoss()
         self.accuracy = metrics.Accuracy()
-        self.fbeta = metrics.FBeta(
+        self.fbeta = metrics.FBetaScore(
             num_classes=num_classes,
             average="macro",
         )
