@@ -17,9 +17,8 @@ from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.loggers import TensorBoardLogger
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import TrainerConf, TrainAppConf
+from torchrecipes.core.conf import DataModuleConf, ModuleConf, TrainerConf, TrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
-from torchrecipes.vision.core.datamodule import VisionDataModuleConf
 from torchrecipes.vision.image_classification.module.image_classification import (
     ImageClassificationModule,
     ImageClassificationModuleConf,
@@ -31,14 +30,11 @@ class ImageClassificationTrainApp(BaseTrainApp):
     This app is used to launch the image classification training / testing.
     """
 
-    module_conf: ImageClassificationModuleConf
-    datamodule_conf: VisionDataModuleConf
-
     def __init__(
         self,
-        module: ImageClassificationModuleConf,
+        module: ModuleConf,
         trainer: TrainerConf,
-        datamodule: VisionDataModuleConf,
+        datamodule: DataModuleConf,
         load_checkpoint_strict: bool = True,
         pretrained_checkpoint_path: Optional[str] = None,
         # pyre-fixme[2]: Parameter annotation cannot contain `Any`.
@@ -57,9 +53,7 @@ class ImageClassificationTrainApp(BaseTrainApp):
         """
         Instantiate a LightningDataModule.
         """
-        return hydra.utils.instantiate(
-            self.datamodule_conf.datamodule,
-        )
+        return hydra.utils.instantiate(self.datamodule_conf)
 
     def get_lightning_module(self) -> LightningModule:
         """
@@ -108,7 +102,7 @@ class ImageClassificationTrainApp(BaseTrainApp):
 @dataclass
 class ImageClassificationTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(ImageClassificationTrainApp)
-    datamodule: VisionDataModuleConf = MISSING
+    datamodule: DataModuleConf = MISSING
     module: ImageClassificationModuleConf = MISSING
     trainer: TrainerConf = MISSING
     pretrained_checkpoint_path: Optional[str] = None

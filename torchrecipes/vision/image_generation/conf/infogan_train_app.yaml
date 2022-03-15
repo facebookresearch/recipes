@@ -8,8 +8,7 @@ defaults:
   - module/discriminator: infogan
   - module/optim: infogan_default
   # datamodule
-  - schema/datamodule: vision_module_conf
-  - datamodule/datamodule: mnist
+  - datamodule: mnist
   # trainer
   - schema/trainer: trainer
   - trainer: cpu

@@ -163,8 +163,8 @@ class TorchVisionDataModuleConf(DataModuleConf):
 
 cs = ConfigStore()
 cs.store(
-    group="schema/datamodule/datamodule",
+    group="schema/datamodule",
     name="torchvision_datamodule_conf",
     node=TorchVisionDataModuleConf,
-    package="datamodule.datamodule",
+    package="datamodule",
 )

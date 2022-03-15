@@ -9,8 +9,7 @@ defaults:
   - module/criterion: bce_loss
   - module/optim: default
   # datamodule
-  - schema/datamodule: vision_module_conf
-  - datamodule/datamodule: mnist
+  - datamodule: mnist
   # trainer
   - schema/trainer: trainer
   - trainer: cpu

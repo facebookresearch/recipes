@@ -29,7 +29,7 @@ class TestTrainApp(BaseTrainAppTestCase):
         self, tb_save_dir: str, test_overrides: Optional[List[str]] = None
     ) -> ImageClassificationTrainApp:
         overrides: List[str] = [
-            "datamodule/datamodule=fake_data",
+            "datamodule=fake_data",
             "+module.model.num_classes=10",
             f"+tb_save_dir={tb_save_dir}",
         ]

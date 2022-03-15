@@ -15,9 +15,8 @@ from omegaconf import MISSING
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import TrainerConf, TrainAppConf
+from torchrecipes.core.conf import DataModuleConf, TrainerConf, TrainAppConf
 from torchrecipes.utils.config_utils import get_class_name_str
-from torchrecipes.vision.core.datamodule import VisionDataModuleConf
 from torchrecipes.vision.image_generation.callbacks import (
     TensorboardGenerativeModelImageSampler,
 )
@@ -26,14 +25,11 @@ from torchrecipes.vision.image_generation.module.infogan import InfoGANModuleCon
 
 
 class GANTrainApp(BaseTrainApp):
-
-    datamodule_conf: VisionDataModuleConf
-
     def __init__(
         self,
         module: GANModuleConf,
         trainer: TrainerConf,
-        datamodule: VisionDataModuleConf,
+        datamodule: DataModuleConf,
     ) -> None:
         super().__init__(module, trainer, datamodule)
 
@@ -41,9 +37,7 @@ class GANTrainApp(BaseTrainApp):
         """
         Instantiate a LightningDataModule.
         """
-        return hydra.utils.instantiate(
-            self.datamodule_conf.datamodule,
-        )
+        return hydra.utils.instantiate(self.datamodule_conf)
 
     def get_callbacks(self) -> List[Callback]:
         # TODO(kaizh): make callback configurable
@@ -53,7 +47,7 @@ class GANTrainApp(BaseTrainApp):
 @dataclass
 class GANTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(GANTrainApp)
-    datamodule: VisionDataModuleConf = MISSING
+    datamodule: DataModuleConf = MISSING
     module: GANModuleConf = MISSING
     trainer: TrainerConf = MISSING
 
@@ -61,6 +55,6 @@ class GANTrainAppConf(TrainAppConf):
 @dataclass
 class InfoGANTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(GANTrainApp)
-    datamodule: VisionDataModuleConf = MISSING
+    datamodule: DataModuleConf = MISSING
     module: InfoGANModuleConf = MISSING
     trainer: TrainerConf = MISSING

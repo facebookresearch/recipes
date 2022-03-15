@@ -18,8 +18,8 @@ class TestGANTrainApp(BaseTrainAppTestCase):
             config_module="torchrecipes.vision.image_generation.conf",
             config_name=config_name,
             overrides=[
-                "+schema/datamodule/datamodule=torchvision_datamodule_conf",
-                "datamodule/datamodule=fake_data",
+                "+schema/datamodule=torchvision_datamodule_conf",
+                "datamodule=fake_data",
             ],
         )
         self.mock_trainer_params(app)

@@ -196,7 +196,7 @@ class MNISTDataModuleConf:
 
 cs = ConfigStore()
 cs.store(
-    group="datamodule/datamodule",
+    group="datamodule",
     name="mnist_data_module",
     node=MNISTDataModuleConf,
 )
