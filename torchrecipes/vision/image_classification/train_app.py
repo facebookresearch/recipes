@@ -5,20 +5,15 @@
 
 
 #!/usr/bin/env python3
-from dataclasses import dataclass
 from typing import Any, List, Optional
 
 import hydra
-
-# @manual "//github/third-party/omry/omegaconf:omegaconf"
-from omegaconf import MISSING
 from pyre_extensions import none_throws
 from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.loggers import TensorBoardLogger
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import DataModuleConf, ModuleConf, TrainerConf, TrainAppConf
-from torchrecipes.utils.config_utils import get_class_name_str
+from torchrecipes.core.conf import DataModuleConf, ModuleConf, TrainerConf
 from torchrecipes.vision.image_classification.module.image_classification import (
     ImageClassificationModule,
 )
@@ -93,16 +88,3 @@ class ImageClassificationTrainApp(BaseTrainApp):
             self.tb_save_dir is not None
         ), "Should specify tb_save_dir if trainer.logger=True!"
         return TensorBoardLogger(save_dir=self.tb_save_dir)
-
-
-@dataclass
-class ImageClassificationTrainAppConf(TrainAppConf):
-    _target_: str = get_class_name_str(ImageClassificationTrainApp)
-    datamodule: DataModuleConf = MISSING
-    module: ModuleConf = MISSING
-    trainer: TrainerConf = MISSING
-    pretrained_checkpoint_path: Optional[str] = None
-    load_checkpoint_strict: bool = True
-    # pyre-fixme[4]: Attribute annotation cannot contain `Any`.
-    callbacks: Optional[List[Any]] = None
-    tb_save_dir: Optional[str] = None
