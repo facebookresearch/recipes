@@ -21,7 +21,6 @@ from torchrecipes.core.conf import DataModuleConf, ModuleConf, TrainerConf, Trai
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchrecipes.vision.image_classification.module.image_classification import (
     ImageClassificationModule,
-    ImageClassificationModuleConf,
 )
 
 
@@ -59,10 +58,7 @@ class ImageClassificationTrainApp(BaseTrainApp):
         """
         Instantiate a LightningModule.
         """
-        module = hydra.utils.instantiate(
-            self.module_conf,
-            _recursive_=False,
-        )
+        module = hydra.utils.instantiate(self.module_conf)
         if self.pretrained_checkpoint_path:
             return ImageClassificationModule.load_from_checkpoint(
                 checkpoint_path=none_throws(self.pretrained_checkpoint_path),
@@ -103,7 +99,7 @@ class ImageClassificationTrainApp(BaseTrainApp):
 class ImageClassificationTrainAppConf(TrainAppConf):
     _target_: str = get_class_name_str(ImageClassificationTrainApp)
     datamodule: DataModuleConf = MISSING
-    module: ImageClassificationModuleConf = MISSING
+    module: ModuleConf = MISSING
     trainer: TrainerConf = MISSING
     pretrained_checkpoint_path: Optional[str] = None
     load_checkpoint_strict: bool = True

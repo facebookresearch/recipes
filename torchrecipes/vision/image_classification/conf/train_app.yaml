@@ -3,7 +3,7 @@ _target_: torchrecipes.vision.image_classification.train_app.ImageClassification
 defaults:
   - _self_
   # module
-  - schema/module: image_classification_module_conf
+  - module: default_module
   - module/model: resnet18
   - module/loss: cross_entropy
   - module/optim: sgd_partial

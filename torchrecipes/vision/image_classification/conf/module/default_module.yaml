@@ -1,0 +1,9 @@
+_target_: torchrecipes.vision.image_classification.module.image_classification.ImageClassificationModule
+model: ???
+loss: ???
+optim: ???
+metrics: ???
+lr_scheduler: null
+apply_softmax: false
+norm_weight_decay: 0.0
+lr_scheduler_interval: epoch

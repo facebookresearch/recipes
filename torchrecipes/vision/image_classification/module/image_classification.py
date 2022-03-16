@@ -6,23 +6,15 @@
 
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
 from typing import Union, Any, Callable, Dict, Iterable, List, Mapping, Optional
 
-import hydra
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from hydra.core.config_store import ConfigStore
-
-# @manual "//github/third-party/omry/omegaconf:omegaconf"
-from omegaconf import MISSING
 from pyre_extensions import none_throws
 from torch.nn import Parameter
 from torch.optim import Optimizer
-from torchrecipes.core.conf import ModuleConf
-from torchrecipes.utils.config_utils import get_class_config_method, config_entry
 from torchvision.ops._utils import split_normalization_params
 
 
@@ -52,9 +44,9 @@ class ImageClassificationModule(pl.LightningModule):
         self,
         model: nn.Module,
         loss: nn.Module,
-        optim_fn: OptimCallable,
+        optim: OptimCallable,
         metrics: Mapping[str, nn.Module],
-        lr_scheduler_fn: Optional[LRSchedulerCallable] = None,
+        lr_scheduler: Optional[LRSchedulerCallable] = None,
         apply_softmax: bool = False,
         process_weighted_labels: bool = False,
         norm_weight_decay: float = 0.0,
@@ -63,48 +55,13 @@ class ImageClassificationModule(pl.LightningModule):
         super().__init__()
         self.model: nn.Module = model
         self.loss: nn.Module = loss
-        self.optim_fn: OptimCallable = optim_fn
-        self.lr_scheduler_fn: Optional[LRSchedulerCallable] = lr_scheduler_fn
+        self.optim_fn: OptimCallable = optim
+        self.lr_scheduler_fn: Optional[LRSchedulerCallable] = lr_scheduler
         self.metrics: nn.ModuleDict = nn.ModuleDict(metrics)
         self.apply_softmax: bool = apply_softmax
         self.process_weighted_labels: bool = process_weighted_labels
         self.norm_weight_decay: float = norm_weight_decay
         self.lr_scheduler_interval: str = lr_scheduler_interval
-
-    @config_entry
-    @staticmethod
-    def from_hydra(
-        # pyre-fixme[2]: Parameter annotation cannot be `Any`.
-        model: Any,
-        # pyre-fixme[2]: Parameter annotation cannot be `Any`.
-        loss: Any,
-        # pyre-fixme[2]: Parameter annotation cannot be `Any`.
-        optim: Any,
-        # pyre-fixme[2]: Parameter annotation cannot contain `Any`.
-        metrics: Any,
-        # pyre-fixme[2]: Parameter annotation cannot be `Any`.
-        lr_scheduler: Optional[Any] = None,
-        apply_softmax: bool = False,
-        process_weighted_labels: bool = False,
-        norm_weight_decay: float = 0.0,
-        lr_scheduler_interval: str = "epoch",
-    ) -> "ImageClassificationModule":
-        model = hydra.utils.instantiate(model)
-        loss = hydra.utils.instantiate(loss)
-        metrics = hydra.utils.instantiate(metrics)
-        optim_fn = hydra.utils.instantiate(optim)
-        lr_scheduler_fn = hydra.utils.instantiate(lr_scheduler)
-        return ImageClassificationModule(
-            model=model,
-            loss=loss,
-            optim_fn=optim_fn,
-            metrics=metrics,
-            lr_scheduler_fn=lr_scheduler_fn,
-            apply_softmax=apply_softmax,
-            process_weighted_labels=process_weighted_labels,
-            norm_weight_decay=norm_weight_decay,
-            lr_scheduler_interval=lr_scheduler_interval,
-        )
 
     def _postprocess_preds(self, preds: torch.Tensor) -> torch.Tensor:
         """
@@ -196,32 +153,3 @@ class ImageClassificationModule(pl.LightningModule):
                 "interval": self.lr_scheduler_interval,
             },
         }
-
-
-@dataclass
-class ImageClassificationModuleConf(ModuleConf):
-    _target_: str = get_class_config_method(ImageClassificationModule)
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    model: Any = MISSING
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    loss: Any = MISSING
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    optim: Any = MISSING
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    metrics: Any = MISSING
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    lr_scheduler: Optional[Any] = None
-    apply_softmax: bool = False
-    process_weighted_labels: bool = False
-    norm_weight_decay: float = 0.0
-    lr_scheduler_interval: str = "epoch"
-
-
-# pyre-fixme[5]: Global expression must be annotated.
-cs = ConfigStore().instance()
-cs.store(
-    group="schema/module",
-    name="image_classification_module_conf",
-    node=ImageClassificationModuleConf,
-    package="module",
-)

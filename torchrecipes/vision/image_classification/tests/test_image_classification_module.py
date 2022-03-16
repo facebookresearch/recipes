@@ -20,7 +20,7 @@ class TestImageClassificationModule(testslide.TestCase):
         module = ImageClassificationModule(
             model=resnet18(),
             loss=torch.nn.CrossEntropyLoss(),
-            optim_fn=partial(torch.optim.SGD, lr=0.1),
+            optim=partial(torch.optim.SGD, lr=0.1),
             metrics={},
             norm_weight_decay=0.1,
         )
@@ -33,8 +33,8 @@ class TestImageClassificationModule(testslide.TestCase):
         module = ImageClassificationModule(
             model=resnet18(),
             loss=torch.nn.CrossEntropyLoss(),
-            optim_fn=partial(torch.optim.SGD, lr=0.1),
-            lr_scheduler_fn=partial(torch.optim.lr_scheduler.StepLR, step_size=10),
+            optim=partial(torch.optim.SGD, lr=0.1),
+            lr_scheduler=partial(torch.optim.lr_scheduler.StepLR, step_size=10),
             metrics={},
             lr_scheduler_interval="step",
         )
