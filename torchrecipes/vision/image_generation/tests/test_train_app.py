@@ -8,6 +8,7 @@
 
 from typing import cast
 
+import torchrecipes.vision.image_generation.conf  # noqa
 from torchrecipes.core.test_utils.test_base import BaseTrainAppTestCase
 from torchrecipes.vision.image_generation.train_app import GANTrainApp
 
@@ -18,8 +19,8 @@ class TestGANTrainApp(BaseTrainAppTestCase):
             config_module="torchrecipes.vision.image_generation.conf",
             config_name=config_name,
             overrides=[
-                "+schema/datamodule=torchvision_datamodule_conf",
-                "datamodule=fake_data",
+                "datamodule=torchvision_datamodule",
+                "+datamodule/datasets=fake_data",
             ],
         )
         self.mock_trainer_params(app)

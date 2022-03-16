@@ -9,8 +9,8 @@ defaults:
   - module/optim: sgd_partial
   - module/metrics: accuracy
   # datamodule
-  - schema/datamodule: torchvision_datamodule_conf
-  - datamodule: cifar10
+  - datamodule: torchvision_datamodule
+  - datamodule/datasets: cifar10
   # trainer
   - schema/trainer: trainer
   - trainer: cpu

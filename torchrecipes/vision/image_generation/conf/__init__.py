@@ -7,7 +7,6 @@
 #!/usr/bin/env python3
 
 import torchrecipes.core.conf  # noqa
-import torchrecipes.vision.core.datamodule  # noqa
 import torchrecipes.vision.data.modules  # noqa
 
 # Components to register with this config

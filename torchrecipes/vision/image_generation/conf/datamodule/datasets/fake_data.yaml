@@ -1,0 +1,24 @@
+train:
+  _target_: torchvision.datasets.FakeData
+  image_size:
+    - 1
+    - 28
+    - 28
+  transform:
+    _target_: torchvision.transforms.ToTensor
+val:
+  _target_: torchvision.datasets.FakeData
+  image_size:
+    - 1
+    - 28
+    - 28
+  transform:
+    _target_: torchvision.transforms.ToTensor
+test:
+  _target_: torchvision.datasets.FakeData
+  image_size:
+    - 1
+    - 28
+    - 28
+  transform:
+    _target_: torchvision.transforms.ToTensor

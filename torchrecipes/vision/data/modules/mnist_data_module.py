@@ -7,15 +7,12 @@
 #!/usr/bin/env python3
 
 import os
-from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
-from hydra.core.config_store import ConfigStore
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
 from torch.utils.data import DataLoader, Dataset, random_split
-from torchrecipes.utils.config_utils import get_class_name_str
 from torchvision import transforms as transform_lib
 from torchvision.datasets import MNIST
 
@@ -178,25 +175,3 @@ class MNISTDataModule(LightningDataModule):
             raise MisconfigurationException(
                 f"Invalid value for val_split={val_split}, Must be integer >= 0 or float between [0, 1]"
             )
-
-
-@dataclass
-class MNISTDataModuleConf:
-    _target_: str = get_class_name_str(MNISTDataModule)
-    data_dir: Optional[str] = None
-    val_split: Any = 0.2  # pyre-ignore[4]: Union[int, float]
-    num_workers: int = 16
-    normalize: bool = False
-    batch_size: int = 32
-    seed: int = 42
-    shuffle: bool = False
-    pin_memory: bool = False
-    drop_last: bool = False
-
-
-cs = ConfigStore()
-cs.store(
-    group="datamodule",
-    name="mnist_data_module",
-    node=MNISTDataModuleConf,
-)

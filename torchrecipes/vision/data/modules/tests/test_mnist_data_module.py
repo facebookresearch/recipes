@@ -9,16 +9,10 @@
 import unittest
 from tempfile import TemporaryDirectory
 
+import hydra
 import torch
-from hydra.core.config_store import ConfigStore
-from hydra.experimental import compose, initialize
-from hydra.utils import instantiate
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
-from torchrecipes.core.test_utils.conf_utils import conf_asdict
-from torchrecipes.vision.data.modules.mnist_data_module import (
-    MNISTDataModule,
-    MNISTDataModuleConf,
-)
+from torchrecipes.vision.data.modules.mnist_data_module import MNISTDataModule
 from torchrecipes.vision.data.transforms import build_transforms
 from torchvision.datasets import MNIST
 
@@ -83,17 +77,19 @@ class TestMNISTDataModule(unittest.TestCase):
         image, _ = next(iter(dataloder))
         self.assertEqual(image.size(), torch.Size([1, 1, 64, 64]))
 
-    def test_module_conf_dataclass(self) -> None:
-        """Tests creating module with dataclass."""
-        module = MNISTDataModule(**conf_asdict(MNISTDataModuleConf()))
-        self.assertIsInstance(module, MNISTDataModule)
-
     def test_init_with_hydra(self) -> None:
         """Tests creating module with Hydra."""
-        # Set up Hydra configs
-        cs = ConfigStore.instance()
-        cs.store(name="mnist_data_module", node=MNISTDataModuleConf)
-        with initialize():
-            test_conf = compose(config_name="mnist_data_module")
-            mnist_data_module = instantiate(test_conf)
-            self.assertIsInstance(mnist_data_module, MNISTDataModule)
+        test_conf = {
+            "_target_": "torchrecipes.vision.data.modules.mnist_data_module.MNISTDataModule",
+            "data_dir": None,
+            "val_split": 0.2,
+            "num_workers": 16,
+            "normalize": False,
+            "batch_size": 32,
+            "seed": 42,
+            "shuffle": False,
+            "pin_memory": False,
+            "drop_last": False,
+        }
+        mnist_data_module = hydra.utils.instantiate(test_conf)
+        self.assertIsInstance(mnist_data_module, MNISTDataModule)

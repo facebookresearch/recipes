@@ -10,14 +10,12 @@ import unittest
 from tempfile import TemporaryDirectory
 from typing import Any, Dict, Optional, Union
 
+import hydra
 import torch
-from hydra.core.config_store import ConfigStore
-from hydra.experimental import compose, initialize
 from hydra.utils import instantiate
 from torch.utils.data import Subset
 from torchrecipes.vision.data.modules.torchvision_data_module import (
     TorchVisionDataModule,
-    TorchVisionDataModuleConf,
 )
 from torchrecipes.vision.data.transforms.builder import (
     build_transforms_from_dataset_config,
@@ -39,17 +37,20 @@ class TestTorchVisionDataModule(unittest.TestCase):
         MNIST(cls.data_path, train=True, download=True)
         MNIST(cls.data_path, train=False, download=True)
 
-        # Create hydra config nodes
-        cs = ConfigStore.instance()
-        cs.store(name="torchvision_data_module", node=TorchVisionDataModuleConf)
-
     def test_init_datamodule_with_hydra(self) -> None:
-        datasets_conf = self._get_datasets_config(download=False)
-        with initialize():
-            test_conf = compose(config_name="torchvision_data_module")
-            test_conf.datasets = datasets_conf
-            torchvision_data_module = instantiate(test_conf, _recursive_=False)
-            self.assertIsInstance(torchvision_data_module, TorchVisionDataModule)
+        test_conf = {
+            "_target_": "torchrecipes.vision.data.modules.torchvision_data_module.TorchVisionDataModule",
+            "datasets": self._get_datasets_config(download=False),
+            "batch_size": 32,
+            "drop_last": False,
+            "normalize": False,
+            "num_workers": 16,
+            "pin_memory": False,
+            "seed": 42,
+            "val_split": None,
+        }
+        torchvision_data_module = hydra.utils.instantiate(test_conf)
+        self.assertIsInstance(torchvision_data_module, TorchVisionDataModule)
 
     def test_creating_datamodule(self) -> None:
         torchvision_data_module = self.get_torchvision_data_module()

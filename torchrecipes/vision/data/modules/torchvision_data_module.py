@@ -146,25 +146,3 @@ class TorchVisionDataModule(LightningDataModule):
         return self._get_data_loader(
             dataset=none_throws(self.datasets["test"]), phase="test"
         )
-
-
-@dataclass
-class TorchVisionDataModuleConf(DataModuleConf):
-    _target_: str = get_class_name_str(TorchVisionDataModule)
-    datasets: Dict[str, Any] = MISSING
-    batch_size: int = 32
-    drop_last: bool = False
-    normalize: bool = False
-    num_workers: int = 16
-    pin_memory: bool = False
-    seed: int = 42
-    val_split: Any = None  # pyre-ignore[4]: Union[int, float] # Omegaconf doesn't support Union types, although there are plans https://github.com/omry/omegaconf/issues/144
-
-
-cs = ConfigStore()
-cs.store(
-    group="schema/datamodule",
-    name="torchvision_datamodule_conf",
-    node=TorchVisionDataModuleConf,
-    package="datamodule",
-)
