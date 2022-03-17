@@ -71,7 +71,6 @@ class TrainerConf:
     logger: Any = True
     plugins: Optional[List[str]] = None
     prepare_data_per_node: Optional[bool] = None
-    process_position: int = 0
     profiler: Optional[str] = None
     progress_bar_refresh_rate: Optional[int] = None
     # Union[int, float]
