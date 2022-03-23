@@ -99,7 +99,6 @@ class TrainerConf:
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     strategy: Optional[Any] = None
     sync_batchnorm: bool = False
-    terminate_on_nan: Optional[bool] = None
     tpu_cores: Optional[int] = None
     # Union[int, float, str]
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
