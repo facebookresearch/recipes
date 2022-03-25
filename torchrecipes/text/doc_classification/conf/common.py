@@ -123,6 +123,11 @@ cs.store(
     name="xlmrbase_classifier",
     node=XLMRClassificationModelConf,
 )
+cs.store(
+    group="module/model",
+    name="xlmrbase_classifier_tiny",
+    node=XLMRClassificationModelConf,
+)
 
 cs.store(group="schema/datamodule/dataset", name="dataset", node=DatasetConf)
 cs.store(group="datamodule/dataset", name="sst2_dataset", node=SST2DatasetConf)

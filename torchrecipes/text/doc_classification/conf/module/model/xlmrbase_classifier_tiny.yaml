@@ -1,0 +1,21 @@
+_target_: torchtext.models.RobertaBundle.build_model
+encoder_conf:
+  _target_: torchtext.models.RobertaEncoderConf
+  vocab_size: 102
+  embedding_dim: 8
+  ffn_dimension: 8
+  padding_idx: 1
+  max_seq_len: 64
+  num_attention_heads:  1
+  num_encoder_layers: 1
+  dropout: 0.1
+  scaling: null
+  normalize_before: False
+head:
+  _target_: torchtext.models.RobertaClassificationHead
+  num_classes: 2
+  input_dim: 8
+  inner_dim: 8
+  dropout: 0.4
+freeze_encoder: True
+checkpoint: null

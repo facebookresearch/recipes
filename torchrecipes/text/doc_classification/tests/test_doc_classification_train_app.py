@@ -48,8 +48,7 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
             config_module="torchrecipes.text.doc_classification.conf",
             config_name="train_app",
             overrides=[
-                "module.model.checkpoint=null",
-                "module.model.freeze_encoder=True",
+                "module/model=xlmrbase_classifier_tiny",
                 f"datamodule.dataset.root={root_dir}",
                 f"trainer.default_root_dir={root_dir}",
                 "trainer.logger=False",
