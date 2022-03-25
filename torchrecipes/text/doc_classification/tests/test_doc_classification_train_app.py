@@ -63,13 +63,7 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
         return app
 
     @tempdir
-    def test_doc_classification_task_train(self, root_dir: str) -> None:
-        train_app = self.get_train_app(root_dir=root_dir)
-        output = train_app.train()
-        self.assert_train_output(output)
-
-    @tempdir
-    def test_doc_classification_task_test(self, root_dir: str) -> None:
+    def test_doc_classification_task(self, root_dir: str) -> None:
         train_app = self.get_train_app(root_dir=root_dir)
         train_app.train()
         output = train_app.test()
