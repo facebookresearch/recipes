@@ -23,7 +23,6 @@ from torchrecipes.utils.config_utils import get_class_config_method, config_entr
 
 if TYPE_CHECKING:
     from torchrecipes.text.doc_classification.conf.common import (
-        ModelConf,
         TransformConf,
     )
 
@@ -66,7 +65,7 @@ class DocClassificationModule(
     @staticmethod
     def from_config(
         transform: "TransformConf",
-        model: "ModelConf",
+        model: DictConfig,
         optim: DictConfig,
         num_classes: int,
     ) -> "DocClassificationModule":

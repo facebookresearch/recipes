@@ -12,10 +12,7 @@ import hydra
 from omegaconf import OmegaConf
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.text.doc_classification.conf.common import (
-    ClassificationHeadConf,
     DocClassificationTransformConf,
-    XLMREncoderConf,
-    XLMRClassificationModelConf,
     SST2DatasetConf,
 )
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
@@ -58,22 +55,8 @@ class TestDocClassificationModule(TaskTestCaseBase):
 
     def get_standard_task(self) -> DocClassificationModule:
         module_conf = DocClassificationModuleConf(
-            model=XLMRClassificationModelConf(
-                encoder_conf=XLMREncoderConf(
-                    vocab_size=102,
-                    embedding_dim=8,
-                    ffn_dimension=8,
-                    max_seq_len=64,
-                    num_attention_heads=1,
-                    num_encoder_layers=1,
-                ),
-                head=ClassificationHeadConf(
-                    num_classes=2,
-                    input_dim=8,
-                    inner_dim=8,
-                ),
-                freeze_encoder=True,
-                checkpoint=None,
+            model=OmegaConf.load(
+                "torchrecipes/text/doc_classification/conf/module/model/xlmrbase_classifier_tiny.yaml"
             ),
             optim=OmegaConf.load(
                 "torchrecipes/text/doc_classification/conf/module/optim/adamw.yaml"

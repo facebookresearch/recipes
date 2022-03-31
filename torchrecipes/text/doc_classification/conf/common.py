@@ -6,7 +6,6 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
-import torchtext
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
@@ -48,62 +47,7 @@ class DocClassificationTransformConf(TransformConf):
     num_labels: int = MISSING
 
 
-@dataclass
-class HeadConf:
-    _target_: str = MISSING
-
-
-@dataclass
-class ClassificationHeadConf(HeadConf):
-    _target_: str = get_class_name_str(torchtext.models.RobertaClassificationHead)
-    num_classes: int = MISSING
-    input_dim: int = MISSING
-    inner_dim: Optional[int] = None
-    dropout: float = 0
-
-
-@dataclass
-class XLMREncoderConf:
-    _target_: str = get_class_name_str(torchtext.models.RobertaEncoderConf)
-    vocab_size: int = 250002
-    embedding_dim: int = 768
-    ffn_dimension: int = 3072
-    padding_idx: int = 1
-    max_seq_len: int = 514
-    num_attention_heads: int = 12
-    num_encoder_layers: int = 12
-    dropout: float = 0.1
-    scaling: Optional[float] = None
-    normalize_before: bool = False
-
-
-@dataclass
-class ModelConf:
-    pass
-
-
-@dataclass
-class XLMRClassificationModelConf(ModelConf):
-    _target_: str = "torchtext.models.RobertaBundle.build_model"
-    encoder_conf: XLMREncoderConf = XLMREncoderConf()
-    head: HeadConf = ClassificationHeadConf()
-    freeze_encoder: bool = False
-    checkpoint: Optional[
-        str
-    ] = "https://download.pytorch.org/models/text/xlmr.base.encoder.pt"
-
-
 cs: ConfigStore = ConfigStore.instance()
-cs.store(
-    group="module/model",
-    name="xlmrbase_classifier",
-    node=XLMRClassificationModelConf,
-)
-cs.store(
-    group="module/model",
-    name="xlmrbase_classifier_tiny",
-    node=XLMRClassificationModelConf,
-)
 
 cs.store(group="schema/datamodule/dataset", name="dataset", node=DatasetConf)
 cs.store(group="datamodule/dataset", name="sst2_dataset", node=SST2DatasetConf)
