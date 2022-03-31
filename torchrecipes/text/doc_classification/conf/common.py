@@ -4,9 +4,8 @@
 # LICENSE file in the root directory of this source tree.
 
 from dataclasses import dataclass
-from typing import Optional, List, Tuple
+from typing import Optional, List
 
-import torch
 import torchtext
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
@@ -94,29 +93,6 @@ class XLMRClassificationModelConf(ModelConf):
     ] = "https://download.pytorch.org/models/text/xlmr.base.encoder.pt"
 
 
-@dataclass
-class OptimConf:
-    pass
-
-
-@dataclass
-class AdamWConf(OptimConf):
-    _target_: str = get_class_name_str(torch.optim.AdamW)
-    lr: float = 1e-3
-    betas: Tuple[float, float] = (0.9, 0.999)
-    eps: float = 1e-8
-    weight_decay: float = 0
-    amsgrad: bool = False
-
-
-@dataclass
-class AdamConf(OptimConf):
-    _target_: str = get_class_name_str(torch.optim.Adam)
-    lr: float = 1e-3
-    betas: Tuple[float, float] = (0.9, 0.999)
-    eps: float = 1e-8
-
-
 cs: ConfigStore = ConfigStore.instance()
 cs.store(
     group="module/model",
@@ -134,7 +110,3 @@ cs.store(group="datamodule/dataset", name="sst2_dataset", node=SST2DatasetConf)
 
 cs.store(group="transform", name="label_transform", node=LabelTransformConf)
 cs.store(group="transform", name="transform", node=TransformConf)
-
-cs.store(group="schema/task/optim", name="optim", node=OptimConf)
-cs.store(group="task/optim", name="adam", node=AdamConf)
-cs.store(group="task/optim", name="adamw", node=AdamWConf)

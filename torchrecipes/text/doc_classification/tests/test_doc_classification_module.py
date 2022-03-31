@@ -9,9 +9,9 @@ import os
 from unittest.mock import patch
 
 import hydra
+from omegaconf import OmegaConf
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.text.doc_classification.conf.common import (
-    AdamWConf,
     ClassificationHeadConf,
     DocClassificationTransformConf,
     XLMREncoderConf,
@@ -75,7 +75,9 @@ class TestDocClassificationModule(TaskTestCaseBase):
                 freeze_encoder=True,
                 checkpoint=None,
             ),
-            optim=AdamWConf(),
+            optim=OmegaConf.load(
+                "torchrecipes/text/doc_classification/conf/module/optim/adamw.yaml"
+            ),
         )
         transform_conf = self.get_transform_conf()
         num_classes = transform_conf.num_labels

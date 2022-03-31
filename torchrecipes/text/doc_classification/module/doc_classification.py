@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchmetrics as metrics
 from hydra.core.config_store import ConfigStore
-from omegaconf import MISSING
+from omegaconf import DictConfig, MISSING
 from torch.nn.modules import CrossEntropyLoss
 from torch.optim import Optimizer
 from torchrecipes.core.conf import ModuleConf
@@ -24,7 +24,6 @@ from torchrecipes.utils.config_utils import get_class_config_method, config_entr
 if TYPE_CHECKING:
     from torchrecipes.text.doc_classification.conf.common import (
         ModelConf,
-        OptimConf,
         TransformConf,
     )
 
@@ -68,7 +67,7 @@ class DocClassificationModule(
     def from_config(
         transform: "TransformConf",
         model: "ModelConf",
-        optim: "OptimConf",
+        optim: DictConfig,
         num_classes: int,
     ) -> "DocClassificationModule":
         transform = hydra.utils.instantiate(transform)
