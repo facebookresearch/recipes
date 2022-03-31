@@ -14,9 +14,6 @@ import hydra
 import testslide
 import torch
 from omegaconf import OmegaConf
-from torchrecipes.text.doc_classification.conf.common import (
-    DocClassificationTransformConf,
-)
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModuleConf,
     DocClassificationDataModule,
@@ -48,9 +45,12 @@ class TestDocClassificationDataModule(testslide.TestCase):
             vocab_path=get_asset_path("vocab_example.pt"),
             spm_model_path=get_asset_path("spm_example.model"),
         )
-        transform_conf = DocClassificationTransformConf(
-            transform=doc_transform_conf,
-            num_labels=2,
+        transform_conf = OmegaConf.create(
+            {
+                "transform": doc_transform_conf,
+                "num_labels": 2,
+                "label_transform": None,
+            }
         )
 
         dataset_conf = OmegaConf.create(

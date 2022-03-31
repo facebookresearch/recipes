@@ -12,14 +12,11 @@ from dataclasses import dataclass
 from typing import Any, Optional
 
 import hydra
-from omegaconf import MISSING
+from omegaconf import DictConfig, MISSING
 from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.loggers import TensorBoardLogger
 from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.conf import TrainAppConf, TrainerConf
-from torchrecipes.text.doc_classification.conf.common import (
-    TransformConf,
-)
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
     DocClassificationDataModuleConf,
@@ -43,7 +40,7 @@ class DocClassificationTrainApp(BaseTrainApp):
         module: DocClassificationModuleConf,
         trainer: TrainerConf,
         datamodule: DocClassificationDataModuleConf,
-        transform: TransformConf,
+        transform: DictConfig,
         tb_save_dir: Optional[str] = None,
     ) -> None:
         self.transform_conf = transform
@@ -53,17 +50,12 @@ class DocClassificationTrainApp(BaseTrainApp):
 
     def get_lightning_module(self) -> LightningModule:
         # check whether this is the OSS or internal transform
-        # the OSS TransformConf has a `num_labels` field whereas the
+        # the OSS transform_conf has a `num_labels` field whereas the
         # internal transforms don't
         if hasattr(self.transform_conf, "num_labels"):
-            # pyre-ignore[16]: Subclass of `TransformConf` has relevant attribute
             num_classes = self.transform_conf.num_labels
-            transform_conf = (
-                # pyre-ignore[16]: Subclass of `TransformConf` has relevant attribute
-                self.transform_conf.transform
-            )
+            transform_conf = self.transform_conf.transform
         else:
-            # pyre-ignore[16]: Subclass of `TransformConf` has relevant attribute
             num_classes = len(self.transform_conf.label_names)
             transform_conf = self.transform_conf
 

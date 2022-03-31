@@ -15,9 +15,6 @@ from torch.utils.data import DataLoader
 from torch.utils.data import IterDataPipe
 from torch.utils.data.backward_compatibility import worker_init_fn
 from torchrecipes.core.conf import DataModuleConf
-from torchrecipes.text.doc_classification.conf.common import (
-    DocClassificationTransformConf,
-)
 from torchrecipes.utils.config_utils import (
     config_entry,
     get_class_config_method,
@@ -59,7 +56,7 @@ class DocClassificationDataModule(pl.LightningDataModule):
     @config_entry
     @staticmethod
     def from_config(
-        transform: DocClassificationTransformConf,
+        transform: DictConfig,
         dataset: DictConfig,
         columns: List[str],
         label_column: str,
@@ -136,7 +133,7 @@ class DocClassificationDataModule(pl.LightningDataModule):
 @dataclass
 class DocClassificationDataModuleConf(DataModuleConf):
     _target_: str = get_class_config_method(DocClassificationDataModule)
-    transform: DocClassificationTransformConf = MISSING
+    transform: Any = MISSING  # pyre-ignore[4]
     dataset: Any = MISSING  # pyre-ignore[4]
     columns: List[str] = field(default_factory=lambda: ["text", "label"])
     label_column: str = "label"

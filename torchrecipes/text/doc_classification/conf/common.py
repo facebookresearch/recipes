@@ -7,10 +7,6 @@ from dataclasses import dataclass
 from typing import Optional, List
 
 from hydra.core.config_store import ConfigStore
-from omegaconf import MISSING
-from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
-    DocClassificationTextTransformConf,
-)
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchtext.transforms import LabelToIndex
 
@@ -23,19 +19,6 @@ class LabelTransformConf:
     sort_names: bool = False
 
 
-@dataclass
-class TransformConf:
-    pass
-
-
-@dataclass
-class DocClassificationTransformConf(TransformConf):
-    transform: DocClassificationTextTransformConf = MISSING
-    label_transform: Optional[LabelTransformConf] = None
-    num_labels: int = MISSING
-
-
 cs: ConfigStore = ConfigStore.instance()
 
 cs.store(group="transform", name="label_transform", node=LabelTransformConf)
-cs.store(group="transform", name="transform", node=TransformConf)

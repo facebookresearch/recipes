@@ -21,10 +21,6 @@ from torchrecipes.core.conf import ModuleConf
 from torchrecipes.core.task_base import TaskBase
 from torchrecipes.utils.config_utils import get_class_config_method, config_entry
 
-if TYPE_CHECKING:
-    from torchrecipes.text.doc_classification.conf.common import (
-        TransformConf,
-    )
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -64,7 +60,7 @@ class DocClassificationModule(
     @config_entry
     @staticmethod
     def from_config(
-        transform: "TransformConf",
+        transform: DictConfig,
         model: DictConfig,
         optim: DictConfig,
         num_classes: int,

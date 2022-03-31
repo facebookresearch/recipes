@@ -9,11 +9,8 @@ import os
 from unittest.mock import patch
 
 import hydra
-from omegaconf import OmegaConf
+from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning.trainer import Trainer
-from torchrecipes.text.doc_classification.conf.common import (
-    DocClassificationTransformConf,
-)
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
     DocClassificationDataModuleConf,
@@ -45,13 +42,13 @@ class TestDocClassificationModule(TaskTestCaseBase):
         self.patcher.stop()
         super().tearDown()
 
-    def get_transform_conf(self) -> DocClassificationTransformConf:
+    def get_transform_conf(self) -> DictConfig:
         doc_transform_conf = DocClassificationTextTransformConf(
             vocab_path=get_asset_path("vocab_example.pt"),
             spm_model_path=get_asset_path("spm_example.model"),
         )
-        return DocClassificationTransformConf(
-            transform=doc_transform_conf, num_labels=2
+        return OmegaConf.create(
+            {"transform": doc_transform_conf, "num_labels": 2, "label_transform": None}
         )
 
     def get_standard_task(self) -> DocClassificationModule:
