@@ -12,8 +12,8 @@ from tempfile import TemporaryDirectory
 import hydra
 import torch
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
-from torchrecipes.vision.data.modules.mnist_data_module import MNISTDataModule
-from torchrecipes.vision.data.transforms import build_transforms
+from torchrecipes.vision.core.datamodule.mnist_data_module import MNISTDataModule
+from torchrecipes.vision.core.datamodule.transforms import build_transforms
 from torchvision.datasets import MNIST
 
 
@@ -80,7 +80,7 @@ class TestMNISTDataModule(unittest.TestCase):
     def test_init_with_hydra(self) -> None:
         """Tests creating module with Hydra."""
         test_conf = {
-            "_target_": "torchrecipes.vision.data.modules.mnist_data_module.MNISTDataModule",
+            "_target_": "torchrecipes.vision.core.datamodule.mnist_data_module.MNISTDataModule",
             "data_dir": None,
             "val_split": 0.2,
             "num_workers": 16,

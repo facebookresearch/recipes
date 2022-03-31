@@ -1,0 +1,10 @@
+_target_: torchrecipes.vision.core.datamodule.mnist_data_module.MNISTDataModule
+data_dir: null
+val_split: 0.2
+num_workers: 16
+normalize: false
+batch_size: 32
+seed: 42
+shuffle: false
+pin_memory: false
+drop_last: false

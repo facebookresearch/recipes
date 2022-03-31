@@ -14,10 +14,10 @@ import hydra
 import torch
 from hydra.utils import instantiate
 from torch.utils.data import Subset
-from torchrecipes.vision.data.modules.torchvision_data_module import (
+from torchrecipes.vision.core.datamodule.torchvision_data_module import (
     TorchVisionDataModule,
 )
-from torchrecipes.vision.data.transforms.builder import (
+from torchrecipes.vision.core.datamodule.transforms.builder import (
     build_transforms_from_dataset_config,
 )
 from torchvision.datasets.mnist import MNIST
@@ -39,7 +39,7 @@ class TestTorchVisionDataModule(unittest.TestCase):
 
     def test_init_datamodule_with_hydra(self) -> None:
         test_conf = {
-            "_target_": "torchrecipes.vision.data.modules.torchvision_data_module.TorchVisionDataModule",
+            "_target_": "torchrecipes.vision.core.datamodule.torchvision_data_module.TorchVisionDataModule",
             "datasets": self._get_datasets_config(download=False),
             "batch_size": 32,
             "drop_last": False,

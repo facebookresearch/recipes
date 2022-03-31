@@ -5,3 +5,12 @@
 
 
 #!/usr/bin/env python3
+from torchrecipes.vision.core.datamodule.mnist_data_module import MNISTDataModule
+from torchrecipes.vision.core.datamodule.torchvision_data_module import (
+    TorchVisionDataModule,
+)
+
+__all__ = [
+    "MNISTDataModule",
+    "TorchVisionDataModule",
+]

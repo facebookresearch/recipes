@@ -1,4 +1,4 @@
-_target_: torchrecipes.vision.data.modules.torchvision_data_module.TorchVisionDataModule
+_target_: torchrecipes.vision.core.datamodule.torchvision_data_module.TorchVisionDataModule
 datasets: ???
 batch_size: 32
 drop_last: false

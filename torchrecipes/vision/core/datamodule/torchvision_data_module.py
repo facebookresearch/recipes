@@ -5,14 +5,9 @@
 
 
 import logging
-from dataclasses import dataclass
 from typing import Tuple, Any, Dict, List, Optional, Union
 
 import torch
-from hydra.core.config_store import ConfigStore
-
-# @manual "//github/third-party/omry/omegaconf:omegaconf"
-from omegaconf import MISSING
 from pyre_extensions import none_throws
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import (
@@ -22,8 +17,6 @@ from torch.utils.data import (
     SequentialSampler,
     random_split,
 )
-from torchrecipes.core.conf import DataModuleConf
-from torchrecipes.utils.config_utils import get_class_name_str
 from torchvision.datasets.vision import VisionDataset
 
 
