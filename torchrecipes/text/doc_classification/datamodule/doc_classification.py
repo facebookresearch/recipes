@@ -128,26 +128,3 @@ class DocClassificationDataModule(pl.LightningDataModule):
 
     def test_dataloader(self) -> DataLoader:
         return self._get_data_loader(self.test_dataset)
-
-
-@dataclass
-class DocClassificationDataModuleConf(DataModuleConf):
-    _target_: str = get_class_config_method(DocClassificationDataModule)
-    transform: Any = MISSING  # pyre-ignore[4]
-    dataset: Any = MISSING  # pyre-ignore[4]
-    columns: List[str] = field(default_factory=lambda: ["text", "label"])
-    label_column: str = "label"
-    batch_size: int = 16
-    num_workers: int = 0
-    drop_last: bool = False
-    pin_memory: bool = False
-
-
-cs: ConfigStore = ConfigStore.instance()
-
-cs.store(
-    group="schema/datamodule",
-    name="doc_classification",
-    node=DocClassificationDataModuleConf,
-    package="datamodule",
-)

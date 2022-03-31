@@ -13,7 +13,6 @@ from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
-    DocClassificationDataModuleConf,
 )
 from torchrecipes.text.doc_classification.module.doc_classification import (
     DocClassificationModule,
@@ -74,10 +73,15 @@ class TestDocClassificationModule(TaskTestCaseBase):
         dataset_conf = OmegaConf.create(
             {"root": _DATA_DIR_PATH, "_target_": get_class_name_str(SST2)}
         )
-        datamodule_conf = DocClassificationDataModuleConf(
-            transform=transform_conf,
-            dataset=dataset_conf,
-            batch_size=8,
+        datamodule_conf = OmegaConf.create(
+            {
+                "_target_": "torchrecipes.text.doc_classification.datamodule.doc_classification.DocClassificationDataModule.from_config",
+                "transform": transform_conf,
+                "dataset": dataset_conf,
+                "columns": ["text", "label"],
+                "label_column": "label",
+                "batch_size": 8,
+            }
         )
         return hydra.utils.instantiate(
             datamodule_conf,

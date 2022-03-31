@@ -19,7 +19,6 @@ from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.conf import TrainAppConf, TrainerConf
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
-    DocClassificationDataModuleConf,
 )
 from torchrecipes.text.doc_classification.module.doc_classification import (
     DocClassificationModuleConf,
@@ -33,20 +32,20 @@ class DocClassificationTrainApp(BaseTrainApp):
     """
 
     module_conf: DocClassificationModuleConf
-    datamodule_conf: DocClassificationDataModuleConf
+    datamodule_conf: DictConfig  # pyre-ignore[15]
 
     def __init__(
         self,
         module: DocClassificationModuleConf,
         trainer: TrainerConf,
-        datamodule: DocClassificationDataModuleConf,
+        datamodule: DictConfig,
         transform: DictConfig,
         tb_save_dir: Optional[str] = None,
     ) -> None:
         self.transform_conf = transform
         self.tb_save_dir = tb_save_dir
 
-        super().__init__(module, trainer, datamodule)
+        super().__init__(module, trainer, datamodule)  # pyre-ignore[6]
 
     def get_lightning_module(self) -> LightningModule:
         # check whether this is the OSS or internal transform

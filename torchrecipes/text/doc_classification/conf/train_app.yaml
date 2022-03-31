@@ -7,7 +7,6 @@ defaults:
   - module/optim: adamw
   - module/model: xlmrbase_classifier
   # datamodule
-  - schema/datamodule: doc_classification
   - datamodule: doc_classification_datamodule
   - datamodule/dataset: sst2_dataset
   # trainer

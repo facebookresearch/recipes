@@ -15,7 +15,6 @@ import testslide
 import torch
 from omegaconf import OmegaConf
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
-    DocClassificationDataModuleConf,
     DocClassificationDataModule,
 )
 from torchrecipes.text.doc_classification.tests.common.assets import _DATA_DIR_PATH
@@ -56,12 +55,15 @@ class TestDocClassificationDataModule(testslide.TestCase):
         dataset_conf = OmegaConf.create(
             {"root": _DATA_DIR_PATH, "_target_": get_class_name_str(SST2)}
         )
-        datamodule_conf = DocClassificationDataModuleConf(
-            transform=transform_conf,
-            dataset=dataset_conf,
-            columns=["text", "label"],
-            label_column="label",
-            batch_size=8,
+        datamodule_conf = OmegaConf.create(
+            {
+                "_target_": "torchrecipes.text.doc_classification.datamodule.doc_classification.DocClassificationDataModule.from_config",
+                "transform": transform_conf,
+                "dataset": dataset_conf,
+                "columns": ["text", "label"],
+                "label_column": "label",
+                "batch_size": 8,
+            }
         )
         return hydra.utils.instantiate(
             datamodule_conf,
