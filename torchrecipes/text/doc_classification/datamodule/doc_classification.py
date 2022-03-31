@@ -4,19 +4,18 @@
 # LICENSE file in the root directory of this source tree.
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 import hydra
 import pytorch_lightning as pl
 import torch.nn as nn
 from hydra.core.config_store import ConfigStore
-from omegaconf import MISSING
+from omegaconf import DictConfig, MISSING
 from torch.utils.data import DataLoader
 from torch.utils.data import IterDataPipe
 from torch.utils.data.backward_compatibility import worker_init_fn
 from torchrecipes.core.conf import DataModuleConf
 from torchrecipes.text.doc_classification.conf.common import (
-    DatasetConf,
     DocClassificationTransformConf,
 )
 from torchrecipes.utils.config_utils import (
@@ -61,7 +60,7 @@ class DocClassificationDataModule(pl.LightningDataModule):
     @staticmethod
     def from_config(
         transform: DocClassificationTransformConf,
-        dataset: DatasetConf,
+        dataset: DictConfig,
         columns: List[str],
         label_column: str,
         batch_size: int,
@@ -138,7 +137,7 @@ class DocClassificationDataModule(pl.LightningDataModule):
 class DocClassificationDataModuleConf(DataModuleConf):
     _target_: str = get_class_config_method(DocClassificationDataModule)
     transform: DocClassificationTransformConf = MISSING
-    dataset: DatasetConf = MISSING
+    dataset: Any = MISSING  # pyre-ignore[4]
     columns: List[str] = field(default_factory=lambda: ["text", "label"])
     label_column: str = "label"
     batch_size: int = 16

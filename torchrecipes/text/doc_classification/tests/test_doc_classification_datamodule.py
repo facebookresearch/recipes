@@ -13,9 +13,8 @@ from unittest.mock import patch
 import hydra
 import testslide
 import torch
+from omegaconf import OmegaConf
 from torchrecipes.text.doc_classification.conf.common import (
-    SST2DatasetConf,
-    LabelTransformConf,
     DocClassificationTransformConf,
 )
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
@@ -27,6 +26,8 @@ from torchrecipes.text.doc_classification.tests.common.assets import get_asset_p
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransformConf,
 )
+from torchrecipes.utils.config_utils import get_class_name_str
+from torchtext.datasets.sst2 import SST2
 
 
 class TestDocClassificationDataModule(testslide.TestCase):
@@ -52,7 +53,9 @@ class TestDocClassificationDataModule(testslide.TestCase):
             num_labels=2,
         )
 
-        dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH)
+        dataset_conf = OmegaConf.create(
+            {"root": _DATA_DIR_PATH, "_target_": get_class_name_str(SST2)}
+        )
         datamodule_conf = DocClassificationDataModuleConf(
             transform=transform_conf,
             dataset=dataset_conf,

@@ -13,7 +13,6 @@ from omegaconf import OmegaConf
 from pytorch_lightning.trainer import Trainer
 from torchrecipes.text.doc_classification.conf.common import (
     DocClassificationTransformConf,
-    SST2DatasetConf,
 )
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
@@ -28,7 +27,9 @@ from torchrecipes.text.doc_classification.tests.common.assets import get_asset_p
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransformConf,
 )
+from torchrecipes.utils.config_utils import get_class_name_str
 from torchrecipes.utils.task_test_base import TaskTestCaseBase
+from torchtext.datasets.sst2 import SST2
 
 
 class TestDocClassificationModule(TaskTestCaseBase):
@@ -73,7 +74,9 @@ class TestDocClassificationModule(TaskTestCaseBase):
 
     def get_datamodule(self) -> DocClassificationDataModule:
         transform_conf = self.get_transform_conf()
-        dataset_conf = SST2DatasetConf(root=_DATA_DIR_PATH)
+        dataset_conf = OmegaConf.create(
+            {"root": _DATA_DIR_PATH, "_target_": get_class_name_str(SST2)}
+        )
         datamodule_conf = DocClassificationDataModuleConf(
             transform=transform_conf,
             dataset=dataset_conf,

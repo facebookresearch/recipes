@@ -12,19 +12,7 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
     DocClassificationTextTransformConf,
 )
 from torchrecipes.utils.config_utils import get_class_name_str
-from torchtext.datasets.sst2 import SST2
 from torchtext.transforms import LabelToIndex
-
-
-@dataclass
-class DatasetConf:
-    pass
-
-
-@dataclass
-class SST2DatasetConf(DatasetConf):
-    _target_: str = get_class_name_str(SST2)
-    root: str = MISSING
 
 
 @dataclass
@@ -48,9 +36,6 @@ class DocClassificationTransformConf(TransformConf):
 
 
 cs: ConfigStore = ConfigStore.instance()
-
-cs.store(group="schema/datamodule/dataset", name="dataset", node=DatasetConf)
-cs.store(group="datamodule/dataset", name="sst2_dataset", node=SST2DatasetConf)
 
 cs.store(group="transform", name="label_transform", node=LabelTransformConf)
 cs.store(group="transform", name="transform", node=TransformConf)
