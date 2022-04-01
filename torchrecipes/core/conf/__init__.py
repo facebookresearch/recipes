@@ -107,7 +107,6 @@ class TrainerConf:
     # pyre-fixme[4]: Attribute annotation cannot be `Any`.
     val_check_interval: Any = 1.0
     weights_save_path: Optional[str] = None
-    weights_summary: Optional[str] = "top"
 
 
 @dataclass
