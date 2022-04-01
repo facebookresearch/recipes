@@ -5,6 +5,16 @@
 
 
 #!/usr/bin/env python3
-
-import torchrecipes.core.conf  # noqa
-import torchrecipes.vision.core.datamodule  # noqa
+# flake8: noqa
+import torch
+import torchvision.models
+from pytorch_lightning.callbacks import LearningRateMonitor
+from torch.optim import SGD
+from torch.optim.lr_scheduler import StepLR
+from torchmetrics import AveragePrecision
+from torchrecipes.vision.core.datamodule.torchvision_data_module import (
+    TorchVisionDataModule,
+)
+from torchrecipes.vision.image_classification.module.image_classification import (
+    ImageClassificationModule,
+)

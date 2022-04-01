@@ -1,0 +1,12 @@
+defaults:
+  # module
+  - module: default_module
+  - module/model: resnet18
+  - module/loss: cross_entropy
+  - module/optim: sgd
+  - module/metrics: accuracy
+  # datamodule
+  - datamodule: torchvision_datamodule
+  - datamodule/datasets: cifar10
+  # trainer
+  - trainer: cpu

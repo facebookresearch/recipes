@@ -1,0 +1,11 @@
+_target_: pytorch_lightning.trainer.Trainer
+default_root_dir: null
+accelerator: cpu
+devices: null
+strategy: null
+max_epochs: 1
+enable_checkpointing: false
+fast_dev_run: false
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: /tmp/logs

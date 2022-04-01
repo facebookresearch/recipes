@@ -1,0 +1,6 @@
+# use _partial_ to instantiate an LR scheduler callable, which returns
+# an LR scheduler in configure_optimizer.
+_target_: torch.optim.lr_scheduler.StepLR
+_partial_: true
+step_size: 10
+gamma: 0.1
