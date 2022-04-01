@@ -18,11 +18,15 @@ from hydra.experimental import compose, initialize_config_module
 from omegaconf import DictConfig
 from pytorch_lightning import LightningDataModule, LightningModule
 from pytorch_lightning.trainer import Trainer
+from torchrecipes.text.doc_classification.module.doc_classification import (
+    DocClassificationModule,
+)
 from torchrecipes.text.doc_classification.tests.common.assets import (
     copy_partial_sst2_dataset,
     get_asset_path,
     copy_asset,
 )
+from torchrecipes.utils.config_utils import get_class_config_method
 from torchrecipes.utils.test import tempdir
 
 
@@ -54,6 +58,7 @@ class TestDocClassificationConfig(testslide.TestCase):
             cfg = compose(
                 config_name="train_app",
                 overrides=[
+                    f"+module._target_={get_class_config_method(DocClassificationModule)}",
                     "module/model=xlmrbase_classifier_tiny",
                     f"datamodule.dataset.root={root_dir}",
                     f"trainer.default_root_dir={root_dir}",
@@ -93,6 +98,7 @@ class TestDocClassificationConfig(testslide.TestCase):
             cfg = compose(
                 config_name="train_app",
                 overrides=[
+                    f"+module._target_={get_class_config_method(DocClassificationModule)}",
                     "module/model=xlmrbase_classifier_tiny",
                     f"datamodule.dataset.root={root_dir}",
                     f"trainer.default_root_dir={root_dir}",

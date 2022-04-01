@@ -16,14 +16,13 @@ from torchrecipes.text.doc_classification.datamodule.doc_classification import (
 )
 from torchrecipes.text.doc_classification.module.doc_classification import (
     DocClassificationModule,
-    DocClassificationModuleConf,
 )
 from torchrecipes.text.doc_classification.tests.common.assets import _DATA_DIR_PATH
 from torchrecipes.text.doc_classification.tests.common.assets import get_asset_path
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransformConf,
 )
-from torchrecipes.utils.config_utils import get_class_name_str
+from torchrecipes.utils.config_utils import get_class_name_str, get_class_config_method
 from torchrecipes.utils.task_test_base import TaskTestCaseBase
 from torchtext.datasets.sst2 import SST2
 
@@ -51,13 +50,16 @@ class TestDocClassificationModule(TaskTestCaseBase):
         )
 
     def get_standard_task(self) -> DocClassificationModule:
-        module_conf = DocClassificationModuleConf(
-            model=OmegaConf.load(
-                "torchrecipes/text/doc_classification/conf/module/model/xlmrbase_classifier_tiny.yaml"
-            ),
-            optim=OmegaConf.load(
-                "torchrecipes/text/doc_classification/conf/module/optim/adamw.yaml"
-            ),
+        module_conf = OmegaConf.create(
+            {
+                "_target_": get_class_config_method(DocClassificationModule),
+                "model": OmegaConf.load(
+                    "torchrecipes/text/doc_classification/conf/module/model/xlmrbase_classifier_tiny.yaml"
+                ),
+                "optim": OmegaConf.load(
+                    "torchrecipes/text/doc_classification/conf/module/optim/adamw.yaml"
+                ),
+            }
         )
         transform_conf = self.get_transform_conf()
         num_classes = transform_conf.num_labels
@@ -75,7 +77,7 @@ class TestDocClassificationModule(TaskTestCaseBase):
         )
         datamodule_conf = OmegaConf.create(
             {
-                "_target_": "torchrecipes.text.doc_classification.datamodule.doc_classification.DocClassificationDataModule.from_config",
+                "_target_": get_class_config_method(DocClassificationDataModule),
                 "transform": transform_conf,
                 "dataset": dataset_conf,
                 "columns": ["text", "label"],

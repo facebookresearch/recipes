@@ -3,7 +3,6 @@ _target_: torchrecipes.text.doc_classification.train_app.DocClassificationTrainA
 defaults:
   - _self_
   # module
-  - schema/module: doc_classification
   - module/optim: adamw
   - module/model: xlmrbase_classifier
   # datamodule

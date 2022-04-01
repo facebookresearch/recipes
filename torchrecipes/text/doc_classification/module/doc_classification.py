@@ -4,8 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import logging
-from dataclasses import dataclass
-from typing import Any, Dict, Optional, Mapping, TYPE_CHECKING
+from typing import Any, Dict, Optional, Mapping
 
 import hydra
 import pytorch_lightning as pl
@@ -13,14 +12,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchmetrics as metrics
-from hydra.core.config_store import ConfigStore
-from omegaconf import DictConfig, MISSING
+from omegaconf import DictConfig
 from torch.nn.modules import CrossEntropyLoss
 from torch.optim import Optimizer
-from torchrecipes.core.conf import ModuleConf
 from torchrecipes.core.task_base import TaskBase
-from torchrecipes.utils.config_utils import get_class_config_method, config_entry
-
+from torchrecipes.utils.config_utils import config_entry
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -140,23 +136,3 @@ class DocClassificationModule(
         self.log("test_loss", loss)
         self.log("test_acc", self.accuracy)
         self.log("test_f1", self.fbeta)
-
-
-@dataclass
-class DocClassificationModuleConf(ModuleConf):
-    _target_: str = get_class_config_method(DocClassificationModule)
-    transform: Any = MISSING  # pyre-ignore[4]: Cannot use complex types with hydra.
-    model: Any = MISSING  # pyre-ignore[4]: Cannot use complex types with hydra.
-    optim: Any = MISSING  # pyre-ignore[4]: Cannot use complex types with hydra.
-    num_classes: int = MISSING
-
-
-cs: ConfigStore = ConfigStore.instance()
-
-
-cs.store(
-    group="schema/module",
-    name="doc_classification",
-    node=DocClassificationModuleConf,
-    package="module",
-)

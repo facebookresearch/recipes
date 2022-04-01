@@ -13,11 +13,15 @@ from unittest.mock import patch
 import torchrecipes.text.doc_classification.conf  # noqa
 from torchrecipes.core.base_train_app import BaseTrainApp
 from torchrecipes.core.test_utils.test_base import BaseTrainAppTestCase
+from torchrecipes.text.doc_classification.module.doc_classification import (
+    DocClassificationModule,
+)
 from torchrecipes.text.doc_classification.tests.common.assets import (
     copy_partial_sst2_dataset,
     get_asset_path,
     copy_asset,
 )
+from torchrecipes.utils.config_utils import get_class_config_method
 from torchrecipes.utils.test import tempdir
 
 
@@ -48,6 +52,7 @@ class TestDocClassificationTrainApp(BaseTrainAppTestCase):
             config_module="torchrecipes.text.doc_classification.conf",
             config_name="train_app",
             overrides=[
+                f"+module._target_={get_class_config_method(DocClassificationModule)}",
                 "module/model=xlmrbase_classifier_tiny",
                 f"datamodule.dataset.root={root_dir}",
                 f"trainer.default_root_dir={root_dir}",

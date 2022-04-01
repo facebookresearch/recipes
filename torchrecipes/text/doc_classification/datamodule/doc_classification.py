@@ -3,22 +3,16 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from dataclasses import dataclass, field
-from typing import Any, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import hydra
 import pytorch_lightning as pl
 import torch.nn as nn
-from hydra.core.config_store import ConfigStore
-from omegaconf import DictConfig, MISSING
+from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from torch.utils.data import IterDataPipe
 from torch.utils.data.backward_compatibility import worker_init_fn
-from torchrecipes.core.conf import DataModuleConf
-from torchrecipes.utils.config_utils import (
-    config_entry,
-    get_class_config_method,
-)
+from torchrecipes.utils.config_utils import config_entry
 from torchtext.functional import to_tensor
 
 

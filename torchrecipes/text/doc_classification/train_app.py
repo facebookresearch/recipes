@@ -20,9 +20,6 @@ from torchrecipes.core.conf import TrainAppConf, TrainerConf
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
 )
-from torchrecipes.text.doc_classification.module.doc_classification import (
-    DocClassificationModuleConf,
-)
 from torchrecipes.utils.config_utils import get_class_name_str
 
 
@@ -31,12 +28,12 @@ class DocClassificationTrainApp(BaseTrainApp):
     This app is used to launch the doc classification training / testing.
     """
 
-    module_conf: DocClassificationModuleConf
+    module_conf: DictConfig  # pyre-ignore[15]
     datamodule_conf: DictConfig  # pyre-ignore[15]
 
     def __init__(
         self,
-        module: DocClassificationModuleConf,
+        module: DictConfig,
         trainer: TrainerConf,
         datamodule: DictConfig,
         transform: DictConfig,
