@@ -27,13 +27,13 @@ const {fbContent} = require('internaldocs-fb-helpers');
           editUrl: fbContent({
             internal:
               'https://www.internalfb.com/intern/diffusion/FBS/browse/master/fbcode/torchrecipes/github/docs',
-            external: 'https://github.com/facebookexternal/stl_tasks/blob/main/docs',
+            external: 'https://github.com/facebookresearch/recipes/blob/main/docs',
           }),
         },
         blog: {
           showReadingTime: true,
           editUrl:
-            'https://github.com/facebookexternal/stl_tasks/blob/main/docs/blog',
+            'https://github.com/facebookresearch/recipes/blob/main/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

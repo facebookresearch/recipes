@@ -92,7 +92,7 @@ if __name__ == "__main__":
         description="Prototype of training recipes for PyTorch",
         long_description=get_long_description(),
         long_description_content_type="text/markdown",
-        url="https://github.com/facebookexternal/stl_tasks",
+        url="https://github.com/facebookresearch/recipes",
         license="BSD-3",
         keywords=["pytorch", "machine learning"],
         python_requires=">=3.8",
