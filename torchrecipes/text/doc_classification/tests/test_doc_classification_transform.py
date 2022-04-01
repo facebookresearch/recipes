@@ -6,20 +6,24 @@
 import hydra
 import testslide
 import torch
+from omegaconf import OmegaConf
 from torchrecipes.text.doc_classification.tests.common.assets import (
     get_asset_path,
 )
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransform,
-    DocClassificationTextTransformConf,
 )
+from torchrecipes.utils.config_utils import get_class_name_str
 
 
 class TestDocClassificationTransform(testslide.TestCase):
     def test_doc_classification_transform(self) -> None:
-        transform_conf = DocClassificationTextTransformConf(
-            vocab_path=get_asset_path("vocab_example.pt"),
-            spm_model_path=get_asset_path("spm_example.model"),
+        transform_conf = OmegaConf.create(
+            {
+                "_target_": get_class_name_str(DocClassificationTextTransform),
+                "vocab_path": get_asset_path("vocab_example.pt"),
+                "spm_model_path": get_asset_path("spm_example.model"),
+            }
         )
         transform = hydra.utils.instantiate(transform_conf, _recursive_=False)
 

@@ -5,16 +5,12 @@
 
 
 import os.path
-from dataclasses import dataclass
 from typing import Any, Dict, List
 
 import torch
 import torch.nn as nn
 import torchtext
 import torchtext.transforms as T
-from hydra.core.config_store import ConfigStore
-from omegaconf import MISSING
-from torchrecipes.utils.config_utils import get_class_name_str
 from torchtext.functional import to_tensor
 
 
@@ -53,22 +49,3 @@ class DocClassificationTextTransform(nn.Module):
         tokens_tensor: torch.Tensor = to_tensor(tokens_list, self.pad_idx)
         batch[self.token_ids_column] = tokens_tensor
         return batch
-
-
-@dataclass
-class DocClassificationTextTransformConf:
-    _target_: str = get_class_name_str(DocClassificationTextTransform)
-    vocab_path: str = MISSING
-    spm_model_path: str = MISSING
-    text_column: str = "text"
-    token_ids_column: str = "token_ids"
-    pad_idx: int = 1
-
-
-# pyre-fixme[5]: Global expression must be annotated.
-cs = ConfigStore.instance()
-cs.store(
-    group="transform",
-    name="doc_classification_text_transform",
-    node=DocClassificationTextTransformConf,
-)

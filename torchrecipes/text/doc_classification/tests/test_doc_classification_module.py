@@ -20,7 +20,7 @@ from torchrecipes.text.doc_classification.module.doc_classification import (
 from torchrecipes.text.doc_classification.tests.common.assets import _DATA_DIR_PATH
 from torchrecipes.text.doc_classification.tests.common.assets import get_asset_path
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
-    DocClassificationTextTransformConf,
+    DocClassificationTextTransform,
 )
 from torchrecipes.utils.config_utils import get_class_name_str, get_class_config_method
 from torchrecipes.utils.task_test_base import TaskTestCaseBase
@@ -41,9 +41,12 @@ class TestDocClassificationModule(TaskTestCaseBase):
         super().tearDown()
 
     def get_transform_conf(self) -> DictConfig:
-        doc_transform_conf = DocClassificationTextTransformConf(
-            vocab_path=get_asset_path("vocab_example.pt"),
-            spm_model_path=get_asset_path("spm_example.model"),
+        doc_transform_conf = OmegaConf.create(
+            {
+                "_target_": get_class_name_str(DocClassificationTextTransform),
+                "vocab_path": get_asset_path("vocab_example.pt"),
+                "spm_model_path": get_asset_path("spm_example.model"),
+            }
         )
         return OmegaConf.create(
             {"transform": doc_transform_conf, "num_labels": 2, "label_transform": None}

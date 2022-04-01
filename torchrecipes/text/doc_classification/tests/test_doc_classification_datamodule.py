@@ -10,19 +10,16 @@
 
 from unittest.mock import patch
 
-import hydra
 import testslide
 import torch
-from omegaconf import OmegaConf
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
 )
 from torchrecipes.text.doc_classification.tests.common.assets import _DATA_DIR_PATH
 from torchrecipes.text.doc_classification.tests.common.assets import get_asset_path
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
-    DocClassificationTextTransformConf,
+    DocClassificationTextTransform,
 )
-from torchrecipes.utils.config_utils import get_class_name_str
 from torchtext.datasets.sst2 import SST2
 
 
@@ -40,34 +37,23 @@ class TestDocClassificationDataModule(testslide.TestCase):
         super().tearDown()
 
     def get_datamodule(self) -> DocClassificationDataModule:
-        doc_transform_conf = DocClassificationTextTransformConf(
+        train_dataset, val_dataset, test_dataset = SST2(root=_DATA_DIR_PATH)
+        text_transform = DocClassificationTextTransform(
             vocab_path=get_asset_path("vocab_example.pt"),
             spm_model_path=get_asset_path("spm_example.model"),
         )
-        transform_conf = OmegaConf.create(
-            {
-                "transform": doc_transform_conf,
-                "num_labels": 2,
-                "label_transform": None,
-            }
-        )
-
-        dataset_conf = OmegaConf.create(
-            {"root": _DATA_DIR_PATH, "_target_": get_class_name_str(SST2)}
-        )
-        datamodule_conf = OmegaConf.create(
-            {
-                "_target_": "torchrecipes.text.doc_classification.datamodule.doc_classification.DocClassificationDataModule.from_config",
-                "transform": transform_conf,
-                "dataset": dataset_conf,
-                "columns": ["text", "label"],
-                "label_column": "label",
-                "batch_size": 8,
-            }
-        )
-        return hydra.utils.instantiate(
-            datamodule_conf,
-            _recursive_=False,
+        return DocClassificationDataModule(
+            train_dataset=train_dataset,
+            val_dataset=val_dataset,
+            # TODO: Note that the following line should be replaced by
+            # `test_dataset` once we update the lightning module to support
+            # test data with and without labels
+            test_dataset=val_dataset,
+            transform=text_transform,
+            label_transform=None,
+            columns=["text", "label"],
+            label_column="label",
+            batch_size=8,
         )
 
     def test_doc_classification_datamodule(self) -> None:
