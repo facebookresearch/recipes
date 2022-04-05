@@ -8,9 +8,9 @@
 import os
 from unittest.mock import patch
 
-import hydra
-from omegaconf import DictConfig, OmegaConf
+import torchtext
 from pytorch_lightning.trainer import Trainer
+from torch.optim import AdamW
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
 )
@@ -22,7 +22,6 @@ from torchrecipes.text.doc_classification.tests.common.assets import get_asset_p
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransform,
 )
-from torchrecipes.utils.config_utils import get_class_name_str, get_class_config_method
 from torchrecipes.utils.task_test_base import TaskTestCaseBase
 from torchtext.datasets.sst2 import SST2
 
@@ -40,60 +39,54 @@ class TestDocClassificationModule(TaskTestCaseBase):
         self.patcher.stop()
         super().tearDown()
 
-    def get_transform_conf(self) -> DictConfig:
-        doc_transform_conf = OmegaConf.create(
-            {
-                "_target_": get_class_name_str(DocClassificationTextTransform),
-                "vocab_path": get_asset_path("vocab_example.pt"),
-                "spm_model_path": get_asset_path("spm_example.model"),
-            }
-        )
-        return OmegaConf.create(
-            {"transform": doc_transform_conf, "num_labels": 2, "label_transform": None}
+    def get_transform(self) -> DocClassificationTextTransform:
+        return DocClassificationTextTransform(
+            vocab_path=get_asset_path("vocab_example.pt"),
+            spm_model_path=get_asset_path("spm_example.model"),
         )
 
     def get_standard_task(self) -> DocClassificationModule:
-        module_conf = OmegaConf.create(
-            {
-                "_target_": get_class_config_method(DocClassificationModule),
-                "model": OmegaConf.load(
-                    "torchrecipes/text/doc_classification/conf/module/model/xlmrbase_classifier_tiny.yaml"
-                ),
-                "optim": OmegaConf.load(
-                    "torchrecipes/text/doc_classification/conf/module/optim/adamw.yaml"
-                ),
-            }
+        model = torchtext.models.RobertaBundle.build_model(
+            encoder_conf=torchtext.models.roberta.model.RobertaEncoderConf(
+                vocab_size=102,
+                embedding_dim=8,
+                ffn_dimension=8,
+                padding_idx=1,
+                max_seq_len=64,
+                num_attention_heads=1,
+                num_encoder_layers=1,
+            ),
+            head=torchtext.models.roberta.model.RobertaClassificationHead(
+                num_classes=2,
+                input_dim=8,
+                inner_dim=8,
+            ),
         )
-        transform_conf = self.get_transform_conf()
-        num_classes = transform_conf.num_labels
-        return hydra.utils.instantiate(
-            module_conf,
-            transform=transform_conf.transform,
-            num_classes=num_classes,
-            _recursive_=False,
+        optim = AdamW(model.parameters())
+        return DocClassificationModule(
+            transform=self.get_transform(),
+            model=model,
+            optim=optim,
+            num_classes=2,
         )
 
     def get_datamodule(self) -> DocClassificationDataModule:
-        transform_conf = self.get_transform_conf()
-        dataset_conf = OmegaConf.create(
-            {"root": _DATA_DIR_PATH, "_target_": get_class_name_str(SST2)}
-        )
-        datamodule_conf = OmegaConf.create(
-            {
-                "_target_": get_class_config_method(DocClassificationDataModule),
-                "transform": transform_conf,
-                "dataset": dataset_conf,
-                "columns": ["text", "label"],
-                "label_column": "label",
-                "batch_size": 8,
-            }
-        )
-        return hydra.utils.instantiate(
-            datamodule_conf,
-            _recursive_=False,
+        train_dataset, val_dataset, test_dataset = SST2(root=_DATA_DIR_PATH)
+        return DocClassificationDataModule(
+            train_dataset=train_dataset,
+            val_dataset=val_dataset,
+            # TODO: Note that the following line should be replaced by
+            # `test_dataset` once we update the lightning module to support
+            # test data with and without labels
+            test_dataset=val_dataset,
+            transform=self.get_transform(),
+            label_transform=None,
+            columns=["text", "label"],
+            label_column="label",
+            batch_size=8,
         )
 
-    def test_python_conf(self) -> None:
+    def test_train(self) -> None:
         # pyre-fixme[16]: `TestDocClassificationModule` has no attribute `datamodule`.
         self.datamodule = self.get_datamodule()
         task = self.get_standard_task()
