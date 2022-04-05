@@ -8,15 +8,14 @@
 
 # pyre-strict
 
-from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Optional
 
 import hydra
-from omegaconf import DictConfig, MISSING
+from omegaconf import DictConfig
 from pytorch_lightning import LightningModule, LightningDataModule
 from pytorch_lightning.loggers import TensorBoardLogger
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import TrainAppConf, TrainerConf
+from torchrecipes.core.conf import TrainerConf
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
 )
@@ -86,11 +85,3 @@ class DocClassificationTrainApp(BaseTrainApp):
             self.tb_save_dir is not None
         ), "Should specify tb_save_dir if trainer.logger=True!"
         return TensorBoardLogger(save_dir=self.tb_save_dir)
-
-
-@dataclass
-class DocClassificationTrainAppConf(TrainAppConf):
-    _target_: str = get_class_name_str(DocClassificationTrainApp)
-    # pyre-ignore[4]: Cannot use complex types with hydra.
-    transform: Any = MISSING
-    tb_save_dir: Optional[str] = None
