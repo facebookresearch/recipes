@@ -70,7 +70,7 @@ class TestDocClassificationConfig(testslide.TestCase):
                 ],
             )
         task, datamodule = self._instantiate_config(cfg)
-        trainer = Trainer(**cfg.trainer)
+        trainer: Trainer = hydra.utils.instantiate(cfg.trainer)
         trainer.fit(task, datamodule=datamodule)
 
         result = trainer.test(task, datamodule=datamodule)
@@ -110,7 +110,7 @@ class TestDocClassificationConfig(testslide.TestCase):
                 ],
             )
         task, datamodule = self._instantiate_config(cfg)
-        trainer = Trainer(**cfg.trainer)
+        trainer: Trainer = hydra.utils.instantiate(cfg.trainer)
         trainer.fit(task, datamodule=datamodule)
 
         result = trainer.test(task, datamodule=datamodule)

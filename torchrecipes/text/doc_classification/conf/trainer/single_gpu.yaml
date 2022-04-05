@@ -1,0 +1,15 @@
+_target_: pytorch_lightning.trainer.Trainer
+accelerator: gpu
+devices: 1
+strategy: null
+max_epochs: 1
+default_root_dir: ""
+enable_checkpointing: true
+fast_dev_run: false
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: /tmp/logs
+callbacks:
+- _target_: pytorch_lightning.callbacks.ModelCheckpoint
+  dirpath: /tmp/checkpoints
+- _target_: pytorch_lightning.callbacks.LearningRateMonitor

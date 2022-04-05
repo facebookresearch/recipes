@@ -6,17 +6,6 @@ defaults:
   # datamodule
   - datamodule: doc_classification_datamodule
   - datamodule/dataset: sst2_dataset
-  # trainer
-  - schema/trainer: trainer
   - trainer: cpu
   # transform
   - transform: doc_classification_transform
-
-random_seed: 42
-
-hydra:
-  searchpath:
-    - pkg://torchrecipes.text.doc_classification.datamodule
-    - pkg://torchrecipes.text.doc_classification.module
-    - pkg://torchrecipes.text.doc_classification.transform
-    - pkg://torchrecipes.core.conf

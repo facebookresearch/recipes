@@ -25,6 +25,7 @@ from torchrecipes.text.doc_classification.module.doc_classification import (
 
 @dataclass
 class TrainOutput:
+    best_model_path: Optional[str] = None
     tensorboard_log_dir: Optional[str] = None
 
 
@@ -49,13 +50,12 @@ def train_and_test(cfg: DictConfig) -> TrainOutput:
         pin_memory=cfg.datamodule.pin_memory,
     )
 
-    trainer_conf = dict(cfg.trainer)
-    trainer_conf["logger"] = TensorBoardLogger(save_dir=cfg.trainer.default_root_dir)
-    trainer = Trainer(**trainer_conf)
+    trainer: Trainer = hydra.utils.instantiate(cfg.trainer)
     trainer.fit(module, datamodule=datamodule)
     trainer.test(module, datamodule=datamodule)
     return TrainOutput(
-        tensorboard_log_dir=trainer_conf["logger"].log_dir,
+        best_model_path=getattr(trainer.checkpoint_callback, "best_model_path", None),
+        tensorboard_log_dir=getattr(trainer.logger, "save_dir", None),
     )
 
 
