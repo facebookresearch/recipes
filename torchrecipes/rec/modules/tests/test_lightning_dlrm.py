@@ -22,7 +22,7 @@ from torchrec import EmbeddingBagCollection
 from torchrec.datasets.criteo import DEFAULT_INT_NAMES
 from torchrec.modules.embedding_configs import EmbeddingBagConfig
 from torchrec.test_utils import skip_if_asan
-from torchrecipes.checkpointing.setup_utils import setup_checkpointing
+from torchrecipes.fb.utils.checkpoint import setup_checkpointing
 from torchrecipes.rec.accelerators.torchrec import (
     TorchrecStrategy,
 )
