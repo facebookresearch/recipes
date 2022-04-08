@@ -1,11 +1,11 @@
 defaults:
-  - _self_
-  # module
   - module/optim: adamw
   - module/model: xlmrbase_classifier
-  # datamodule
   - datamodule: doc_classification_datamodule
   - datamodule/dataset: sst2_dataset
   - trainer: cpu
-  # transform
   - transform: doc_classification_transform
+  - _self_
+
+transform:
+  num_labels: 2

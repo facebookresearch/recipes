@@ -5,7 +5,7 @@ encoder_conf:
   embedding_dim: 8
   ffn_dimension: 8
   padding_idx: 1
-  max_seq_len: 64
+  max_seq_len: 128
   num_attention_heads:  1
   num_encoder_layers: 1
   dropout: 0.1

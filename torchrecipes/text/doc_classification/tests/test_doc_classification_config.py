@@ -56,7 +56,7 @@ class TestDocClassificationConfig(testslide.TestCase):
 
         with initialize_config_module("torchrecipes.text.doc_classification.conf"):
             cfg = compose(
-                config_name="default",
+                config_name="default_config",
                 overrides=[
                     f"+module._target_={get_class_config_method(DocClassificationModule)}",
                     "module/model=xlmrbase_classifier_tiny",
@@ -96,7 +96,7 @@ class TestDocClassificationConfig(testslide.TestCase):
 
         with initialize_config_module("torchrecipes.text.doc_classification.conf"):
             cfg = compose(
-                config_name="default",
+                config_name="default_config",
                 overrides=[
                     f"+module._target_={get_class_config_method(DocClassificationModule)}",
                     "module/model=xlmrbase_classifier_tiny",

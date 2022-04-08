@@ -14,7 +14,6 @@ from typing import Optional
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
-from pytorch_lightning.loggers import TensorBoardLogger
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
 )
@@ -59,7 +58,7 @@ def train_and_test(cfg: DictConfig) -> TrainOutput:
     )
 
 
-@hydra.main(config_path="conf", config_name="default")
+@hydra.main(config_path="conf", config_name="default_config")
 def main(cfg: DictConfig) -> TrainOutput:
     print(f"config:\n{OmegaConf.to_yaml(cfg)}")
     return train_and_test(cfg)

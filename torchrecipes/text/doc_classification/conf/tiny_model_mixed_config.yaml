@@ -1,0 +1,24 @@
+# This config demostrates specifying a mix of full options from the config group for
+# a component, referring to preset config groups and override options in config groups.
+
+# New recipe developers could start with specifying full options in a single yaml
+# file like `tiny_model_full_config.yaml`. When the best defaults for
+# some options are settled, they can be added as a config group(e.g.
+# module/model=my_model) and referred here to make this file concise.
+
+defaults:
+  # this is optional as it will be overrided by the `model` section below
+  - module/model: xlmrbase_classifier_tiny
+  - module/optim: adamw
+  - datamodule: doc_classification_datamodule
+  - transform: doc_classification_transform_tiny
+  - trainer: cpu
+  - _self_
+
+datamodule:
+  dataset:
+    _target_: torchtext.datasets.sst2.SST2
+    root: ~/.torchtext/cache
+
+trainer:
+  fast_dev_run: false

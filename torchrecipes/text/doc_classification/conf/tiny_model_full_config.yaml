@@ -1,0 +1,81 @@
+# This config demostrates specifying full config options in single yaml file
+# Optionally, users can add config groups to hold some frequently used configs and
+# refer them in `defaults` to make this config more concise as shown in
+# tiny_model_mixed_config.yaml
+
+module:
+  # equivalent to setting `module/optim: adamw` under `defaults`
+  optim:
+    _target_: torch.optim.AdamW
+    lr: 1.0e-05
+    betas:
+    - 0.9
+    - 0.999
+    eps: 1.0e-08
+    weight_decay: 0
+    amsgrad: false
+  # equivalent to setting `module/model: xlmrbase_classifier_tiny` under `defaults`
+  model:
+    _target_: torchtext.models.RobertaBundle.build_model
+    encoder_conf:
+      _target_: torchtext.models.RobertaEncoderConf
+      vocab_size: 102
+      embedding_dim: 8
+      ffn_dimension: 8
+      padding_idx: 1
+      max_seq_len: 128
+      num_attention_heads:  1
+      num_encoder_layers: 1
+      dropout: 0.1
+      scaling: null
+      normalize_before: False
+    head:
+      _target_: torchtext.models.RobertaClassificationHead
+      num_classes: 2
+      input_dim: 8
+      inner_dim: 8
+      dropout: 0.4
+    freeze_encoder: True
+    checkpoint: null
+
+# equivalent to setting `datamodule: doc_classification_datamodule` under `defaults`
+datamodule:
+  _target_: torchrecipes.text.doc_classification.datamodule.doc_classification.DocClassificationDataModule.from_config
+  columns:
+  - text
+  - label
+  label_column: label
+  batch_size: 16
+  num_workers: 0
+  drop_last: False
+  pin_memory: False
+  dataset:
+    _target_: torchtext.datasets.sst2.SST2
+    root: ~/.torchtext/cache
+
+# equivalent to setting `transform: doc_classification_transform_tiny` under `defaults`
+transform:
+  transform:
+    _target_: torchrecipes.text.doc_classification.transform.doc_classification_text_transform.DocClassificationTextTransform
+    vocab_path: https://download.pytorch.org/models/text/xlmr.vocab_example.pt
+    spm_model_path: https://download.pytorch.org/models/text/xlmr.sentencepiece_example.bpe.model
+  label_transform:
+    _target_: torchtext.transforms.LabelToIndex
+    label_names:
+    - "0"
+    - "1"
+  num_labels: 2
+
+# equivalent to setting `trainer: cpu` under `defaults`
+trainer:
+  _target_: pytorch_lightning.trainer.Trainer
+  accelerator: cpu
+  devices: null
+  strategy: null
+  max_epochs: 1
+  default_root_dir: /tmp/doc_classification/torchrecipes
+  enable_checkpointing: true
+  fast_dev_run: false
+  logger:
+    _target_: pytorch_lightning.loggers.TensorBoardLogger
+    save_dir: /tmp/torchrecipes/doc_classification/logs
