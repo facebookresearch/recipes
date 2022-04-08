@@ -88,20 +88,16 @@ class DocClassificationDataModule(pl.LightningDataModule):
     def _get_data_loader(self, dataset: IterDataPipe[Tuple[str, str]]) -> DataLoader:
         dataset = dataset.batch(self.batch_size).rows2columnar(self.columns)
         dataset = dataset.map(self.transform)
-        if self.label_transform:
-            dataset = dataset.map(
-                lambda x: {
-                    **x,
-                    "label_ids": to_tensor(self.label_transform(x[self.label_column])),
-                }
-            )
-        else:
-            dataset = dataset.map(
-                lambda x: {
-                    **x,
-                    "label_ids": to_tensor(x[self.label_column]),
-                }
-            )
+        dataset = dataset.map(
+            lambda x: {
+                **x,
+                "label_ids": to_tensor(
+                    self.label_transform(  # pyre-fixme[29]: Optional[nn.modules.module.Module] is not a function.
+                        [str(label) for label in x[self.label_column]]
+                    )
+                ),
+            }
+        )
         dataset = dataset.add_index()
 
         return DataLoader(

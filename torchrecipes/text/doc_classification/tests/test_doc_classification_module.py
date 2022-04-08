@@ -24,6 +24,7 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
 )
 from torchrecipes.utils.task_test_base import TaskTestCaseBase
 from torchtext.datasets.sst2 import SST2
+from torchtext.transforms import LabelToIndex
 
 
 class TestDocClassificationModule(TaskTestCaseBase):
@@ -72,6 +73,7 @@ class TestDocClassificationModule(TaskTestCaseBase):
 
     def get_datamodule(self) -> DocClassificationDataModule:
         train_dataset, val_dataset, test_dataset = SST2(root=_DATA_DIR_PATH)
+        label_transform = LabelToIndex(label_names=["0", "1"])
         return DocClassificationDataModule(
             train_dataset=train_dataset,
             val_dataset=val_dataset,
@@ -80,7 +82,7 @@ class TestDocClassificationModule(TaskTestCaseBase):
             # test data with and without labels
             test_dataset=val_dataset,
             transform=self.get_transform(),
-            label_transform=None,
+            label_transform=label_transform,
             columns=["text", "label"],
             label_column="label",
             batch_size=8,

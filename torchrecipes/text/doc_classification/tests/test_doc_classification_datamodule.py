@@ -21,6 +21,7 @@ from torchrecipes.text.doc_classification.transform.doc_classification_text_tran
     DocClassificationTextTransform,
 )
 from torchtext.datasets.sst2 import SST2
+from torchtext.transforms import LabelToIndex
 
 
 class TestDocClassificationDataModule(testslide.TestCase):
@@ -42,6 +43,7 @@ class TestDocClassificationDataModule(testslide.TestCase):
             vocab_path=get_asset_path("vocab_example.pt"),
             spm_model_path=get_asset_path("spm_example.model"),
         )
+        label_transform = LabelToIndex(label_names=["0", "1"])
         return DocClassificationDataModule(
             train_dataset=train_dataset,
             val_dataset=val_dataset,
@@ -50,7 +52,7 @@ class TestDocClassificationDataModule(testslide.TestCase):
             # test data with and without labels
             test_dataset=val_dataset,
             transform=text_transform,
-            label_transform=None,
+            label_transform=label_transform,
             columns=["text", "label"],
             label_column="label",
             batch_size=8,
