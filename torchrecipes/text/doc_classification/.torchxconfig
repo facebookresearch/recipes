@@ -1,0 +1,12 @@
+[flow]
+secure_group = oncall_pt_lightning
+entitlement = gpu_default_global
+proxy_workflow_image = None
+
+[cli:run]
+component = fb.dist.ddp
+workspace = //torchrecipes/text/doc_classification:penv
+
+[component:fb.dist.ddp]
+img = pytorch_recipes_text_doc_classification:latest
+m = main.py
