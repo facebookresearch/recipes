@@ -20,7 +20,6 @@ from hydra.utils import instantiate
 from omegaconf import MISSING
 from torch import nn, Tensor
 from torchrecipes.core.conf import ModuleConf
-from torchrecipes.core.task_base import TaskBase
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchvision.utils import make_grid
 
@@ -66,7 +65,7 @@ def to_categorical(
     return torch.tensor(y_cat, dtype=torch.float, device=device)
 
 
-class InfoGAN(TaskBase[Batch, TrainOutput, TestOutput], pl.LightningModule):
+class InfoGAN(pl.LightningModule):
     """
     Implements a Lighting module for training vision InfoGAN.
 
@@ -276,11 +275,15 @@ class InfoGAN(TaskBase[Batch, TrainOutput, TestOutput], pl.LightningModule):
         self._update(imgs)
         return (self.generator_step(), self.discriminator_step(), self.info_loss_step())
 
+    # pyre-fixme[15]: `test_step` overrides method defined in `LightningModule`
+    #  inconsistently.
     def test_step(
         self, batch: Batch, batch_idx: int, *args: Any, **kwargs: Any
     ) -> TestOutput:
         return self._evaluation_step(batch)
 
+    # pyre-fixme[15]: `validation_step` overrides method defined in
+    #  `LightningModule` inconsistently.
     def validation_step(
         self, batch: Batch, batch_idx: int, *args: Any, **kwargs: Any
     ) -> TestOutput:

@@ -15,15 +15,12 @@ import torchmetrics as metrics
 from omegaconf import DictConfig
 from torch.nn.modules import CrossEntropyLoss
 from torch.optim import Optimizer
-from torchrecipes.core.task_base import TaskBase
 from torchrecipes.utils.config_utils import config_entry
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-class DocClassificationModule(
-    TaskBase[Mapping[str, torch.Tensor], torch.Tensor, None], pl.LightningModule
-):
+class DocClassificationModule(pl.LightningModule):
     """
     Generic module for doc classification
     The components(model, optim etc.) can be configured and instantiated by hydra
