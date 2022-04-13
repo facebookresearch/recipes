@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from typing import (
-    Optional,
-)
+from typing import Optional
 
 import pytorch_lightning as pl
 from hydra.core.config_store import ConfigStore
@@ -9,10 +7,7 @@ from omegaconf import MISSING
 from torch.utils.data import DataLoader
 from torchaudio.datasets import LibriMix
 from torchrecipes.core.conf import DataModuleConf
-from torchrecipes.utils.config_utils import (
-    config_entry,
-    get_class_config_method,
-)
+from torchrecipes.utils.config_utils import config_entry, get_class_config_method
 
 from .test_dataset import TestDataset
 from .utils import CollateFn

@@ -1,14 +1,5 @@
 from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Mapping,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 import hydra
 import pytorch_lightning as pl
@@ -19,7 +10,7 @@ from torchaudio.models import ConvTasNet
 from torchrecipes.audio.source_separation.loss import si_sdr_loss
 from torchrecipes.audio.source_separation.metrics import sdri_metric, sisdri_metric
 from torchrecipes.core.conf import ModuleConf
-from torchrecipes.utils.config_utils import get_class_config_method, config_entry
+from torchrecipes.utils.config_utils import config_entry, get_class_config_method
 
 
 def _get_model(

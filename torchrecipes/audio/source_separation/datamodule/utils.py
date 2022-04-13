@@ -1,7 +1,4 @@
-from typing import (
-    List,
-    Tuple,
-)
+from typing import List, Tuple
 
 import torch
 from torch import Tensor
