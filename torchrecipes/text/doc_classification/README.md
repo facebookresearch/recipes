@@ -16,85 +16,73 @@ The XLM-RoBERTa model was proposed in [Unsupervised Cross-lingual Representation
 
 [Papers With Code link](https://paperswithcode.com/paper/unsupervised-cross-lingual-representation-1)
 
-### Preparation
-
-In this recipe, we use TorchX to launch training job using either CPU or GPU. You can install TorchX with
-
+## Training
+* Train with [default config](https://github.com/facebookresearch/recipes/blob/main/torchrecipes/text/doc_classification/conf/default_config.yaml)(with XLM-R model and SST-2 dataset using CPU):
 ```
-$pip install torchx
+$ python main.py
 ```
-
-Then create a file `recipes/torchrecipes/launcher/torchx_app.py` with the following contents
-
+* It's time-consuming to complete the full training. For quick debugging, you can override trainer config option `fast_dev_run`
 ```
-# 'recipes/torchrecipes/launcher/torchx_app.py'
-
-import torchx.specs as specs
-
-doc_classification_args = [
-    "-m", "run",
-    "--config-name",
-    "train_app",
-    "--config-path",
-    "torchrecipes/text/doc_classification/conf",
-    "transform.num_labels=2",
-]
-
-def torchx_app(image: str = "run.py:latest", *job_args: str) -> specs.AppDef:
-    return specs.AppDef(
-        name="run",
-        roles=[
-            specs.Role(
-                name="run",
-                image=image,
-                entrypoint="python",
-                args=[*doc_classification_args, *job_args],
-                env={
-                    "CONFIG_MODULE": "torchrecipes.text.doc_classification.conf",
-                    "MODE": "prod",
-                    "HYDRA_FULL_ERROR": "1",
-                }
-            )
-        ],
-    )
+$ python main.py trainer.fast_dev_run=true
 ```
-The `torchx_app` above defines the entrypoint, args and image for launching. Next, we create a symlink for `launcher/run.py` at the top level of the repo:
-
+* Train with single GPU
 ```
-cd recipes
-ln -s torchrecipes/launcher/run.py ./run.py
+$ python main.py trainer=single_gpu
+```
+* Train with multiple GPUs(default to 8 GPUs). Note that we need to Download the SST-2 dataset locally. This step is temporary until the [torchdata multiprocessing issue](https://github.com/pytorch/data/issues/144) gets resolved.
+```
+$ mkdir -p ~/.torchtext/cache/SST2 # make SST2 dataset folder
+$ wget -P ~/.torchtext/cache/SST2 https://dl.fbaipublicfiles.com/glue/data/SST-2.zip # download the dataset
+
+$ python main.py trainer=multi_gpu
+```
+* Train with 2 GPUs
+```
+$ python main.py trainer=multi_gpu trainer.devices=2
+```
+* Switch to a different model by overriding `module/model` config group.
+```
+$ python main.py module/model=xlmrbase_classifier_tiny
+```
+* You can load a different default config file([tiny_model_full_config.yaml](https://github.com/facebookresearch/recipes/blob/main/torchrecipes/text/doc_classification/conf/tiny_model_full_config.yaml)) by specifying `--config-name`
+```
+$ python main.py --config-name=tiny_model_full_config
+```
+*This recipe uses Hydra config. You can learn more from [Hydra Getting Started](https://hydra.cc/docs/intro/)*
+
+## Training with torchx
+[TorchX](https://pytorch.org/torchx/0.2.0dev0/) is a universal job launcher for PyTorch applications. Optionally, you can use torchx to launch this recipe with various schedulers(Local, Docker, Kubernetes, Slurm, etc.).
+
+* Install torchx
+```
+$ pip install torchx
+```
+* Train locally with single GPU
+```
+$ torchx run --scheduler local_cwd utils.python --script main.py trainer=single_gpu
 ```
 
-
-### Launch Training
-#### CPU
-Launch a training job to train the XLM-R model on the SST-2 dataset using CPU:
+* Train locally with multiple GPUs
 
 ```
-torchx run --scheduler local_cwd `# mode`\
-torchrecipes/launcher/torchx_app.py:torchx_app `# torchx entry point`\
-+tb_save_dir=/tmp/ `# hydra overrides`
+$ mkdir -p ~/.torchtext/cache/SST2 # make SST2 dataset folder
+$ wget -P ~/.torchtext/cache/SST2 https://dl.fbaipublicfiles.com/glue/data/SST-2.zip # download the dataset
+
+torchx run --scheduler local_cwd utils.python --script main.py trainer=multi_gpu trainer.devices=2
 ```
-#### GPU
+
+* Train remotely with SLURM
 First request an interactive host with specified gpus using SLURM:
 ```
-srun -p dev -t 3:00:00 --gres=gpu:2 --cpus-per-task=20 --pty bash
-```
-
-Next download the SST-2 dataset locally. This step is temporary until the [torchdata multiprocessing issue](https://github.com/pytorch/data/issues/144) gets resolved.
-```
-mkdir -p ~/.torchtext/cache/SST2 # make SST2 dataset folder
-wget -P ~/.torchtext/cache/SST2 https://dl.fbaipublicfiles.com/glue/data/SST-2.zip # download the dataset
+$ srun -p dev -t 3:00:00 --gres=gpu:2 --cpus-per-task=20 --pty bash
 ```
 
 Now run the following script to launch training using multiple GPUs:
 ```
-torchx run --scheduler local_cwd  `# mode` \
-torchrecipes/launcher/torchx_app.py:torchx_app `# torchx entry point` \
-trainer=multi_gpu trainer.gpus=2 +tb_save_dir=/tmp/ `# hydra overrides`
+$ torchx run --scheduler local_cwd utils.python --script main.py trainer=multi_gpu trainer.gpus=2
 ```
 
 ### Common Mistakes
 * Ensure you have activated the environment where torchrecipes is installed (i.e. `conda activate torchrecipes`)
-* You may need to update the permissions for the `\tmp` folder to allow the training recipe to save files inside the folder. Alternatively you could replace this with a folder in your home dir (i.e. `+tb_save_dir=/home/{user}/tmp/`)
+* You may need to update the permissions for the `\tmp` folder to allow the training recipe to save files inside the folder. Alternatively you could replace this with a folder in your home dir (i.e. `trainer.logger.save_dir=/home/{user}/tmp/`)
 * You can update `trainer.gpus` parameter to use the number of GPUs available in your machine but in doing so you will also need to modify the learning rate (`module.optim.lr`) and the (`datamodule.batch_size`) parameters to ensure similar training results
