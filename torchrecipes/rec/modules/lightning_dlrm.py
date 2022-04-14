@@ -15,11 +15,11 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 import torchmetrics as metrics
+from ai_codesign.benchmarks.dlrm.torchrec_dlrm.modules.dlrm_train import DLRMTrain
 from torchrec import EmbeddingBagCollection
 from torchrec.distributed import TrainPipelineSparseDist
 from torchrec.distributed.model_parallel import DistributedModelParallel
 from torchrec.distributed.train_pipeline import In
-from torchrec.github.examples.dlrm.modules.dlrm_train import DLRMTrain
 from torchrec.optim.keyed import KeyedOptimizerWrapper
 
 
