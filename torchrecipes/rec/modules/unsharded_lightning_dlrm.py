@@ -16,8 +16,7 @@ import torch
 import torch.nn as nn
 import torchmetrics as metrics
 from hydra.core.config_store import ConfigStore
-from torchrec import EmbeddingBagCollection
-from torchrec import KeyedJaggedTensor
+from torchrec import EmbeddingBagCollection, KeyedJaggedTensor
 from torchrec.datasets.utils import Batch
 from torchrec.models.dlrm import DLRM
 from torchrecipes.core.conf import ModuleConf

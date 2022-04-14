@@ -8,9 +8,7 @@
 
 import testslide
 import torch
-from torchrecipes.rec.datamodules.random_rec_datamodule import (
-    RandomRecDataModule,
-)
+from torchrecipes.rec.datamodules.random_rec_datamodule import RandomRecDataModule
 
 
 class TestRandomRecDataModule(testslide.TestCase):

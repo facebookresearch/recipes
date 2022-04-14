@@ -6,13 +6,7 @@
 
 import random
 from collections import Counter
-from typing import (
-    Callable,
-    Dict,
-    Iterator,
-    Optional,
-    TypeVar,
-)
+from typing import Callable, Dict, Iterator, Optional, TypeVar
 
 from torch.utils.data import IterDataPipe
 

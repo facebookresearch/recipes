@@ -6,7 +6,7 @@
 
 import logging
 import os
-from typing import Dict, Optional, Any, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 import torch.distributed as dist

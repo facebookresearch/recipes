@@ -7,28 +7,20 @@
 #!/usr/bin/env python3
 
 from functools import partial
-from typing import (
-    Any,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Union,
-    cast,
-    Callable,
-)
+from typing import Any, Callable, cast, Iterable, List, Mapping, Optional, Union
 
 import pytorch_lightning as pl
 import torch
 from pyre_extensions import none_throws
 from torch.utils.data import DataLoader, IterDataPipe
 from torchrec.datasets.criteo import (
+    criteo_kaggle,
+    criteo_terabyte,
     DEFAULT_CAT_NAMES,
     DEFAULT_INT_NAMES,
     DEFAULT_LABEL_NAME,
 )
-from torchrec.datasets.criteo import criteo_terabyte, criteo_kaggle
-from torchrec.datasets.utils import rand_split_train_val, Batch
+from torchrec.datasets.utils import Batch, rand_split_train_val
 from torchrec.sparse.jagged_tensor import KeyedJaggedTensor
 from torchrecipes.rec.datamodules.samplers.undersampler import ProportionUnderSampler
 

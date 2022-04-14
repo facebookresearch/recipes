@@ -12,9 +12,9 @@ import tempfile
 import testslide
 from torchrecipes.rec.datamodules.criteo_datamodule import CriteoDataModule
 from torchrecipes.rec.datamodules.tests.utils import (
+    CAT_FEATURE_COUNT,
     create_dataset_tsv,
     INT_FEATURE_COUNT,
-    CAT_FEATURE_COUNT,
 )
 
 

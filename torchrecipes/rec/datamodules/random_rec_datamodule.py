@@ -5,7 +5,7 @@
 
 
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import List, Optional
 
 import pytorch_lightning as pl
 from hydra.core.config_store import ConfigStore

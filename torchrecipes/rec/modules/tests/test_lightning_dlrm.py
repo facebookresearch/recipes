@@ -23,9 +23,7 @@ from torchrec.datasets.criteo import DEFAULT_INT_NAMES
 from torchrec.modules.embedding_configs import EmbeddingBagConfig
 from torchrec.test_utils import skip_if_asan
 from torchrecipes.fb.utils.checkpoint import setup_checkpointing
-from torchrecipes.rec.accelerators.torchrec import (
-    TorchrecStrategy,
-)
+from torchrecipes.rec.accelerators.torchrec import TorchrecStrategy
 from torchrecipes.rec.datamodules.random_rec_datamodule import RandomRecDataModule
 from torchrecipes.rec.modules.lightning_dlrm import LightningDLRM
 

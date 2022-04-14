@@ -6,13 +6,13 @@
 
 #!/usr/bin/env python3
 
-from typing import TypeVar, Iterable, Iterator
+from typing import Iterable, Iterator, TypeVar
 
 import testslide
 from torch.utils.data import IterDataPipe
 from torchrecipes.rec.datamodules.samplers.undersampler import (
-    ProportionUnderSampler,
     DistributionUnderSampler,
+    ProportionUnderSampler,
 )
 
 T = TypeVar("T")
