@@ -9,8 +9,7 @@ import hydra
 import pytorch_lightning as pl
 import torch.nn as nn
 from omegaconf import DictConfig
-from torch.utils.data import DataLoader
-from torch.utils.data import IterDataPipe
+from torch.utils.data import DataLoader, IterDataPipe
 from torch.utils.data.backward_compatibility import worker_init_fn
 from torchrecipes.utils.config_utils import config_entry
 from torchtext.functional import to_tensor

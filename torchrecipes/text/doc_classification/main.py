@@ -13,7 +13,7 @@ from typing import Optional
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from pytorch_lightning import Trainer, seed_everything
+from pytorch_lightning import seed_everything, Trainer
 from torchrecipes.text.doc_classification.datamodule.doc_classification import (
     DocClassificationDataModule,
 )

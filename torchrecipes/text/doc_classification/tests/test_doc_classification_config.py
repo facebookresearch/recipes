@@ -22,9 +22,9 @@ from torchrecipes.text.doc_classification.module.doc_classification import (
     DocClassificationModule,
 )
 from torchrecipes.text.doc_classification.tests.common.assets import (
+    copy_asset,
     copy_partial_sst2_dataset,
     get_asset_path,
-    copy_asset,
 )
 from torchrecipes.utils.config_utils import get_class_config_method
 from torchrecipes.utils.test import tempdir

@@ -7,9 +7,7 @@ import hydra
 import testslide
 import torch
 from omegaconf import OmegaConf
-from torchrecipes.text.doc_classification.tests.common.assets import (
-    get_asset_path,
-)
+from torchrecipes.text.doc_classification.tests.common.assets import get_asset_path
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransform,
 )

@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import logging
-from typing import Any, Dict, Optional, Mapping
+from typing import Any, Dict, Mapping, Optional
 
 import hydra
 import pytorch_lightning as pl

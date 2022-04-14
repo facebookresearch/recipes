@@ -17,8 +17,10 @@ from torchrecipes.text.doc_classification.datamodule.doc_classification import (
 from torchrecipes.text.doc_classification.module.doc_classification import (
     DocClassificationModule,
 )
-from torchrecipes.text.doc_classification.tests.common.assets import _DATA_DIR_PATH
-from torchrecipes.text.doc_classification.tests.common.assets import get_asset_path
+from torchrecipes.text.doc_classification.tests.common.assets import (
+    _DATA_DIR_PATH,
+    get_asset_path,
+)
 from torchrecipes.text.doc_classification.transform.doc_classification_text_transform import (
     DocClassificationTextTransform,
 )
