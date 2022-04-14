@@ -12,19 +12,18 @@ import os
 import time
 import traceback
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, TypedDict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 import hydra
 import torch
 from omegaconf import OmegaConf
 from pytorch_lightning import LightningDataModule, LightningModule
-from pytorch_lightning.callbacks import Callback
-from pytorch_lightning.callbacks import ModelCheckpoint as OSSModelCheckpoint
+from pytorch_lightning.callbacks import Callback, ModelCheckpoint as OSSModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger as OSSTensorboardLogger
 from pytorch_lightning.trainer import Trainer
 from pytorch_lightning.utilities.types import _EVALUATE_OUTPUT, _PREDICT_OUTPUT
 from torchrecipes._internal_patches import log_run, ModelCheckpoint, TensorBoardLogger
-from torchrecipes.core.conf import ModuleConf, DataModuleConf, TrainerConf
+from torchrecipes.core.conf import DataModuleConf, ModuleConf, TrainerConf
 from torchrecipes.core.logger import JobStatus
 from torchrecipes.utils.checkpoint import find_last_checkpoint_path
 from torchrecipes.utils.trainer_plugins import get_trainer_params

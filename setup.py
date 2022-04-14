@@ -11,7 +11,7 @@ import shutil
 import subprocess
 from typing import List
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 import distutils.command.clean  # isort:skip
 
 _PACKAGE_NAME: str = "torchrecipes"

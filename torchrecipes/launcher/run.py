@@ -9,15 +9,14 @@
 import importlib
 import logging
 import os
-from enum import auto, unique, Enum
-from typing import Union, Optional
+from enum import auto, Enum, unique
+from typing import Optional, Union
 
 import hydra
 from omegaconf import OmegaConf
 from pytorch_lightning.utilities.types import _EVALUATE_OUTPUT, _PREDICT_OUTPUT
 from torch.distributed.elastic.multiprocessing import errors
-from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.base_train_app import TrainOutput
+from torchrecipes.core.base_train_app import BaseTrainApp, TrainOutput
 from torchrecipes.core.conf import TrainAppConf
 
 logger: logging.Logger = logging.getLogger(__name__)

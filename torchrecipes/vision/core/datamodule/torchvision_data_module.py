@@ -5,17 +5,17 @@
 
 
 import logging
-from typing import Tuple, Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from pyre_extensions import none_throws
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import (
-    Subset,
     DataLoader,
+    random_split,
     RandomSampler,
     SequentialSampler,
-    random_split,
+    Subset,
 )
 from torchvision.datasets.vision import VisionDataset
 

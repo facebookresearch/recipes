@@ -6,7 +6,7 @@
 
 from functools import wraps
 from tempfile import TemporaryDirectory
-from typing import TypeVar, Callable
+from typing import Callable, TypeVar
 from unittest import TestCase
 
 from pyre_extensions import ParameterSpecification
