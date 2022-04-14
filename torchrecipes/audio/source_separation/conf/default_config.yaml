@@ -1,0 +1,67 @@
+datamodule:
+  _target_: torchrecipes.audio.source_separation.datamodule.librimix.LibriMixDataModule
+  root_dir: ???
+  batch_size: 6
+  tr_split: train-360
+  num_speakers: 2
+  sample_rate: 8000
+  task: sep_clean
+  num_workers: 4
+
+module:
+  _target_: torchrecipes.audio.source_separation.module.conv_tasnet.ConvTasNetModule
+  model:
+    _target_: torchaudio.models.ConvTasNet
+    num_sources: 2
+    enc_kernel_size: 16
+    enc_num_feats: 512
+    msk_kernel_size: 3
+    msk_num_feats: 128
+    msk_num_hidden_feats: 512
+    msk_num_layers: 8
+    msk_num_stacks: 3
+    msk_activate: relu
+  loss:
+    _target_: torchrecipes.audio.source_separation.loss.si_sdr_loss
+    _partial_: true
+  optim_fn:
+    _target_: torch.optim.Adam
+    _partial_: true
+    lr: 0.001
+  metrics:
+    sdri:
+      _target_: torchrecipes.audio.source_separation.metrics.sdri_metric
+      _partial_: true
+    sisdri:
+      _target_: torchrecipes.audio.source_separation.metrics.sisdri_metric
+      _partial_: true
+  lr_scheduler:
+    _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+    _partial_: true
+    mode: min
+    factor: 0.5
+    patience: 5
+
+trainer:
+  _target_: pytorch_lightning.trainer.Trainer
+  strategy: ddp
+  accelerator: gpu
+  devices: 2
+  default_root_dir: null
+  max_epochs: 200
+  limit_train_batches: 1.0
+  gradient_clip_val: 5.0
+  logger:
+    _target_: pytorch_lightning.loggers.TensorBoardLogger
+    save_dir: /tmp/logs
+  callbacks:
+  - _target_: pytorch_lightning.callbacks.ModelCheckpoint
+    dirpath: /tmp/checkpoints
+    monitor: losses/val_loss
+    mode: min
+    save_top_k: 5
+    save_weights_only: true
+  - _target_: pytorch_lightning.callbacks.EarlyStopping
+    monitor: losses/val_loss
+    mode: min
+    patience: 30

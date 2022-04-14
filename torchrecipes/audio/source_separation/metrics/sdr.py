@@ -1,6 +1,14 @@
-import torch
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
-from ..loss import utils
+
+#!/usr/bin/env python3
+# pyre-strict
+
+import torch
+from torchrecipes.audio.source_separation.loss import utils
 
 
 def sisdri_metric(
