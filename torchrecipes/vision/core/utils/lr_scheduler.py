@@ -6,7 +6,7 @@
 
 from typing import Callable, List
 
-from torch.optim import Optimizer, lr_scheduler
+from torch.optim import lr_scheduler, Optimizer
 
 
 def sequential_lr(

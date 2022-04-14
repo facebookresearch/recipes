@@ -7,7 +7,7 @@
 #!/usr/bin/env python3
 # Based on https://github.com/PyTorchLightning/lightning-bolts/blob/master/pl_bolts/callbacks/vision/image_generation.py
 from contextlib import contextmanager
-from typing import runtime_checkable, Iterator, Optional, Protocol, Tuple
+from typing import Iterator, Optional, Protocol, runtime_checkable, Tuple
 
 import torch
 import torchvision

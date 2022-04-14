@@ -6,7 +6,7 @@
 
 #!/usr/bin/env python3
 
-from typing import Union, Any, Callable, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Union
 
 import pytorch_lightning as pl
 import torch

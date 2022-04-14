@@ -15,7 +15,7 @@ from omegaconf import MISSING
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import DataModuleConf, TrainerConf, TrainAppConf
+from torchrecipes.core.conf import DataModuleConf, TrainAppConf, TrainerConf
 from torchrecipes.utils.config_utils import get_class_name_str
 from torchrecipes.vision.image_generation.callbacks import (
     TensorboardGenerativeModelImageSampler,

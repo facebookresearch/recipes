@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Any, Iterable, Optional, Tuple, Dict
+from typing import Any, Dict, Iterable, Optional, Tuple
 
 import torch
 from pytorch_lightning import LightningModule

@@ -6,7 +6,7 @@
 
 #!/usr/bin/env python3
 # Base on https://github.com/eriklindernoren/PyTorch-GAN/blob/master/implementations/infogan/infogan.py
-from typing import Tuple, List
+from typing import List, Tuple
 
 import torch
 from torch import nn
