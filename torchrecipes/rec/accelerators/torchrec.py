@@ -52,8 +52,16 @@ class TorchrecStrategy(ParallelStrategy):
             device = torch.device("cpu")
         return device
 
-    def save_checkpoint(self, checkpoint: Dict[str, Any], filepath: _PATH) -> None:
-        self.checkpoint_io.save_checkpoint(checkpoint, filepath)
+    def save_checkpoint(
+        self,
+        checkpoint: Dict[str, Any],
+        filepath: _PATH,
+        # pyre-ignore[2]: Parameter `storage_options` has type `None` but type `Any` is specified.
+        storage_options: Optional[Any] = None,
+    ) -> None:
+        self.checkpoint_io.save_checkpoint(
+            checkpoint=checkpoint, path=filepath, storage_options=storage_options
+        )
 
     # pyre-ignore[3]
     def batch_to_device(
