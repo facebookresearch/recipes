@@ -100,8 +100,6 @@ if __name__ == "__main__":
         include_package_data=True,
         # Package info
         packages=find_packages(),
-        # pyre-fixme[6]: Expected `Mapping[str, typing.Type[setuptools.Command]]`
-        #  for 15th param but got `Mapping[str, typing.Type[clean]]`.
         cmdclass={
             "clean": clean,
         },
