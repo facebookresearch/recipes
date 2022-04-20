@@ -78,7 +78,7 @@ class TestLightningDLRM(unittest.TestCase):
         dm1, dm2 = datamodules
 
         # Load m1 state dicts into m2
-        lit_model2.model.load_state_dict(lit_model1.model.state_dict(), strict=False)
+        lit_model2.model.load_state_dict(lit_model1.model.state_dict())
         optim1 = lit_model1.configure_optimizers()
         optim2 = lit_model2.configure_optimizers()
         optim2.load_state_dict(optim1.state_dict())
@@ -207,7 +207,7 @@ class TestLightningDLRM(unittest.TestCase):
 
         # load state dict from the chopped state_dict
         # pyre-fixme[6] Expected `collections.OrderedDict[str, torch.Tensor]` for 1st positional only
-        model2.model.load_state_dict(test_std, strict=False)
+        model2.model.load_state_dict(test_std)
 
         # assert parameters equal
         for w0, w1 in zip(model1.model.parameters(), model2.model.parameters()):
