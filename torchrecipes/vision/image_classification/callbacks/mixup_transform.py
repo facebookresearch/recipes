@@ -3,18 +3,14 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 import torch
-from hydra.core.config_store import ConfigStore
-from omegaconf import MISSING
 from pyre_extensions import none_throws
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning.trainer.trainer import Trainer
 from torch.distributions.beta import Beta
-from torchrecipes.utils.config_utils import get_class_name_str
 
 
 def convert_to_one_hot(targets: torch.Tensor, num_classes: int) -> torch.Tensor:
@@ -75,20 +71,3 @@ class MixupTransform(Callback):
         permuted_indices = torch.randperm(batch["target"].shape[0])
         for key in ["input", "target"]:
             batch[key] = c * batch[key] + (1.0 - c) * batch[key][permuted_indices, :]
-
-
-@dataclass
-class MixupTransformConf:
-    _target_: str = get_class_name_str(MixupTransform)
-    # pyre-fixme[4]: Attribute annotation cannot be `Any`.
-    alpha: Any = MISSING
-    num_classes: Optional[int] = None
-
-
-cs: ConfigStore = ConfigStore.instance()
-cs.store(
-    group="callbacks/mixup_transform",
-    name="mixup_transform",
-    node=MixupTransformConf,
-    package="mixup_transform",
-)
