@@ -8,8 +8,8 @@
 
 import importlib
 import os
+from unittest import mock
 
-import mock
 import testslide
 from testslide import StrictMock
 from torchrecipes.core.base_train_app import BaseTrainApp, TrainOutput
