@@ -9,6 +9,7 @@
 
 import math
 from itertools import permutations
+from typing import Callable
 from typing import Optional
 
 import torch
@@ -49,8 +50,8 @@ def sdr(
         This function is tested to produce the exact same result as
         https://github.com/naplab/Conv-TasNet/blob/e66d82a8f956a69749ec8a4ae382217faa097c5c/utility/sdr.py#L34-L56
     """
-    reference_pow = reference.pow(2).mean(axis=2, keepdim=True)
-    mix_pow = (estimate * reference).mean(axis=2, keepdim=True)
+    reference_pow = reference.pow(2).mean(dim=2, keepdim=True)
+    mix_pow = (estimate * reference).mean(dim=2, keepdim=True)
     scale = mix_pow / (reference_pow + epsilon)
 
     reference = scale * reference
@@ -60,12 +61,12 @@ def sdr(
     error_pow = error.pow(2)
 
     if mask is None:
-        reference_pow = reference_pow.mean(axis=2)
-        error_pow = error_pow.mean(axis=2)
+        reference_pow = reference_pow.mean(dim=2)
+        error_pow = error_pow.mean(dim=2)
     else:
-        denom = mask.sum(axis=2)
-        reference_pow = (mask * reference_pow).sum(axis=2) / denom
-        error_pow = (mask * error_pow).sum(axis=2) / denom
+        denom = mask.sum(dim=2)
+        reference_pow = (mask * reference_pow).sum(dim=2) / denom
+        error_pow = (mask * error_pow).sum(dim=2) / denom
 
     return 10 * torch.log10(reference_pow) - 10 * torch.log10(error_pow)
 
@@ -90,7 +91,7 @@ class PIT(torch.nn.Module):
           https://arxiv.org/abs/1703.06284
     """
 
-    def __init__(self, utility_func):
+    def __init__(self, utility_func: Callable[..., torch.Tensor]) -> None:
         super().__init__()
         self.utility_func = utility_func
 
@@ -140,7 +141,7 @@ def sdr_pit(
     reference: torch.Tensor,
     mask: Optional[torch.Tensor] = None,
     epsilon: float = 1e-8,
-):
+) -> torch.Tensor:
     """Computes scale-invariant source-to-distortion ratio.
 
     1. adjust both estimate and reference to have 0-mean

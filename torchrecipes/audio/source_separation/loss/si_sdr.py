@@ -25,8 +25,8 @@ def si_sdr_loss(
     Returns:
         torch.Tensor: Si-SDR loss. Tensor of dimension (batch, )
     """
-    estimate = estimate - estimate.mean(axis=2, keepdim=True)
-    reference = reference - reference.mean(axis=2, keepdim=True)
+    estimate = estimate - estimate.mean(dim=2, keepdim=True)
+    reference = reference - reference.mean(dim=2, keepdim=True)
 
     si_sdri = utils.sdr_pit(estimate, reference, mask=mask)
     return -si_sdri.mean()
