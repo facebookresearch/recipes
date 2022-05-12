@@ -109,7 +109,7 @@ class InfoGAN(pl.LightningModule):
 
         # Static generator inputs for sampling
         self.register_buffer(
-            "static_z", torch.zeros([self.n_classes ** 2, self.latent_dim])
+            "static_z", torch.zeros([self.n_classes**2, self.latent_dim])
         )
         self.register_buffer(
             "static_label",
@@ -126,7 +126,7 @@ class InfoGAN(pl.LightningModule):
             ),
         )
         self.register_buffer(
-            "static_code", torch.zeros([self.n_classes ** 2, self.code_dim])
+            "static_code", torch.zeros([self.n_classes**2, self.code_dim])
         )
 
     def training_step(
@@ -292,7 +292,7 @@ class InfoGAN(pl.LightningModule):
     def generate_sample_image(self, n_row: int = 10) -> Tensor:
         # Static sample
         z = torch.tensor(
-            np.random.normal(0, 1, (n_row ** 2, self.latent_dim)),
+            np.random.normal(0, 1, (n_row**2, self.latent_dim)),
             dtype=torch.float,
             device=self.device,
         )
@@ -301,7 +301,7 @@ class InfoGAN(pl.LightningModule):
         static_img = make_grid(static_sample, nrow=n_row, normalize=True, padding=0)
 
         # Get varied c1 and c2
-        zeros = np.zeros((n_row ** 2, 1))
+        zeros = np.zeros((n_row**2, 1))
         c_varied = np.repeat(np.linspace(-1, 1, n_row)[:, np.newaxis], n_row, 0)
         c1 = torch.tensor(
             np.concatenate((c_varied, zeros), -1),

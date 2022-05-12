@@ -34,7 +34,7 @@ class Generator(nn.Module):
 
         self.init_size: int = img_size // 4  # Initial size before upsampling
         self.l1: nn.modules.Sequential = nn.Sequential(
-            nn.Linear(input_dim, 128 * self.init_size ** 2)
+            nn.Linear(input_dim, 128 * self.init_size**2)
         )
 
         self.conv_blocks: nn.modules.Sequential = nn.Sequential(
@@ -99,17 +99,17 @@ class Discriminator(nn.Module):
         )
 
         # The height and width of downsampled image
-        ds_size = img_size // 2 ** 4
+        ds_size = img_size // 2**4
 
         # Output layers
         self.adv_layer: nn.modules.Sequential = nn.Sequential(
-            nn.Linear(128 * ds_size ** 2, 1)
+            nn.Linear(128 * ds_size**2, 1)
         )
         self.aux_layer: nn.modules.Sequential = nn.Sequential(
-            nn.Linear(128 * ds_size ** 2, n_classes), nn.Softmax()
+            nn.Linear(128 * ds_size**2, n_classes), nn.Softmax()
         )
         self.latent_layer: nn.modules.Sequential = nn.Sequential(
-            nn.Linear(128 * ds_size ** 2, code_dim)
+            nn.Linear(128 * ds_size**2, code_dim)
         )
 
     def forward(
