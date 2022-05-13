@@ -7,7 +7,7 @@
 #!/usr/bin/env python3
 # pyre-strict
 
-from typing import Optional
+from typing import Optional, Dict
 
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
@@ -52,9 +52,9 @@ class LibriMixDataModule(LightningDataModule):
         self.sample_rate = sample_rate
         self.task = task
         self.num_workers = num_workers
-        self.datasets = {}
+        self.datasets: Dict[str, LibriMix] = {}
 
-    def _get_dataset(self, subset):
+    def _get_dataset(self, subset: str) -> LibriMix:
         return LibriMix(
             root=self.root_dir,
             subset=subset,
@@ -70,7 +70,7 @@ class LibriMixDataModule(LightningDataModule):
         if stage == "test" or stage is None:
             self.datasets["test"] = self._get_dataset(subset="test")
 
-    def train_dataloader(self):
+    def train_dataloader(self) -> DataLoader:
         return DataLoader(
             self.datasets["train"],
             batch_size=self.batch_size,
@@ -79,7 +79,7 @@ class LibriMixDataModule(LightningDataModule):
             drop_last=True,
         )
 
-    def val_dataloader(self):
+    def val_dataloader(self) -> DataLoader:
         return DataLoader(
             self.datasets["val"],
             batch_size=self.batch_size,
@@ -88,7 +88,7 @@ class LibriMixDataModule(LightningDataModule):
             drop_last=True,
         )
 
-    def test_dataloader(self):
+    def test_dataloader(self) -> DataLoader:
         return DataLoader(
             self.datasets["test"],
             batch_size=self.batch_size,
