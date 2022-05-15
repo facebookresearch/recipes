@@ -8,7 +8,7 @@
 import logging
 import os
 import sys
-from typing import Iterator, Any, List, TypeVar
+from typing import Any, Iterator, List, TypeVar
 
 import pytorch_lightning as pl
 import torch

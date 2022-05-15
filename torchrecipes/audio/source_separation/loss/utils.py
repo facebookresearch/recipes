@@ -9,8 +9,7 @@
 
 import math
 from itertools import permutations
-from typing import Callable
-from typing import Optional
+from typing import Callable, Optional
 
 import torch
 

@@ -11,7 +11,7 @@ import logging
 
 import hydra
 import torchrecipes.audio.source_separation.conf  # noqa
-from omegaconf import OmegaConf, DictConfig
+from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import seed_everything
 
 log: logging.Logger = logging.getLogger(__name__)

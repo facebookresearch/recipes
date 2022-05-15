@@ -7,7 +7,7 @@
 #!/usr/bin/env python3
 # pyre-strict
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
