@@ -5,23 +5,21 @@
 
 
 #!/usr/bin/env python3
-from dataclasses import dataclass
+
 from typing import List, Optional
 
 import hydra
 
 # @manual "//github/third-party/omry/omegaconf:omegaconf"
-from omegaconf import MISSING
+
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.callbacks import Callback
 from torchrecipes.core.base_train_app import BaseTrainApp
-from torchrecipes.core.conf import DataModuleConf, TrainAppConf, TrainerConf
-from torchrecipes.utils.config_utils import get_class_name_str
+from torchrecipes.core.conf import DataModuleConf, TrainerConf
 from torchrecipes.vision.image_generation.callbacks import (
     TensorboardGenerativeModelImageSampler,
 )
 from torchrecipes.vision.image_generation.module.gan import GANModuleConf
-from torchrecipes.vision.image_generation.module.infogan import InfoGANModuleConf
 
 
 class GANTrainApp(BaseTrainApp):
@@ -42,19 +40,3 @@ class GANTrainApp(BaseTrainApp):
     def get_callbacks(self) -> List[Callback]:
         # TODO(kaizh): make callback configurable
         return [TensorboardGenerativeModelImageSampler()]
-
-
-@dataclass
-class GANTrainAppConf(TrainAppConf):
-    _target_: str = get_class_name_str(GANTrainApp)
-    datamodule: DataModuleConf = MISSING
-    module: GANModuleConf = MISSING
-    trainer: TrainerConf = MISSING
-
-
-@dataclass
-class InfoGANTrainAppConf(TrainAppConf):
-    _target_: str = get_class_name_str(GANTrainApp)
-    datamodule: DataModuleConf = MISSING
-    module: InfoGANModuleConf = MISSING
-    trainer: TrainerConf = MISSING

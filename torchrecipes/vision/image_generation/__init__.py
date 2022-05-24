@@ -13,4 +13,5 @@ def register_components() -> None:
     subcomponents to Hydra's ConfigStore.
     """
     import torchrecipes.vision.image_generation.module.gan  # noqa
+    import torchrecipes.vision.image_generation.module.infogan  # noqa
     import torchrecipes.vision.image_generation.train_app  # noqa
