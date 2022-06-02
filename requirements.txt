@@ -1,4 +1,5 @@
 hydra-core>=1.1.2
 pyre-extensions>=0.0.23
 pytorch-lightning @ git+https://github.com/PyTorchLightning/pytorch-lightning.git@9b011606f
+protobuf<=3.20.1 # strict. TODO: Remove after tensorboard gets compatible https://github.com/tensorflow/tensorboard/issues/5708
 TestSlide>=2.7.0
