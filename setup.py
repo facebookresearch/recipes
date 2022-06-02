@@ -24,7 +24,8 @@ _GITIGNORE: str = ".gitignore"
 
 def get_version() -> str:
     """Retrieves the version of the library."""
-    if version := os.getenv("BUILD_VERSION"):
+    version = os.getenv("BUILD_VERSION")
+    if version:
         return version
     cwd = os.path.dirname(os.path.abspath(__file__))
     version_file_path = os.path.join(_PACKAGE_NAME, _VERSION_FILE)
@@ -95,7 +96,7 @@ if __name__ == "__main__":
         url="https://github.com/facebookresearch/recipes",
         license="BSD-3",
         keywords=["pytorch", "machine learning"],
-        python_requires=">=3.8",
+        python_requires=">=3.7",
         install_requires=get_requirements(),
         include_package_data=True,
         # Package info
