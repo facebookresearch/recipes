@@ -19,7 +19,7 @@ from torchrec import EmbeddingBagCollection
 from torchrec.distributed import TrainPipelineSparseDist
 from torchrec.distributed.model_parallel import DistributedModelParallel
 from torchrec.distributed.train_pipeline import In
-from torchrec.models.dlrm import DLRMTrain
+from torchrec.models.dlrm import DLRM, DLRMTrain
 from torchrec.optim.keyed import KeyedOptimizerWrapper
 
 
@@ -53,13 +53,14 @@ class LightningDLRM(pl.LightningModule):
             dist.init_process_group(backend=backend)
         self.to(device=device)
 
-        model = DLRMTrain(
+        dlrm_model = DLRM(
             embedding_bag_collection=embedding_bag_collection,
             dense_in_features=dense_in_features,
             dense_arch_layer_sizes=dense_arch_layer_sizes,
             over_arch_layer_sizes=over_arch_layer_sizes,
             dense_device=device,
         )
+        model = DLRMTrain(dlrm_model)
 
         self.model = DistributedModelParallel(
             module=model,
