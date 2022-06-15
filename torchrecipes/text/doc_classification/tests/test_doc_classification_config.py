@@ -117,7 +117,11 @@ class TestDocClassificationConfig(testslide.TestCase):
         self.assertGreaterEqual(result[0]["test_f1"], 0)
 
         ts_model = task.to_torchscript()
+        # pyre-fixme[29]: `Union[typing.Dict[str, torch._C.ScriptModule],
+        #  torch._C.ScriptModule]` is not a function.
         pred1 = ts_model({"text": ["hello world", "how are you?"]})
+        # pyre-fixme[29]: `Union[typing.Dict[str, torch._C.ScriptModule],
+        #  torch._C.ScriptModule]` is not a function.
         pred2 = ts_model({"text": ["hello world", "how are you?"], "label": ["1", "0"]})
         self.assertIsNotNone(pred1)
         self.assertIsNotNone(pred2)

@@ -113,7 +113,6 @@ class MNISTDataModule(LightningDataModule):
         dataset_train, dataset_val = random_split(
             dataset,
             splits,
-            # pyre-ignore[16]: Generator has manual_seed
             generator=torch.Generator().manual_seed(self.seed),
         )
 

@@ -53,10 +53,10 @@ class MultilabelAccuracy(Metric):
         ), f"top-k({self._top_k}) is greater than the number of classes({num_classes})"
         preds, target = self._format_inputs(preds, target)
 
-        # pyre-ignore[16]: torch.Tensor has attribute topk
         _, top_idx = preds.topk(self._top_k, dim=1, largest=True, sorted=True)
 
         # pyre-ignore[16]: Accuracy has attribute correct
+        # pyre-fixme[29]: `Union[BoundMethod[typing.Callable(torch._C._TensorBase.__i...
         self.correct += (
             torch.gather(target, dim=1, index=top_idx[:, : self._top_k])
             .max(dim=1)
@@ -64,10 +64,14 @@ class MultilabelAccuracy(Metric):
             .item()
         )
         # pyre-ignore[16]: Accuracy has attribute total
+        # pyre-fixme[29]: `Union[BoundMethod[typing.Callable(torch._C._TensorBase.__i...
         self.total += preds.shape[0]
 
     def compute(self) -> torch.Tensor:
+        # pyre-fixme[6]: For 1st param expected `Tensor` but got `Union[Tensor,
+        #  Module]`.
         if torch.is_nonzero(self.total):
+            # pyre-fixme[29]: `Union[BoundMethod[typing.Callable(torch._C._TensorBase...
             return self.correct / self.total
         return torch.tensor(0.0)
 

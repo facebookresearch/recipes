@@ -81,7 +81,6 @@ def run_with_hydra(
     return run_in_certain_mode(app)
 
 
-# pyre-ignore[56]: Decorator is not defined in typeshed_internal.
 @errors.record
 def main() -> None:
     config_module = os.getenv(CONFIG_MODULE)

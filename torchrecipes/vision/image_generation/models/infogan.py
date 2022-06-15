@@ -88,7 +88,11 @@ class Discriminator(nn.Module):
                 nn.Dropout2d(0.25),
             ]
             if bn:
+                # pyre-fixme[6]: For 1st param expected `Union[LeakyReLU, Conv2d,
+                #  Dropout2d]` but got `BatchNorm2d`.
                 block.append(nn.BatchNorm2d(out_filters, 0.8))
+            # pyre-fixme[7]: Expected `List[Module]` but got `List[Union[LeakyReLU,
+            #  Conv2d, Dropout2d]]`.
             return block
 
         self.conv_blocks: nn.modules.Sequential = nn.Sequential(

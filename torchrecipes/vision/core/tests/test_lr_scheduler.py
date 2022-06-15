@@ -28,9 +28,12 @@ class TestCosineWithWarmup(unittest.TestCase):
     @parameterized.expand([(2,), (0.2,)])
     def test_lr_schedule(self, warmup_iters: Union[int, float]) -> None:
         """Tests learning rate matches expected schedule during model training."""
+        # pyre-fixme[28]: Unexpected keyword argument `requires_grad`.
         test_parameter = torch.autograd.Variable(
             torch.randn([5, 5]), requires_grad=True
         )
+        # pyre-fixme[6]: For 1st param expected `Union[Iterable[Dict[typing.Any,
+        #  typing.Any]], Iterable[Tensor]]` but got `List[Variable]`.
         optimizer = torch.optim.SGD([test_parameter], lr=0.01)
         lr_scheduler = CosineWithWarmup(
             optimizer, warmup_start_factor=0.1, max_iters=10, warmup_iters=warmup_iters

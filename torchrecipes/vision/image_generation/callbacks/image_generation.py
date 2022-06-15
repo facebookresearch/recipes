@@ -106,6 +106,8 @@ class TensorboardGenerativeModelImageSampler(Callback):
         # pyre-ignore[16]: `pytorch_lightning.loggers.base.LightningLoggerBase` has no attribute `experiment`.
         experiment = logger.experiment
         dim = (self.num_samples, pl_module.latent_dim)
+        # pyre-fixme[6]: For 3rd param expected `Union[List[int], Size,
+        #  typing.Tuple[int, ...]]` but got `Tuple[int, Union[Tensor, Module]]`.
         z = torch.normal(mean=0.0, std=1.0, size=dim, device=pl_module.device)
 
         # generate images
