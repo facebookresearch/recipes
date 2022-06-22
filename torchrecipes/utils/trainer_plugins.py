@@ -34,6 +34,8 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
     "ddp_find_unused_parameters_false": DDPStrategyConf(
         find_unused_parameters=False,
     ),
+    # pyre-fixme[6]: For 1st param expected `Optional[str]` but got `(process_group:
+    #  ProcessGroup, bucket: GradBucket) -> Future[Tensor]`.
     "ddp_fp16_compress": DDPStrategyConf(ddp_comm_hook=default.fp16_compress_hook),
 }
 
