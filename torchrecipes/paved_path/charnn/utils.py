@@ -5,7 +5,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-import random
+import os
 
 import numpy as np
 import torch
@@ -49,3 +49,11 @@ def sample(model, x, steps, temperature=1.0, sample=False, top_k=None):
         x = torch.cat((x, ix), dim=1)
 
     return x
+
+
+def get_realpath(path: str):
+    if "://" in path or os.path.isabs(path):
+        return path
+
+    WORKING_DIR = os.path.dirname(__file__)
+    return os.path.join(WORKING_DIR, path)

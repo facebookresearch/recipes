@@ -20,7 +20,7 @@ from torch.utils.data import random_split
 from char_dataset import CharDataset, get_dataset
 from model import GPT, GPTConfig, OptimizerConfig
 from trainer import Checkpoint, Trainer, TrainerConfig, load_checkpoint
-from utils import sample
+from utils import get_realpath, sample
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ def main(cfg: DictConfig):
     setup_process_group()
 
     job_name = get_job_name()
-    data_path = cfg["dataset"]["path"]
+    data_path = get_realpath(cfg["dataset"]["path"])
     logger.info(
         f"{get_fq_hostname()}:{os.getpid()}:{device} Running charNN {job_name}, data_path: {data_path}"
     )
