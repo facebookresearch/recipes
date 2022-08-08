@@ -46,7 +46,10 @@ def get_raw_model(model: torch.nn.Module) -> torch.nn.Module:
 
 
 def save_checkpoint(
-    checkpoint_path: Optional[str], model: torch.nn.Module, optimizer: optim.Optimizer, epoch: int
+    checkpoint_path: Optional[str],
+    model: torch.nn.Module,
+    optimizer: optim.Optimizer,
+    epoch: int,
 ) -> None:
     if checkpoint_path and dist.get_rank() == 0:
         model = get_raw_model(model)
@@ -117,7 +120,9 @@ class Trainer:
                 torch.profiler.ProfilerActivity.CPU,
                 torch.profiler.ProfilerActivity.CUDA,
             ],
-            on_trace_ready=torch.profiler.tensorboard_trace_handler(self._get_log_dir()),
+            on_trace_ready=torch.profiler.tensorboard_trace_handler(
+                self._get_log_dir()
+            ),
         )
 
     def run_batch(self, x, y, train: bool = True) -> float:
@@ -134,7 +139,10 @@ class Trainer:
 
     def run_epoch(self, epoch: int, max_iter: int = -1) -> None:
         train_sampler = DistributedSampler(
-            self.train_dataset, rank=self.rank, num_replicas=self.world_size, shuffle=True
+            self.train_dataset,
+            rank=self.rank,
+            num_replicas=self.world_size,
+            shuffle=True,
         )
         train_loader = DataLoader(
             self.train_dataset,
@@ -161,7 +169,9 @@ class Trainer:
                 if prof:
                     prof.step()
                 if self.tb_writer:
-                    self.tb_writer.add_scalar(f"train_loss_{epoch}", train_batch_loss, it)
+                    self.tb_writer.add_scalar(
+                        f"train_loss_{epoch}", train_batch_loss, it
+                    )
                 if it % 100 == 0:
                     print(
                         f"{self.rank}: epoch {epoch + 1} iter {it}: train loss {train_batch_loss:.5f}"
@@ -181,7 +191,9 @@ class Trainer:
                     )
                 if max_iter > 0 and it >= max_iter:
                     break
-            save_checkpoint(self.config.checkpoint_path, self.model, self.optimizer, epoch)
+            save_checkpoint(
+                self.config.checkpoint_path, self.model, self.optimizer, epoch
+            )
 
         finally:
             if prof:

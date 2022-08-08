@@ -66,7 +66,9 @@ class EmbeddingStem(nn.Module):
     def __init__(self, config: GPTConfig, device="cpu", dtype=torch.float32):
         super().__init__()
 
-        self.tok_emb = nn.Embedding(config.vocab_size, config.n_embd, device=device, dtype=dtype)
+        self.tok_emb = nn.Embedding(
+            config.vocab_size, config.n_embd, device=device, dtype=dtype
+        )
         self.pos_emb = nn.Parameter(
             torch.zeros(1, config.block_size, config.n_embd, device=device, dtype=dtype)
         )
@@ -81,7 +83,9 @@ class EmbeddingStem(nn.Module):
         assert t <= self.block_size, "Cannot forward, model block size is exhausted."
 
         token_embeddings = self.tok_emb(idx)  # each index maps to a (learnable) vector
-        position_embeddings = self.pos_emb[:, :t, :]  # each position maps to a (learnable) vector
+        position_embeddings = self.pos_emb[
+            :, :t, :
+        ]  # each position maps to a (learnable) vector
         return self.drop(token_embeddings + position_embeddings)
 
 
@@ -157,7 +161,10 @@ class GPT(nn.Module):
         rank = int(os.getenv("RANK", "0"))
 
         if rank == 0:
-            print("GPT Model Number of parameters: ", sum(p.numel() for p in self.parameters()))
+            print(
+                "GPT Model Number of parameters: ",
+                sum(p.numel() for p in self.parameters()),
+            )
 
     def get_block_size(self):
         return self.block_size

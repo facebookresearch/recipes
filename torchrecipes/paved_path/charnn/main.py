@@ -13,13 +13,13 @@ from typing import Optional, Tuple
 import hydra
 import torch
 import torch.distributed as dist
-from omegaconf import DictConfig
-from torch.nn.parallel import DistributedDataParallel
-from torch.utils.data import random_split
 
 from char_dataset import CharDataset, get_dataset
 from model import GPT, GPTConfig, OptimizerConfig
-from trainer import Checkpoint, Trainer, TrainerConfig, load_checkpoint
+from omegaconf import DictConfig
+from torch.nn.parallel import DistributedDataParallel
+from torch.utils.data import random_split
+from trainer import Checkpoint, load_checkpoint, Trainer, TrainerConfig
 from utils import get_realpath, sample
 
 logger = logging.getLogger(__name__)
@@ -101,9 +101,9 @@ def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) 
     if dist.get_rank() == 0:
         device = get_device()
         context = cfg["charnn"]["phrase"]
-        x = torch.tensor([dataset.stoi[s] for s in context], dtype=torch.long)[None, ...].to(
-            device
-        )
+        x = torch.tensor([dataset.stoi[s] for s in context], dtype=torch.long)[
+            None, ...
+        ].to(device)
         y = sample(model, x, 2000, temperature=1.0, sample=True, top_k=10)[0]
         completion = "".join([dataset.itos[int(i)] for i in y])
         print(completion)
@@ -128,7 +128,9 @@ def main(cfg: DictConfig):
     datalen = len(dataset)
     train_len = int(datalen * 0.9)
 
-    train_dataset, test_dataset = random_split(dataset, [train_len, datalen - train_len])
+    train_dataset, test_dataset = random_split(
+        dataset, [train_len, datalen - train_len]
+    )
 
     mconf = GPTConfig(
         vocab_size=dataset.vocab_size,
@@ -150,8 +152,12 @@ def main(cfg: DictConfig):
     )
 
     checkpoint = load_checkpoint(tconf.checkpoint_path)
-    opt_conf = OptimizerConfig(lr=cfg["opt"]["lr"], weight_decay=cfg["opt"]["weight_decay"])
-    model, optimizer = get_model_and_optimizer(cfg["charnn"]["dist"], mconf, opt_conf, checkpoint)
+    opt_conf = OptimizerConfig(
+        lr=cfg["opt"]["lr"], weight_decay=cfg["opt"]["weight_decay"]
+    )
+    model, optimizer = get_model_and_optimizer(
+        cfg["charnn"]["dist"], mconf, opt_conf, checkpoint
+    )
 
     if cfg["charnn"]["task"] == "train":
         trainer = Trainer(

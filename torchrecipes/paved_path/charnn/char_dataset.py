@@ -18,7 +18,7 @@ def _init_data(self, data_path: str, block_size) -> None:
         self.data = f.read()
     self.data_path = data_path
     self.block_size = block_size
-    chars = sorted(list(set(self.data)))
+    chars = sorted(set(self.data))
     self.data_size = len(self.data)
     self.vocab_size = len(chars)
     print(f"Data has {self.data_size} characters, {self.vocab_size} unique.")
