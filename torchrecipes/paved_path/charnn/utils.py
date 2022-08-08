@@ -7,7 +7,6 @@
 
 import os
 
-import numpy as np
 import torch
 from torch.nn import functional as F
 
@@ -30,7 +29,7 @@ def sample(model, x, steps, temperature=1.0, sample=False, top_k=None):
     # block_size = model.get_block_size()
     block_size = 128
     model.eval()
-    for k in range(steps):
+    for _ in range(steps):
         x_cond = (
             x if x.size(1) <= block_size else x[:, -block_size:]
         )  # crop context if needed

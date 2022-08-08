@@ -26,4 +26,3 @@ charnn:
 hydra:
   run:
     dir: ./
-
