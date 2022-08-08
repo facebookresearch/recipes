@@ -1,0 +1,29 @@
+experiment_name: charnn-test
+opt:
+  lr: 0.0006
+  weight_decay: 0.1
+dataset:
+  path: data/input.txt
+max_iter: 200
+trainer:
+  max_epochs: 1
+  lr: 0.0006
+  batch_size: 128
+  data_loader_workers: 1
+  enable_profile: False
+  log_dir: "/tmp/charnn-test"
+model:
+  n_layer: 2 # 8
+  n_head: 2 # 8
+  n_embd: 32 # 512
+charnn:
+  dist: ddp
+  # train or generate
+  task: train
+  # start string
+  phrase: Hello there
+
+hydra:
+  run:
+    dir: ./
+
