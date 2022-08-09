@@ -24,7 +24,7 @@ class CharDataset(Dataset):
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         return self._getitem(idx)
 
-    def _init_data(self, data_path: str, block_size) -> None:
+    def _init_data(self, data_path: str, block_size: int) -> None:
         fs, path = fsspec.core.url_to_fs(data_path)
         with fs.open(path, "r") as f:
             self.data = f.read()
