@@ -105,9 +105,7 @@ def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) 
     if dist.get_rank() == 0:
         device = get_device()
         context = cfg["charnn"]["phrase"]
-        x = torch.tensor([dataset.stoi[s] for s in context], dtype=torch.long)[
-            None, ...
-        ].to(device)
+        x = torch.tensor([dataset.stoi[s] for s in context], dtype=torch.long).unsqueeze(0).to(device)
         y = sample(model, x, 2000, temperature=1.0, sample=True, top_k=10)[0]
         completion = "".join([dataset.itos[int(i)] for i in y])
         print(completion)
@@ -127,11 +125,11 @@ def main(cfg: DictConfig) -> None:
     block_size = 128  # spatial extent of the model for its context
     dataset = get_dataset(data_path, block_size)
 
-    datalen = len(dataset)
-    train_len = int(datalen * 0.9)
+    data_len = len(dataset)
+    train_len = int(data_len * 0.9)
 
     train_dataset, test_dataset = random_split(
-        dataset, [train_len, datalen - train_len]
+        dataset, [train_len, data_len - train_len]
     )
 
     mconf = GPTConfig(
@@ -173,7 +171,7 @@ def main(cfg: DictConfig) -> None:
         )
         trainer.fit(cfg.get("max_iter", -1))
     elif cfg["charnn"]["task"] == "generate":
-        generate_seq(cfg, model, train_dataset)
+        generate_seq(cfg, model, train_dataset.dataset)
     else:
         raise RuntimeError(f"Unknown task: {cfg['charnn']['task']}")
 
