@@ -29,7 +29,7 @@ def get_fq_hostname() -> str:
     return socket.getfqdn(socket.gethostname())
 
 
-def set_env():
+def set_env() -> None:
     os.environ["RANK"] = os.environ.get("RANK", "0")
     os.environ["WORLD_SIZE"] = os.environ.get("WORLD_SIZE", "1")
     os.environ["MASTER_PORT"] = os.environ.get("MASTER_PORT", "29830")
@@ -40,16 +40,16 @@ def set_env():
     )
 
 
-def get_job_name():
+def get_job_name() -> str:
     uid = os.environ["TORCHELASTIC_RUN_ID"]
     return f"test-job-{uid}"
 
 
-def get_device() -> Optional[int]:
+def get_device() -> torch.device:
     if not torch.cuda.is_available():
-        logger.warning("NO GPU!!")
-        return None
-    return int(os.environ["LOCAL_RANK"])
+        return torch.device("cpu")
+    local_rank = int(os.environ.get("LOCAL_RANK", "0"))
+    return torch.device(f"cuda:{local_rank}")
 
 
 def get_ddp_model_and_optimizer(
@@ -110,7 +110,7 @@ def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) 
 
 
 @hydra.main(config_path=".", config_name="trainer_config")
-def main(cfg: DictConfig):
+def main(cfg: DictConfig) -> None:
     set_env()
     device = get_device()
     if device is not None:

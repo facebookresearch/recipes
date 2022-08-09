@@ -201,6 +201,6 @@ class Trainer:
             if self.tb_writer:
                 self.tb_writer.flush()
 
-    def fit(self, max_iter: int = -1):
+    def fit(self, max_iter: int = -1) -> None:
         for epoch in range(self.start_epoch, self.config.max_epochs):
             self.run_epoch(epoch, max_iter)

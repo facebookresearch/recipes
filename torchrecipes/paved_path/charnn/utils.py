@@ -6,12 +6,15 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+from typing import Optional
 
 import torch
+import torch.nn as nn
+from torch import Tensor
 from torch.nn import functional as F
 
 
-def top_k_logits(logits, k):
+def top_k_logits(logits: Tensor, k: int) -> Tensor:
     v, ix = torch.topk(logits, k)
     out = logits.clone()
     out[out < v[:, [-1]]] = -float("Inf")
@@ -19,7 +22,7 @@ def top_k_logits(logits, k):
 
 
 @torch.no_grad()
-def sample(model, x, steps, temperature=1.0, sample=False, top_k=None):
+def sample(model: nn.Module, x: Tensor, steps: int, temperature: float = 1.0, sample: bool = False, top_k: Optional[int] = None) -> Tensor:
     """
     take a conditioning sequence of indices in x (of shape (b,t)) and predict the next token in
     the sequence, feeding the predictions back into the model each time. Clearly the sampling
@@ -52,9 +55,9 @@ def sample(model, x, steps, temperature=1.0, sample=False, top_k=None):
     return x
 
 
-def get_realpath(path: str):
+def get_realpath(path: str) -> str:
     if "://" in path or os.path.isabs(path):
         return path
 
-    WORKING_DIR = os.path.dirname(__file__)
-    return os.path.join(WORKING_DIR, path)
+    work_dir = os.path.dirname(__file__)
+    return os.path.join(work_dir, path)

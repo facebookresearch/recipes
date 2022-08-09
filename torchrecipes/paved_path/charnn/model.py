@@ -18,9 +18,11 @@ GPT model:
 import logging
 import os
 from dataclasses import dataclass
+from typing import Tuple
 
 import torch
 import torch.nn as nn
+from torch import Tensor
 from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
     checkpoint_wrapper,
 )
@@ -36,7 +38,7 @@ class OptimizerConfig:
     weight_decay: float = 0.1
 
 
-def module_wrapper(module, fsdp=False, activation="noop"):
+def module_wrapper(module, fsdp=False, activation="noop") -> nn.Module:
     if not fsdp:
         return module
 
@@ -63,7 +65,7 @@ class GPTConfig:
 
 
 class EmbeddingStem(nn.Module):
-    def __init__(self, config: GPTConfig, device="cpu", dtype=torch.float32):
+    def __init__(self, config: GPTConfig, device="cpu", dtype=torch.float32) -> None:
         super().__init__()
 
         self.tok_emb = nn.Embedding(
@@ -75,10 +77,10 @@ class EmbeddingStem(nn.Module):
         self.drop = nn.Dropout(config.embd_pdrop)
         self.block_size = config.block_size
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.tok_emb.reset_parameters()
 
-    def forward(self, idx):
+    def forward(self, idx) -> Tensor:
         b, t = idx.size()
         assert t <= self.block_size, "Cannot forward, model block size is exhausted."
 
@@ -94,7 +96,7 @@ class MultiheadAttentionLayer(nn.Module):
     A multi-head masked self-attention layer with a projection at the end.
     """
 
-    def __init__(self, config, device="cpu", dtype=torch.float32):
+    def __init__(self, config, device="cpu", dtype=torch.float32) -> None:
         super().__init__()
         assert config.n_embd % config.n_head == 0
         self.resid_drop = nn.Dropout(config.resid_pdrop)
@@ -114,7 +116,7 @@ class MultiheadAttentionLayer(nn.Module):
             dtype=dtype,
         )
 
-    def forward(self, x):
+    def forward(self, x) -> Tensor:
         _, seq_size, _ = x.size()
         y = self.attn(x, x, x, attn_mask=self.mask[0, 0, :seq_size, :seq_size])[0]
         y = self.resid_drop(self.proj(y))
@@ -124,7 +126,7 @@ class MultiheadAttentionLayer(nn.Module):
 class Block(nn.Module):
     """an unassuming Transformer block"""
 
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         super().__init__()
         self.ln1 = nn.LayerNorm(config.n_embd)
         self.ln2 = nn.LayerNorm(config.n_embd)
@@ -136,7 +138,7 @@ class Block(nn.Module):
             nn.Dropout(config.resid_pdrop),
         )
 
-    def forward(self, x):
+    def forward(self, x) -> Tensor:
         x = x + self.attn(self.ln1(x))
         x = x + self.mlp(self.ln2(x))
         return x
@@ -145,7 +147,7 @@ class Block(nn.Module):
 class GPT(nn.Module):
     """the full GPT language model, with a context size of block_size"""
 
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         super().__init__()
 
         # input embedding stem
@@ -166,10 +168,10 @@ class GPT(nn.Module):
                 sum(p.numel() for p in self.parameters()),
             )
 
-    def get_block_size(self):
+    def get_block_size(self) -> int:
         return self.block_size
 
-    def _init_weights(self, module):
+    def _init_weights(self, module) -> None:
         if isinstance(module, (nn.Linear, nn.Embedding)):
             module.weight.data.normal_(mean=0.0, std=0.02)
             if isinstance(module, nn.Linear) and module.bias is not None:
@@ -178,7 +180,7 @@ class GPT(nn.Module):
             module.bias.data.zero_()
             module.weight.data.fill_(1.0)
 
-    def forward(self, idx, targets=None):
+    def forward(self, idx, targets=None) -> Tuple[Tensor, Tensor]:
         b, t = idx.size()
         assert t <= self.block_size, "Cannot forward, model block size is exhausted."
 
