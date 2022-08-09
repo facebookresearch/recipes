@@ -13,13 +13,13 @@ from typing import Optional, Tuple
 import hydra
 import torch
 import torch.distributed as dist
-
-from char_dataset import CharDataset, get_dataset
-from model import GPT, GPTConfig, OptimizerConfig
 from omegaconf import DictConfig
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import random_split
-from trainer import Checkpoint, load_checkpoint, Trainer, TrainerConfig
+
+from char_dataset import CharDataset, get_dataset
+from model import GPT, GPTConfig, OptimizerConfig
+from trainer import Checkpoint, Trainer, TrainerConfig, load_checkpoint
 from utils import get_realpath, sample
 
 logger = logging.getLogger(__name__)
