@@ -46,10 +46,14 @@ def get_job_name() -> str:
 
 
 def get_device() -> torch.device:
-    if not torch.cuda.is_available():
-        return torch.device("cpu")
-    local_rank = int(os.environ.get("LOCAL_RANK", "0"))
-    return torch.device(f"cuda:{local_rank}")
+    if  torch.cuda.is_available():
+        local_rank = int(os.environ.get("LOCAL_RANK", "0"))
+        device = torch.device(f"cuda:{local_rank}")
+        torch.cuda.set_device(device)
+    else:
+        device = torch.device("cpu")
+    return device
+    
 
 
 def get_ddp_model_and_optimizer(
@@ -62,9 +66,9 @@ def get_ddp_model_and_optimizer(
         model.load_state_dict(checkpoint.model_state)
     device = get_device()
     device_ids = None
-    if device is not None:
+    if device.type == "cuda":
         model = model.to(device)
-        device_ids = [device]
+        device_ids = [device.index]
     model = DistributedDataParallel(
         model,
         device_ids=device_ids,
@@ -83,15 +87,15 @@ def get_model_and_optimizer(
 ) -> Tuple[torch.nn.Module, torch.optim.Optimizer]:
     if type == "ddp":
         return get_ddp_model_and_optimizer(gpt_config, opt_config, checkpoint)
-    else:
-        raise RuntimeError(f"Unknown type: {type}. Allowed values: [ddp]")
+    
+    raise RuntimeError(f"Unknown type: {type}. Allowed values: [ddp]")
 
 
 def setup_process_group() -> None:
     device = get_device()
     rank = int(os.environ["RANK"])
     world_size = int(os.environ["WORLD_SIZE"])
-    if device is not None:
+    if device.type == "cuda":
         dist.init_process_group("nccl", rank=rank, world_size=world_size)
     else:
         dist.init_process_group("gloo", rank=rank, world_size=world_size)
@@ -113,8 +117,6 @@ def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) 
 def main(cfg: DictConfig) -> None:
     set_env()
     device = get_device()
-    if device is not None:
-        torch.cuda.set_device(device)
     setup_process_group()
 
     job_name = get_job_name()

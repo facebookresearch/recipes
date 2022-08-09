@@ -83,7 +83,7 @@ class Trainer:
         train_dataset: Dataset,
         test_dataset: Dataset,
         config: TrainerConfig,
-        device: Optional[int] = None,
+        device: Optional[torch.device] = None,
         start_epoch: int = 0,
     ):
         self.model = model
