@@ -65,14 +65,14 @@ class GPTConfig:
 
 
 class EmbeddingStem(nn.Module):
-    def __init__(self, config: GPTConfig, device="cpu", dtype=torch.float32) -> None:
+    def __init__(self, config: GPTConfig, dtype=torch.float32) -> None:
         super().__init__()
 
         self.tok_emb = nn.Embedding(
-            config.vocab_size, config.n_embd, device=device, dtype=dtype
+            config.vocab_size, config.n_embd, dtype=dtype
         )
         self.pos_emb = nn.Parameter(
-            torch.zeros(1, config.block_size, config.n_embd, device=device, dtype=dtype)
+            torch.zeros(1, config.block_size, config.n_embd, dtype=dtype)
         )
         self.drop = nn.Dropout(config.embd_pdrop)
         self.block_size = config.block_size
@@ -96,11 +96,11 @@ class MultiheadAttentionLayer(nn.Module):
     A multi-head masked self-attention layer with a projection at the end.
     """
 
-    def __init__(self, config, device="cpu", dtype=torch.float32) -> None:
+    def __init__(self, config, dtype=torch.float32) -> None:
         super().__init__()
         assert config.n_embd % config.n_head == 0
         self.resid_drop = nn.Dropout(config.resid_pdrop)
-        self.proj = nn.Linear(config.n_embd, config.n_embd, device=device, dtype=dtype)
+        self.proj = nn.Linear(config.n_embd, config.n_embd, dtype=dtype)
         self.register_buffer(
             "mask",
             torch.tril(torch.ones(config.block_size, config.block_size)).view(
@@ -112,7 +112,6 @@ class MultiheadAttentionLayer(nn.Module):
             num_heads=config.n_head,
             dropout=config.attn_pdrop,
             batch_first=True,
-            device=device,
             dtype=dtype,
         )
 
