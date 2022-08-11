@@ -6,6 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 import logging
 import os
+import random
 import socket
 import uuid
 from typing import Optional, Tuple
@@ -111,9 +112,15 @@ def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) 
         print(completion)
 
 
+def set_seed(seed: int) -> None:
+    random.seed(seed)
+    torch.manual_seed(seed)
+
+
 @hydra.main(config_path=".", config_name="trainer_config")
 def main(cfg: DictConfig) -> None:
     set_env()
+    set_seed(42)
     device = get_device()
     setup_process_group()
 
