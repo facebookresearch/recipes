@@ -106,7 +106,7 @@ def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) 
     if dist.get_rank() == 0:
         device = get_device()
         context = cfg["charnn"]["phrase"]
-        x = torch.tensor([dataset.stoi[s] for s in context], dtype=torch.long).unsqueeze(0).to(device)
+        x = torch.tensor([dataset.stoi[s] for s in context], dtype=torch.long, device=device).unsqueeze(0)
         y = sample(model, x, 2000, temperature=1.0, sample=True, top_k=10)[0]
         completion = "".join([dataset.itos[int(i)] for i in y])
         print(completion)
