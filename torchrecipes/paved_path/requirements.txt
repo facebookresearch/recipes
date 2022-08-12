@@ -1,0 +1,4 @@
+torch
+tensorboard
+hydra-core
+fsspec
