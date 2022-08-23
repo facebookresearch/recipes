@@ -1,0 +1,7 @@
+hydra-core
+fsspec
+s3fs
+numpy
+tensorboard
+--find-links https://download.pytorch.org/whl/nightly/cu113/torch_nightly.html
+torch --pre torch 
