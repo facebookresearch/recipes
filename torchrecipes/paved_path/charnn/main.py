@@ -79,6 +79,18 @@ def get_ddp_model_and_optimizer(
     return model, optimizer
 
 
+def get_model_and_optimizer(
+    type: str,
+    gpt_config: GPTConfig,
+    opt_config: OptimizerConfig,
+    checkpoint: Optional[Checkpoint],
+) -> Tuple[torch.nn.Module, torch.optim.Optimizer]:
+    if type == "ddp":
+        return get_ddp_model_and_optimizer(gpt_config, opt_config, checkpoint)
+
+    raise RuntimeError(f"Unknown type: {type}. Allowed values: [ddp]")
+
+
 def setup_process_group() -> None:
     device = get_device()
     rank = int(os.environ["RANK"])
@@ -151,7 +163,9 @@ def main(cfg: DictConfig) -> None:
     opt_conf = OptimizerConfig(
         lr=cfg["opt"]["lr"], weight_decay=cfg["opt"]["weight_decay"]
     )
-    model, optimizer = get_ddp_model_and_optimizer(mconf, opt_conf, checkpoint)
+    model, optimizer = get_model_and_optimizer(
+        cfg["charnn"]["dist"], mconf, opt_conf, checkpoint
+    )
 
     if cfg["charnn"]["task"] == "train":
         trainer = Trainer(
