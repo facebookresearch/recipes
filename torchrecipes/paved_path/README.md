@@ -58,3 +58,6 @@ Note that it will output a URL like "aws_batch://torchx/..." that is used to tra
 torchx status "aws_batch://torchx/..."
 ```
 
+## Pipelines
+As your applications getting complicated, you can make them as pipelines, manage and monitor them by frameworks like Airflow, Kubeflow, etc.
+* [Airflow example](https://github.com/facebookresearch/recipes/tree/main/torchrecipes/paved_path/airflow)

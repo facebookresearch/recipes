@@ -40,19 +40,22 @@ dag = DAG(
 )
 
 
+# This example uses torchx CLI with BashOperator.
+# We can also use PythonOperator to achive it.
 train = BashOperator(
     task_id="train",
-    bash_command="""AWS_DEFAULT_REGION=$REGION \
+    bash_command=f"""AWS_DEFAULT_REGION=$REGION \
         torchx run --workspace '' -s aws_batch \
-        -cfg queue=$JOB_QUEUE,image_repo=$ECR_URL/charnn dist.ddp \
-        --script charnn/main.py --image $ECR_URL/charnn:latest \
+        -cfg queue={JOB_QUEUE},image_repo={ECR_URL}/charnn dist.ddp \
+        --script charnn/main.py --image {ECR_URL}/charnn:latest \
         --cpu 8 --gpu 2 -j 1x2 --memMB 20480 2>&1 \
-        | grep -Eo aws_batch://torchx/$JOB_QUEUE:main-[a-z0-9]+""",
+        | grep -Eo aws_batch://torchx/{JOB_QUEUE}:main-[a-z0-9]+""",
     env={
         "REGION": REGION,
         "JOB_QUEUE": JOB_QUEUE,
         "ECR_URL": ECR_URL,
     },
+    append_env=True,
     dag=dag,
     do_xcom_push=True,
 )
@@ -61,6 +64,8 @@ train = BashOperator(
 def wait_for_batch_job(**context) -> bool:
     session = boto3.session.Session()
     client = session.client("batch", region_name=REGION)
+    # XComs are a mechanism that let Tasks talk to each other
+    # Learn more from https://airflow.apache.org/docs/apache-airflow/stable/concepts/xcoms.html
     job = context["ti"].xcom_pull(task_ids="train")
     job_desc = job.split("/")[-1]
     queue_name, job_name = job_desc.split(":")
@@ -85,7 +90,7 @@ wait_for_job = PythonOperator(
 
 parse_output = BashOperator(
     task_id="parse_output",
-    bash_command="output: {{ ti.xcom_pull(task_ids='wait_for_job') }}",
+    bash_command="echo {{ ti.xcom_pull(task_ids='wait_for_job') }}",
     dag=dag,
 )
 
