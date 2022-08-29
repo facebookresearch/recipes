@@ -17,7 +17,6 @@ model:
   n_head: 2 # 8
   n_embd: 32 # 512
 charnn:
-  dist: ddp
   # train or generate
   task: train
   # start string
