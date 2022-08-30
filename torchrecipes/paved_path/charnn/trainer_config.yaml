@@ -1,4 +1,4 @@
-experiment_name: charnn-test
+
 opt:
   lr: 0.0006
   weight_decay: 0.1
@@ -6,12 +6,13 @@ dataset:
   path: data/input.txt
 max_iter: 200
 trainer:
+  work_dir: "/tmp/charnn"
   max_epochs: 1
   lr: 0.0006
   batch_size: 128
   data_loader_workers: 1
   enable_profile: False
-  log_dir: "/tmp/charnn-test"
+  snapshot_path: ""  # specify your snapshot path to restore training state
 model:
   n_layer: 2 # 8
   n_head: 2 # 8

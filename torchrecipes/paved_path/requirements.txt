@@ -2,3 +2,5 @@ torch
 tensorboard
 hydra-core
 fsspec
+--pre
+torchsnapshot-nightly

@@ -9,18 +9,19 @@ import os
 import random
 import socket
 import uuid
-from typing import Optional, Tuple
+from typing import Tuple
 
 import hydra
 import torch
 import torch.distributed as dist
+import torchsnapshot
 
 from char_dataset import CharDataset, get_dataset
 from model import GPT, GPTConfig, OptimizerConfig
 from omegaconf import DictConfig
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import random_split
-from trainer import Checkpoint, load_checkpoint, Trainer, TrainerConfig
+from trainer import Trainer, TrainerConfig
 from utils import get_realpath, sample
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ def set_env() -> None:
 
 def get_job_name() -> str:
     uid = os.environ["TORCHELASTIC_RUN_ID"]
-    return f"test-job-{uid}"
+    return f"run-{uid}"
 
 
 def get_device() -> torch.device:
@@ -57,13 +58,10 @@ def get_device() -> torch.device:
 
 
 def get_ddp_model_and_optimizer(
-    gpt_config: GPTConfig, opt_config: OptimizerConfig, checkpoint: Optional[Checkpoint]
+    gpt_config: GPTConfig, opt_config: OptimizerConfig
 ) -> Tuple[torch.nn.Module, torch.optim.Optimizer]:
     # Create new GPT Model on CPU
     model = GPT(gpt_config)
-    # Load GPT model from checkpoint if present
-    if checkpoint:
-        model.load_state_dict(checkpoint.model_state)
     device = get_device()
     device_ids = None
     if device.type == "cuda":
@@ -83,11 +81,9 @@ def get_model_and_optimizer(
     type: str,
     gpt_config: GPTConfig,
     opt_config: OptimizerConfig,
-    checkpoint: Optional[Checkpoint],
 ) -> Tuple[torch.nn.Module, torch.optim.Optimizer]:
     if type == "ddp":
-        return get_ddp_model_and_optimizer(gpt_config, opt_config, checkpoint)
-
+        return get_ddp_model_and_optimizer(gpt_config, opt_config)
     raise RuntimeError(f"Unknown type: {type}. Allowed values: [ddp]")
 
 
@@ -149,23 +145,34 @@ def main(cfg: DictConfig) -> None:
     )
 
     train_cfg = cfg["trainer"]
+    train_cfg["work_dir"] = os.path.join(train_cfg.get("work_dir", ""), job_name)
     tconf = TrainerConfig(
+        work_dir=train_cfg["work_dir"],
         job_name=job_name,
         max_epochs=train_cfg["max_epochs"],
         batch_size=train_cfg["batch_size"],
         data_loader_workers=train_cfg["data_loader_workers"],
         enable_profile=train_cfg["enable_profile"],
-        log_dir=train_cfg.get("log_dir"),
-        checkpoint_path=train_cfg.get("checkpoint_path"),
+        # TODO: @stevenliu remove log_dir. infer it from work_dir
+        log_dir=os.path.join(train_cfg["work_dir"], "logs"),
     )
-
-    checkpoint = load_checkpoint(tconf.checkpoint_path)
     opt_conf = OptimizerConfig(
         lr=cfg["opt"]["lr"], weight_decay=cfg["opt"]["weight_decay"]
     )
-    model, optimizer = get_model_and_optimizer(
-        cfg["charnn"]["dist"], mconf, opt_conf, checkpoint
-    )
+    model, optimizer = get_model_and_optimizer(cfg["charnn"]["dist"], mconf, opt_conf)
+
+    # app_state will be saved or restored for checkpointing
+    progress = torchsnapshot.StateDict(current_epoch=0)
+    app_state = {
+        "model": model,
+        "optimizer": optimizer,
+        "progress": progress,
+    }
+
+    if train_cfg.get("snapshot_path", None):
+        snapshot = torchsnapshot.Snapshot(train_cfg["snapshot_path"])
+        print(f"Restoring snapshot from path: {train_cfg['snapshot_path']}")
+        snapshot.restore(app_state=app_state)
 
     if cfg["charnn"]["task"] == "train":
         trainer = Trainer(
@@ -175,9 +182,9 @@ def main(cfg: DictConfig) -> None:
             test_dataset,
             tconf,
             device,
-            checkpoint.finished_epoch + 1 if checkpoint else 0,
+            progress["current_epoch"],
         )
-        trainer.fit(cfg.get("max_iter", -1))
+        trainer.fit(app_state, max_iter=cfg.get("max_iter", -1))
     elif cfg["charnn"]["task"] == "generate":
         generate_seq(cfg, model, train_dataset.dataset)
     else:
