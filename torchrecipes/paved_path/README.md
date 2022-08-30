@@ -23,7 +23,7 @@ You will get output like below. The snapshot path can be used for inference or r
 ...
 [2022-08-30 20:07:33,842][trainer][INFO] - Saving snapshot to /tmp/charnn/run-bc6565c7/snapshots/epoch-1
 ```
-* Restore from snapshot and train with more epochs
+* Restore from a snapshot and train with more epochs
 ```bash
 python charnn/main.py trainer.max_epochs=3 trainer.snapshot_path=/tmp/charnn/run-1f7abaed/snapshots/epoch-1
 ```
@@ -37,8 +37,7 @@ python charnn/main.py charnn.task="generate" charnn.phrase="hello world" trainer
 ```bash
 torchx run  -s local_cwd dist.ddp -j 1x2 --script charnn/main.py
 ```
-* NOTE: 
-    * `-j 1x2` means single node with 2 GPUs. Learn more about torchx [here](https://pytorch.org/torchx/latest/)
+> **_NOTE_**: `-j 1x2` specifies single node with 2 GPUs. Learn more about torchx [here](https://pytorch.org/torchx/latest/)
 
 ## Development in AWS
 ### Setup environment
@@ -52,13 +51,12 @@ Before launching a job in Batch, we need to create a docker image containing the
 
 ### AWS Batch
 1. Create Batch through Wizard: https://docs.aws.amazon.com/batch/latest/userguide/Batch_GetStarted.html
-  * NOTE: 
-    * Configure Compute Environment and Job Queue(named it as "torch-gpu"). Do not need to Define Job if launch with torch.x
+  > **_NOTE_**: Configure Compute Environment and Job Queue(named it as "torch-gpu"). Do not need to Define Job if launch with torch.x
 2. Setup env variables
 ```bash
 export REGION="us-west-2"  # or any region in your case
 export JOB_QUEUE="torchx-gpu"  # must match the name of your Job Queue
-export ECR_URL="YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/charnn"  # defined in docker/README.md
+export ECR_URL="YOUR_AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/charnn"  # defined in docker/README.md
 ```
 3. Launch a model training job with torchx
 ```bash
@@ -67,10 +65,18 @@ torchx run --workspace '' -s aws_batch \
         --script charnn/main.py --image $ECR_URL/charnn:latest \
         --cpu 8 --gpu 2 -j 1x2 --memMB 20480
 ```
-Note that it will output a URL like "aws_batch://torchx/..." that is used to track the job status.
-4. Check job status
-```bash
-torchx status "aws_batch://torchx/..."
+You should get output as below. You can monitor and manage the job in AWS Batch console through the `UI URL`.
+```
+torchx 2022-08-29 22:01:22 INFO     Found credentials in environment variables.
+aws_batch://torchx/torchx-gpu:main-pqwtnnj6dqhr0
+torchx 2022-08-29 22:01:23 INFO     Launched app: aws_batch://torchx/torchx-gpu:main-pqwtnnj6dqhr0
+torchx 2022-08-29 22:01:23 INFO     AppStatus:
+    State: PENDING
+    Num Restarts: -1
+    Roles:
+    Msg: <NONE>
+    Structured Error Msg: <NONE>
+    UI URL: https://us-west-2.console.aws.amazon.com/batch/home?region=us-west-2#jobs/mnp-job/d6c98cdd-693e-47b8-981b-69e119743768
 ```
 
 ## Pipelines
