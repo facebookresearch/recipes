@@ -63,3 +63,7 @@ torchx 2022-08-29 22:01:23 INFO     AppStatus:
     Structured Error Msg: <NONE>
     UI URL: https://us-west-2.console.aws.amazon.com/batch/home?region=us-west-2#jobs/mnp-job/d6c98cdd-693e-47b8-981b-69e119743768
 ```
+
+## Pipelines
+As your applications getting complicated, you can make them as pipelines, manage and monitor them by frameworks like Airflow, Kubeflow, etc.
+* [Airflow example](https://github.com/facebookresearch/recipes/tree/main/torchrecipes/paved_path/airflow)
