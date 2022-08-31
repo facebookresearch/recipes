@@ -8,14 +8,29 @@
 pip install -r requirements.txt
 ```
 
-2. Train a model
+2. Model training
+* Train a model
 ```bash
 python charnn/main.py
+```
+You will get output like below. The snapshot path can be used for inference or restore training
+```
+0: epoch 0 iter 100: train loss 3.01963
+0: epoch 0 iter 200: train loss 2.69831
+0: epoch 0 iter 0: test loss 2.67962
+0: epoch 0 iter 100: test loss 2.69960
+0: epoch 0 iter 200: test loss 2.70585
+...
+[2022-08-30 20:07:33,842][trainer][INFO] - Saving snapshot to /tmp/charnn/run-bc6565c7/snapshots/epoch-1
+```
+* Restore from a snapshot and train with more epochs
+```bash
+python charnn/main.py trainer.max_epochs=3 trainer.snapshot_path=/tmp/charnn/run-1f7abaed/snapshots/epoch-1
 ```
 
 3. Generate text from a model
 ```bash
-python charnn/main.py charnn.task="generate" charnn.phrase="hello world"
+python charnn/main.py charnn.task="generate" charnn.phrase="hello world" trainer.snapshot_path=/tmp/charnn/run-1f7abaed/snapshots/epoch-1
 ```
 
 4. [Optional] train a model with torchx

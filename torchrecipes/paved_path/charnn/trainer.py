@@ -8,71 +8,33 @@
 
 import logging
 import os
-from collections import OrderedDict
-from dataclasses import asdict, dataclass
-from typing import Any, Dict, Optional
+from dataclasses import dataclass
+from typing import Dict, Optional
 
 import torch
-import torch.distributed as dist
 import torch.optim as optim
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.tensorboard import SummaryWriter
+from torchsnapshot import Snapshot, Stateful
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class TrainerConfig:
+    work_dir: str
     job_name: str
     max_epochs: int = 10
     batch_size: int = 64
-    checkpoint_path: Optional[str] = None
     data_loader_workers: int = 0
     enable_profile: bool = False
     log_dir: Optional[str] = None
 
 
-@dataclass
-class Checkpoint:
-    model_state: "OrderedDict[str, torch.Tensor]"
-    optimizer_state: Dict[str, Any]
-    finished_epoch: int
-
-
 def get_raw_model(model: torch.nn.Module) -> torch.nn.Module:
     return model.module if hasattr(model, "module") else model
-
-
-def save_checkpoint(
-    checkpoint_path: Optional[str],
-    model: torch.nn.Module,
-    optimizer: optim.Optimizer,
-    epoch: int,
-) -> None:
-    if checkpoint_path and dist.get_rank() == 0:
-        model = get_raw_model(model)
-        checkpoint = Checkpoint(
-            finished_epoch=epoch,
-            model_state=model.state_dict(),
-            optimizer_state=optimizer.state_dict(),
-        )
-        torch.save(asdict(checkpoint), checkpoint_path)
-
-
-def load_checkpoint(checkpoint_path: Optional[str]) -> Optional[Checkpoint]:
-    if checkpoint_path and os.path.exists(checkpoint_path):
-        # Load checkpoint on CPU. For big models the sequence is:
-        # 1. Create model
-        # 2. Load model state from checkpoint
-        # 3. Move model to GPU
-        # 4. Create optimizer
-        # 5. Load optimizer state from checkpoint
-        checkpoint_data = torch.load(checkpoint_path, map_location="cpu")
-        return Checkpoint(**checkpoint_data)
-    else:
-        return None
 
 
 class Trainer:
@@ -174,7 +136,7 @@ class Trainer:
                     )
                 if it % 100 == 0:
                     print(
-                        f"{self.rank}: epoch {epoch + 1} iter {it}: train loss {train_batch_loss:.5f}"
+                        f"{self.rank}: epoch {epoch} iter {it}: train loss {train_batch_loss:.5f}"
                     )
                 if max_iter > 0 and it >= max_iter:
                     break
@@ -187,13 +149,10 @@ class Trainer:
                     self.tb_writer.add_scalar(f"test_loss_{epoch}", test_batch_loss, it)
                 if it % 100 == 0:
                     print(
-                        f"{self.rank}: epoch {epoch + 1} iter {it}: test loss {test_batch_loss:.5f}"
+                        f"{self.rank}: epoch {epoch} iter {it}: test loss {test_batch_loss:.5f}"
                     )
                 if max_iter > 0 and it >= max_iter:
                     break
-            save_checkpoint(
-                self.config.checkpoint_path, self.model, self.optimizer, epoch
-            )
 
         finally:
             if prof:
@@ -201,6 +160,17 @@ class Trainer:
             if self.tb_writer:
                 self.tb_writer.flush()
 
-    def fit(self, max_iter: int = -1) -> None:
-        for epoch in range(self.start_epoch, self.config.max_epochs):
+    def fit(self, app_state: Dict[str, Stateful], max_iter: int = -1) -> None:
+        progress = app_state["progress"]
+        for epoch in range(progress["current_epoch"], self.config.max_epochs):
             self.run_epoch(epoch, max_iter)
+            progress["current_epoch"] += 1
+
+            # save a snapshot per epoch
+            snapshot = Snapshot.take(
+                path=os.path.join(
+                    self.config.work_dir, f"snapshots/epoch-{progress['current_epoch']}"
+                ),
+                app_state=app_state,
+            )
+            logger.info(f"Saving snapshot to {snapshot.path}")
