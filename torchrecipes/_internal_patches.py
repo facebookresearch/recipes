@@ -29,8 +29,6 @@ _FB_ONLY_ARGS = (
     "save_torchscript",
     "save_quantized",
     "api_key",
-    "enable_alert_service",
-    "alert_configuration_path",
 )
 
 
