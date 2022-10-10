@@ -161,16 +161,19 @@ class Trainer:
                 self.tb_writer.flush()
 
     def fit(self, app_state: Dict[str, Stateful], max_iter: int = -1) -> None:
+        snapshot_path = ""
         progress = app_state["progress"]
         for epoch in range(progress["current_epoch"], self.config.max_epochs):
             self.run_epoch(epoch, max_iter)
             progress["current_epoch"] += 1
 
             # save a snapshot per epoch
-            snapshot = Snapshot.take(
-                path=os.path.join(
+            if epoch == self.config.max_epochs - 1:
+                snapshot_path = os.path.join(self.config.work_dir, "snapshots/last")
+            else:
+                snapshot_path = os.path.join(
                     self.config.work_dir, f"snapshots/epoch-{progress['current_epoch']}"
-                ),
-                app_state=app_state,
-            )
+                )
+            snapshot = Snapshot.take(path=snapshot_path, app_state=app_state)
             logger.info(f"Saving snapshot to {snapshot.path}")
+        return snapshot_path

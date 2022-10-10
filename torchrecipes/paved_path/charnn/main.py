@@ -121,7 +121,8 @@ def main(cfg: DictConfig) -> None:
     device = get_device()
     setup_process_group()
 
-    job_name = get_job_name()
+    train_cfg = cfg["trainer"]
+    job_name = train_cfg["job_name"] if train_cfg.get("job_name") else get_job_name()
     data_path = get_realpath(cfg["dataset"]["path"])
     logger.info(
         f"{get_fq_hostname()}:{os.getpid()}:{device} Running charNN {job_name}, data_path: {data_path}"
@@ -144,7 +145,6 @@ def main(cfg: DictConfig) -> None:
         n_embd=cfg["model"]["n_embd"],
     )
 
-    train_cfg = cfg["trainer"]
     train_cfg["work_dir"] = os.path.join(train_cfg.get("work_dir", ""), job_name)
     tconf = TrainerConfig(
         work_dir=train_cfg["work_dir"],
