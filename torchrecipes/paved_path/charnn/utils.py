@@ -6,8 +6,9 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from typing import Optional
+from typing import Any, Optional
 
+import fsspec
 import torch
 import torch.nn as nn
 from torch import Tensor
@@ -68,3 +69,11 @@ def get_realpath(path: str) -> str:
 
     work_dir = os.path.dirname(__file__)
     return os.path.join(work_dir, path)
+
+
+def get_filesystem(path: str) -> Any:
+    if path.startswith("s3"):
+        fs = fsspec.filesystem("s3")
+    else:
+        fs = fsspec.filesystem("file")
+    return fs

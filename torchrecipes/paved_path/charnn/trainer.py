@@ -13,11 +13,14 @@ from typing import Dict, Optional
 
 import torch
 import torch.optim as optim
+from torch.nn import Module
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.tensorboard import SummaryWriter
 from torchsnapshot import Snapshot, Stateful
+
+from utils import get_filesystem
 
 logger = logging.getLogger(__name__)
 
@@ -160,6 +163,17 @@ class Trainer:
             if self.tb_writer:
                 self.tb_writer.flush()
 
+    def export(self, model: Module, path: str) -> None:
+        fs = get_filesystem(path)
+        dirname = os.path.dirname(path)
+        if not fs.exists(dirname):
+            fs.mkdirs(dirname)
+
+        logger.info(f"Exporting model to {path}")
+        model.eval()
+        with fs.open(path, "wb") as f:
+            torch.save(model.state_dict(), f)
+
     def fit(self, app_state: Dict[str, Stateful], max_iter: int = -1) -> None:
         snapshot_path = ""
         progress = app_state["progress"]
@@ -176,4 +190,7 @@ class Trainer:
                 )
             snapshot = Snapshot.take(path=snapshot_path, app_state=app_state)
             logger.info(f"Saving snapshot to {snapshot.path}")
+
+        model_path = os.path.join(self.config.work_dir, "models/last.pt")
+        self.export(app_state["model"].module, model_path)
         return snapshot_path
