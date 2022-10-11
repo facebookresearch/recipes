@@ -6,10 +6,10 @@
 # LICENSE file in the root directory of this source tree.
 import argparse
 
+import fsspec
 import torch
 
 from model import GPT, GPTConfig
-from utils import get_filesystem
 
 parser = argparse.ArgumentParser(description="Quantize the model from a snapshot")
 parser.add_argument("-i", "--input_path", type=str, required=True,
@@ -37,8 +37,8 @@ def main() -> None:
     )
     model = GPT(mconf)
 
-    fs = get_filesystem(args.input_path)
-    with fs.open(args.input_path, "rb") as f:
+    fs, intput_path = fsspec.core.url_to_fs(args.input_path)
+    with fs.open(intput_path, "rb") as f:
         model.load_state_dict(torch.load(f, map_location="cpu"))
 
     # quantize the model. Note that dynamic Quantization currently only 
@@ -52,8 +52,8 @@ def main() -> None:
     if args.torchscript:
         model = torch.jit.script(model)
 
-    fs = get_filesystem(args.output_path)
-    with fs.open(args.output_path, "wb") as f:
+    fs, output_path = fsspec.core.url_to_fs(args.output_path)
+    with fs.open(output_path, "wb") as f:
         torch.save(model, f)
     print(f"exported model to {args.output_path}")
 

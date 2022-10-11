@@ -69,11 +69,3 @@ def get_realpath(path: str) -> str:
 
     work_dir = os.path.dirname(__file__)
     return os.path.join(work_dir, path)
-
-
-def get_filesystem(path: str) -> Any:
-    if path.startswith("s3"):
-        fs = fsspec.filesystem("s3")
-    else:
-        fs = fsspec.filesystem("file")
-    return fs

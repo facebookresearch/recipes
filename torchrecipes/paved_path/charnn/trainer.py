@@ -11,6 +11,7 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Optional
 
+import fsspec
 import torch
 import torch.optim as optim
 from torch.nn import Module
@@ -19,8 +20,6 @@ from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.tensorboard import SummaryWriter
 from torchsnapshot import Snapshot, Stateful
-
-from utils import get_filesystem
 
 logger = logging.getLogger(__name__)
 
@@ -164,8 +163,8 @@ class Trainer:
                 self.tb_writer.flush()
 
     def export(self, model: Module, path: str) -> None:
-        fs = get_filesystem(path)
-        dirname = os.path.dirname(path)
+        fs, p = fsspec.core.url_to_fs(path)
+        dirname = os.path.dirname(p)
         if not fs.exists(dirname):
             fs.mkdirs(dirname)
 
