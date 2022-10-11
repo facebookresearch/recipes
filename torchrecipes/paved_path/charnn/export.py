@@ -21,6 +21,8 @@ parser.add_argument("-b", "--block_size", type=int, default=128, help="block siz
 parser.add_argument("-l", "--n_layer", type=int, default=2, help="number of layers for the model")
 parser.add_argument("-d", "--n_head", type=int, default=2, help="number of heads for the model")
 parser.add_argument("-e", "--n_embd", type=int, default=32, help="size of embedding for the model")
+parser.add_argument("-q", "--quantize", type=bool, default=True, help="quantize the model")
+parser.add_argument("-t", "--torchscript", type=bool, default=False, help="torchscript the model")
 
 
 def main() -> None:
@@ -37,17 +39,22 @@ def main() -> None:
 
     fs = get_filesystem(args.input_path)
     with fs.open(args.input_path, "rb") as f:
-        model.load_state_dict(torch.load(f, map_location="cuda:0"))
+        model.load_state_dict(torch.load(f, map_location="cpu"))
 
     # quantize the model. Note that dynamic Quantization currently only 
     # supports nn.Linear and nn.LSTM in qconfig_spec
-    model_quantized = torch.quantization.quantize_dynamic(
-        model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
-    )
+    if args.quantize:
+        model = torch.quantization.quantize_dynamic(
+            model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
+        )
+    # torchscript the model. Note that minGPT model in this example is
+    # not torchscriptable yet.
+    if args.torchscript:
+        model = torch.jit.script(model)
 
     fs = get_filesystem(args.output_path)
     with fs.open(args.output_path, "wb") as f:
-        torch.save(model_quantized, f)
+        torch.save(model, f)
     print(f"exported model to {args.output_path}")
 
 
