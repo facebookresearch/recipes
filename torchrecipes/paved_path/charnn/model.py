@@ -18,7 +18,6 @@ GPT model:
 import logging
 import os
 from dataclasses import dataclass
-from typing import Tuple
 
 import torch
 import torch.nn as nn
@@ -27,7 +26,6 @@ from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
     checkpoint_wrapper,
 )
 from torch.distributed.fsdp.wrap import wrap
-from torch.nn import functional as F
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +76,7 @@ class EmbeddingStem(nn.Module):
     def reset_parameters(self) -> None:
         self.tok_emb.reset_parameters()
 
-    def forward(self, idx) -> Tensor:
+    def forward(self, idx: Tensor) -> Tensor:
         b, t = idx.size()
         assert t <= self.block_size, "Cannot forward, model block size is exhausted."
 
@@ -177,7 +175,7 @@ class GPT(nn.Module):
             module.bias.data.zero_()
             module.weight.data.fill_(1.0)
 
-    def forward(self, idx, targets=None) -> Tuple[Tensor, Tensor]:
+    def forward(self, idx: Tensor) -> Tensor:
         b, t = idx.size()
         assert t <= self.block_size, "Cannot forward, model block size is exhausted."
 
@@ -186,8 +184,4 @@ class GPT(nn.Module):
         x = self.blocks(x)
         x = self.ln_f(x)
         logits = self.head(x)
-        loss = None
-        if targets is not None:
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
-
-        return logits, loss
+        return logits

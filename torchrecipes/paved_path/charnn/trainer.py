@@ -14,7 +14,7 @@ from typing import Dict, Optional
 import fsspec
 import torch
 import torch.optim as optim
-from torch.nn import Module
+from torch.nn import functional as F, Module
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
@@ -91,8 +91,8 @@ class Trainer:
 
     def run_batch(self, x, y, train: bool = True) -> float:
         with torch.set_grad_enabled(train):
-            _, loss = self.model(x, y)
-
+            logits = self.model(x)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), y.view(-1))
         if train:
             self.model.zero_grad()
             loss.backward()
