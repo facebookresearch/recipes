@@ -16,7 +16,7 @@ import torch
 import torch.distributed as dist
 import torchsnapshot
 
-from char_dataset import CharDataset, get_dataset
+from char_dataset import CharDataset
 from model import GPT, GPTConfig, OptimizerConfig
 from omegaconf import DictConfig
 from torch.nn.parallel import DistributedDataParallel
@@ -128,7 +128,7 @@ def main(cfg: DictConfig) -> None:
         f"{get_fq_hostname()}:{os.getpid()}:{device} Running charNN {job_name}, data_path: {data_path}"
     )
     block_size = 128  # spatial extent of the model for its context
-    dataset = get_dataset(data_path, block_size)
+    dataset = CharDataset(data_path, block_size)
 
     data_len = len(dataset)
     train_len = int(data_len * 0.9)
