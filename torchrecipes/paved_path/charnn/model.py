@@ -176,7 +176,7 @@ class GPT(nn.Module):
             module.weight.data.fill_(1.0)
 
     def forward(self, idx: Tensor) -> Tensor:
-        b, t = idx.size()
+        _, t = idx.size()
         assert t <= self.block_size, "Cannot forward, model block size is exhausted."
 
         # forward the GPT model

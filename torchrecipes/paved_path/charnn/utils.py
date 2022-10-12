@@ -6,9 +6,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from typing import Any, Optional
+from typing import Optional
 
-import fsspec
 import torch
 import torch.nn as nn
 from torch import Tensor
@@ -44,7 +43,7 @@ def sample(
         x_cond = (
             x if x.size(1) <= block_size else x[:, -block_size:]
         )  # crop context if needed
-        logits, _ = model(x_cond)
+        logits = model(x_cond)
         # pluck the logits at the final step and scale by temperature
         logits = logits[:, -1, :] / temperature
         # optionally crop probabilities to only the top k options

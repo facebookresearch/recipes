@@ -10,6 +10,7 @@ from typing import List
 import fsspec
 import torch
 import torch.nn as nn
+from torch import Tensor
 
 
 class CharTransform(nn.Module):
@@ -26,12 +27,15 @@ class CharTransform(nn.Module):
         self.stoi = {ch: i for i, ch in enumerate(chars)}
         self.itos = {i: ch for i, ch in enumerate(chars)}
 
-    def forward(self, text: str):
+    def forward(self, text: str) -> Tensor:
         return self.encode(text)
 
-    def encode(self, text: str):
+    def encode(self, text: str) -> Tensor:
+        # Unsqueeze the input because GPT model expects a batch of inputs.
         ids = [self.stoi[s] for s in text]
         return torch.tensor(ids, dtype=torch.long)
 
-    def decode(self, ids: List[int]):
-        return "".join([self.itos[i] for i in ids])
+    def decode(self, ids: Tensor) -> str:
+        # Squeeze model output because GPT model returns a batch of ouputs.
+        token_ids: List[int] = ids.tolist()
+        return "".join([self.itos[i] for i in token_ids])

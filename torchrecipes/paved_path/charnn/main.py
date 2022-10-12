@@ -11,18 +11,21 @@ import socket
 import uuid
 from typing import Tuple
 
+import fsspec
 import hydra
 import torch
 import torch.distributed as dist
+import torch.nn as nn
 import torchsnapshot
 
 from char_dataset import CharDataset
+from combined_module import CombinedModule
 from model import GPT, GPTConfig, OptimizerConfig
 from omegaconf import DictConfig
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import random_split
 from trainer import Trainer, TrainerConfig
-from utils import get_realpath, sample
+from utils import get_realpath
 
 logger = logging.getLogger(__name__)
 
@@ -97,21 +100,31 @@ def setup_process_group() -> None:
         dist.init_process_group("gloo", rank=rank, world_size=world_size)
 
 
-def generate_seq(cfg: DictConfig, model: torch.nn.Module, dataset: CharDataset) -> None:
+def generate_seq(
+    cfg: DictConfig, module: torch.nn.Module, dataset: CharDataset
+) -> None:
     if dist.get_rank() == 0:
-        device = get_device()
         context = cfg["charnn"]["phrase"]
-        x = torch.tensor(
-            [dataset.stoi[s] for s in context], dtype=torch.long, device=device
-        ).unsqueeze(0)
-        y = sample(model, x, 2000, temperature=1.0, sample=True, top_k=10)[0]
-        completion = "".join([dataset.itos[int(i)] for i in y])
+        completion = module(context)
         print(completion)
 
 
 def set_seed(seed: int) -> None:
     random.seed(seed)
     torch.manual_seed(seed)
+
+
+def save_module(transform: nn.Module, model: nn.Module, save_path: str):
+    module = CombinedModule(transform=transform, model=model)
+    module.eval()
+
+    fs, path = fsspec.core.url_to_fs(save_path)
+    dirname = os.path.dirname(path)
+    if not fs.exists(dirname):
+        fs.mkdirs(dirname)
+    logger.info(f"Saving CombinedModule to {save_path}")
+    with fs.open(path, "wb") as f:
+        torch.save(module, f)
 
 
 @hydra.main(config_path=".", config_name="trainer_config")
@@ -185,8 +198,15 @@ def main(cfg: DictConfig) -> None:
             progress["current_epoch"],
         )
         trainer.fit(app_state, max_iter=cfg.get("max_iter", -1))
+        save_module(
+            transform=dataset.transform,
+            model=model.module,  # save the vanilla model instead of DDP wrapped model
+            save_path=os.path.join(train_cfg["work_dir"], "modules/last.pt"),
+        )
     elif cfg["charnn"]["task"] == "generate":
-        generate_seq(cfg, model, train_dataset.dataset)
+        module = CombinedModule(transform=dataset.transform, model=model)
+        module.set_device(device)
+        generate_seq(cfg, module, train_dataset.dataset)
     else:
         raise RuntimeError(f"Unknown task: {cfg['charnn']['task']}")
 
