@@ -11,10 +11,9 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Optional
 
-import fsspec
 import torch
 import torch.optim as optim
-from torch.nn import functional as F, Module
+from torch.nn import functional as F
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
@@ -176,6 +175,10 @@ class Trainer:
                 snapshot_path = os.path.join(
                     self.config.work_dir, f"snapshots/epoch-{progress['current_epoch']}"
                 )
-            snapshot = Snapshot.take(path=snapshot_path, app_state=app_state)
+            snapshot = Snapshot.take(
+                path=snapshot_path,
+                app_state=app_state,
+                replicated=["**"]
+            )
             logger.info(f"Saving snapshot to {snapshot.path}")
         return snapshot_path
