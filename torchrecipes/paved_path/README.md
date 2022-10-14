@@ -48,6 +48,31 @@ torchx run  -s local_cwd dist.ddp -j 1x2 --script main.py -- trainer.max_epochs=
 python export.py --input_path /tmp/charnn/my_job/modules/last.pt --output_path /tmp/charnn/my_job/modules/export.pt --torchscript
 ```
 
+4. Deployment
+* Archive the module with its handler.py such that torchserve knows how to load and inference with the model
+```bash
+cd ../serve
+mkdir model_store
+torch-model-archiver --model-name gpt --version 1.0 --serialized-file  /tmp/charnn/my_job/modules/exported.pt --handler handler.py --export-path model_store
+```
+It will generate a archive file at "model_store/gpt.mar"
+
+* Start torchserve.
+```bash
+torchserve --start --model-store model_store --models all
+```
+It will start a server at http://127.0.0.1:8080
+
+* Test model serving with curl
+```bash
+curl http://127.0.0.1:8080/predictions/gpt -H "Content-Type: text/plain" --data "hello world"
+```
+
+* Stop torchserve
+```bash
+torchserve --stop
+```
+
 ## Development in AWS
 ### Setup environment
 1. Launch an EC2 instance following [EC2 GetStarted](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html)

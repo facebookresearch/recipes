@@ -5,3 +5,5 @@ fsspec
 --pre
 torchsnapshot-nightly
 fsspec[s3]
+torchserve
+torch-model-archiver
