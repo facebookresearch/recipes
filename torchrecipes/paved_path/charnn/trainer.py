@@ -13,6 +13,7 @@ from typing import Dict, Optional
 
 import torch
 import torch.optim as optim
+from torch.nn import functional as F
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
@@ -89,8 +90,8 @@ class Trainer:
 
     def run_batch(self, x, y, train: bool = True) -> float:
         with torch.set_grad_enabled(train):
-            _, loss = self.model(x, y)
-
+            logits = self.model(x)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), y.view(-1))
         if train:
             self.model.zero_grad()
             loss.backward()
@@ -161,16 +162,23 @@ class Trainer:
                 self.tb_writer.flush()
 
     def fit(self, app_state: Dict[str, Stateful], max_iter: int = -1) -> None:
+        snapshot_path = ""
         progress = app_state["progress"]
         for epoch in range(progress["current_epoch"], self.config.max_epochs):
             self.run_epoch(epoch, max_iter)
             progress["current_epoch"] += 1
 
             # save a snapshot per epoch
-            snapshot = Snapshot.take(
-                path=os.path.join(
+            if epoch == self.config.max_epochs - 1:
+                snapshot_path = os.path.join(self.config.work_dir, "snapshots/last")
+            else:
+                snapshot_path = os.path.join(
                     self.config.work_dir, f"snapshots/epoch-{progress['current_epoch']}"
-                ),
+                )
+            snapshot = Snapshot.take(
+                path=snapshot_path,
                 app_state=app_state,
+                replicated=["**"],
             )
             logger.info(f"Saving snapshot to {snapshot.path}")
+        return snapshot_path

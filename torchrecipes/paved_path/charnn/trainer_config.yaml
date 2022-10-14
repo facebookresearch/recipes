@@ -6,6 +6,8 @@ dataset:
 max_iter: 200
 trainer:
   work_dir: "/tmp/charnn"
+  # each run's outputs will be saved under work_dir/job_name. If not specified, job_name will be auto-generated.
+  job_name: ""
   max_epochs: 1
   lr: 0.0006
   batch_size: 128

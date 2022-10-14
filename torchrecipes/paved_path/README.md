@@ -9,9 +9,10 @@ pip install -r requirements.txt
 ```
 
 2. Model training
-* Train a model
+* Train a GPT model for char generation task.
 ```bash
-python charnn/main.py
+cd charnn
+python main.py trainer.job_name=my_job
 ```
 You will get output like below. The snapshot path can be used for inference or restore training
 ```
@@ -21,23 +22,31 @@ You will get output like below. The snapshot path can be used for inference or r
 0: epoch 0 iter 100: test loss 2.69960
 0: epoch 0 iter 200: test loss 2.70585
 ...
-[2022-08-30 20:07:33,842][trainer][INFO] - Saving snapshot to /tmp/charnn/run-bc6565c7/snapshots/epoch-1
+[2022-10-12 21:30:50,161][trainer][INFO] - Saving snapshot to /tmp/charnn/my_job/snapshots/last
+[2022-10-12 21:30:50,161][__main__][INFO] - Saving CombinedModule to /tmp/charnn/my_job/modules/last.pt
 ```
-* Restore from a snapshot and train with more epochs
+* Resume training from a snapshot and train with more epochs
 ```bash
-python charnn/main.py trainer.max_epochs=3 trainer.snapshot_path=/tmp/charnn/run-1f7abaed/snapshots/epoch-1
-```
-
-3. Generate text from a model
-```bash
-python charnn/main.py charnn.task="generate" charnn.phrase="hello world" trainer.snapshot_path=/tmp/charnn/run-1f7abaed/snapshots/epoch-1
+python main.py trainer.max_epochs=3 trainer.snapshot_path=/tmp/charnn/my_job/snapshots/last
 ```
 
-4. [Optional] train a model with torchx
+* [Optional] train the model with torchx. It's especially useful for multi-node multi-GPU training and
+you can switch between various clusters/schedulers easily.
 ```bash
-torchx run  -s local_cwd dist.ddp -j 1x2 --script charnn/main.py
+torchx run  -s local_cwd dist.ddp -j 1x2 --script main.py
 ```
 > **_NOTE_**: `-j 1x2` specifies single node with 2 GPUs. Learn more about torchx [here](https://pytorch.org/torchx/latest/)
+
+* [Optional] resume training from a snapshot and train with more epochs with torchx
+```bash
+torchx run  -s local_cwd dist.ddp -j 1x2 --script main.py -- trainer.max_epochs=3 trainer.snapshot_path=/tmp/charnn/my_job/snapshots/last
+```
+
+3. Model transformation.
+* Export the module with torchscript. Optionally, you can append `--quantize` to quantize the model.
+```bash
+python export.py --input_path /tmp/charnn/my_job/modules/last.pt --output_path /tmp/charnn/my_job/modules/export.pt --torchscript
+```
 
 ## Development in AWS
 ### Setup environment
