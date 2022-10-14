@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# Script to deploy model with torchserve
+
 S3_URL=$1
 LOCAL_MODULE_PATH="/tmp/charnn/exported.pt"
 

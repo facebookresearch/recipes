@@ -129,23 +129,26 @@ def save_module(transform: nn.Module, model: nn.Module, save_path: str) -> None:
 
 @hydra.main(config_path=".", config_name="trainer_config")
 def main(cfg: DictConfig) -> None:
+    # Setup distributed for distributed training
+    # TODO: @stevenliu clean up. As we use torchx, most of them are not required
     set_env()
-    set_seed(42)
-    device = get_device()
     setup_process_group()
+
+    device = get_device()
+    set_seed(42)
 
     train_cfg = cfg["trainer"]
     job_name = train_cfg["job_name"] if train_cfg.get("job_name") else get_job_name()
+
+    # Data Loading
     data_path = get_realpath(cfg["dataset"]["path"])
     logger.info(
         f"{get_fq_hostname()}:{os.getpid()}:{device} Running charNN {job_name}, data_path: {data_path}"
     )
     block_size = 128  # spatial extent of the model for its context
     dataset = CharDataset(data_path, block_size)
-
     data_len = len(dataset)
     train_len = int(data_len * 0.9)
-
     train_dataset, test_dataset = random_split(
         dataset, [train_len, data_len - train_len]
     )
@@ -188,6 +191,7 @@ def main(cfg: DictConfig) -> None:
         snapshot.restore(app_state=app_state)
 
     if cfg["charnn"]["task"] == "train":
+        # Model Training
         trainer = Trainer(
             model,
             optimizer,
@@ -198,6 +202,8 @@ def main(cfg: DictConfig) -> None:
             progress["current_epoch"],
         )
         trainer.fit(app_state, max_iter=cfg.get("max_iter", -1))
+
+        # Save model and its transform together
         save_module(
             transform=dataset.transform,
             model=model.module,  # save the vanilla model instead of DDP wrapped model

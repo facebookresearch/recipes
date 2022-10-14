@@ -4,6 +4,11 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Airflow DAG definition for charnn. Before running it, it's required
+to set the AWS related configs below according to your AWS account.
+"""
+
 import logging
 import os
 import uuid
@@ -17,7 +22,7 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.hooks.batch_waiters import BatchWaitersHook
 from airflow.providers.amazon.aws.operators.batch import BatchOperator
 
-# AWS Elastic Container Registry(ECR) Configs
+# AWS Elastic Container Registry(ECR) configs
 REGION = "us-west-2"
 ECR_URL = os.environ["ECR_URL"]
 IMAGE = "613447952645.dkr.ecr.us-west-2.amazonaws.com/charnn:latest"
