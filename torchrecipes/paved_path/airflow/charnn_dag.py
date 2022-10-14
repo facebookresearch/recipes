@@ -4,7 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+import logging
 import os
+import uuid
 from datetime import datetime, timedelta
 
 import boto3.session
@@ -13,11 +15,24 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.hooks.batch_waiters import BatchWaitersHook
+from airflow.providers.amazon.aws.operators.batch import BatchOperator
 
+# AWS Elastic Container Registry(ECR) Configs
 REGION = "us-west-2"
-JOB_QUEUE = "torchx-gpu"
 ECR_URL = os.environ["ECR_URL"]
+IMAGE = "613447952645.dkr.ecr.us-west-2.amazonaws.com/charnn:latest"
 
+# AWS Batch configs
+JOB_QUEUE_GPU = "torchx-gpu"
+JOB_QUEUE_GENERAL = "general-ec2-cpu"
+JOB_DEFINITION_GENERAL = "charnn-general-cpu"
+
+work_dir = "s3://paved-path-prototype/charnn"
+job_name = f"run-{uuid.uuid4()}"
+module_path = os.path.join(work_dir, job_name, "modules/last.pt")
+exported_module_path = os.path.join(work_dir, job_name, "modules/exported.pt")
+
+logger = logging.getLogger("charnn_dag")
 
 default_args = {
     "depends_on_past": False,
@@ -30,7 +45,7 @@ default_args = {
 
 
 dag = DAG(
-    "train_charnn",
+    "charnn_dag",
     default_args=default_args,
     description="A DAG to train charnn in AWS Batch",
     schedule_interval="@daily",
@@ -46,13 +61,14 @@ train = BashOperator(
     task_id="train",
     bash_command=f"""AWS_DEFAULT_REGION=$REGION \
         torchx run --workspace '' -s aws_batch \
-        -cfg queue={JOB_QUEUE},image_repo={ECR_URL}/charnn dist.ddp \
-        --script charnn/main.py --image {ECR_URL}/charnn:latest \
-        --cpu 8 --gpu 2 -j 1x2 --memMB 20480 2>&1 \
-        | grep -Eo aws_batch://torchx/{JOB_QUEUE}:main-[a-z0-9]+""",
+        -cfg queue={JOB_QUEUE_GPU},image_repo={ECR_URL}/charnn dist.ddp \
+        --image {ECR_URL}/charnn:latest \
+        --cpu 8 --gpu 2 -j 1x2 --memMB 20480 \
+        --script main.py trainer.work_dir={work_dir} trainer.job_name={job_name} \
+        2>&1 | grep -Eo aws_batch://torchx/{JOB_QUEUE_GPU}:main-[a-z0-9]+""",
     env={
         "REGION": REGION,
-        "JOB_QUEUE": JOB_QUEUE,
+        "JOB_QUEUE": JOB_QUEUE_GPU,
         "ECR_URL": ECR_URL,
     },
     append_env=True,
@@ -74,11 +90,8 @@ def wait_for_batch_job(**context) -> bool:
         filters=[{"name": "JOB_NAME", "values": [job_name]}],
     )["jobSummaryList"][0]["jobId"]
     waiter = BatchWaitersHook(region_name=REGION)
-    try:
-        waiter.wait_for_job(job_id)
-        return True
-    except Exception:
-        return False
+    waiter.wait_for_job(job_id)
+    return waiter.check_job_success(job_id)
 
 
 wait_for_job = PythonOperator(
@@ -88,11 +101,24 @@ wait_for_job = PythonOperator(
 )
 
 
-parse_output = BashOperator(
-    task_id="parse_output",
-    bash_command="echo {{ ti.xcom_pull(task_ids='wait_for_job') }}",
+export = BatchOperator(
+    task_id="export",
+    job_name="charnn-export-job",
+    job_queue=JOB_QUEUE_GENERAL,
+    job_definition=JOB_DEFINITION_GENERAL,
+    overrides={
+        "command": f"python export.py --input_path {module_path} --output_path {exported_module_path} --torchscript".split()
+    },
     dag=dag,
 )
 
+deploy = BatchOperator(
+    task_id="deploy",
+    job_name="charnn-deploy-job",
+    job_queue=JOB_QUEUE_GENERAL,
+    job_definition=JOB_DEFINITION_GENERAL,
+    overrides={"command": f"./serve/deploy.sh {exported_module_path}".split()},
+    dag=dag,
+)
 
-train >> wait_for_job >> parse_output
+train >> wait_for_job >> export >> deploy

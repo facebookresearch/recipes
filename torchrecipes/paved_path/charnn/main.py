@@ -114,7 +114,7 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
 
 
-def save_module(transform: nn.Module, model: nn.Module, save_path: str):
+def save_module(transform: nn.Module, model: nn.Module, save_path: str) -> None:
     module = CombinedModule(transform=transform, model=model)
     module.eval()
 
