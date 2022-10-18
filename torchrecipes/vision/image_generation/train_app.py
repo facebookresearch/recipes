@@ -10,7 +10,7 @@ from typing import List, Optional
 
 import hydra
 
-# @manual "//github/third-party/omry/omegaconf:omegaconf"
+# @manual "fbsource//third-party/pypi/omegaconf:omegaconf"
 
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.callbacks import Callback

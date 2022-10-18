@@ -16,7 +16,7 @@ import torch
 from hydra.core.config_store import ConfigStore
 from hydra.utils import instantiate
 
-# @manual "//github/third-party/omry/omegaconf:omegaconf"
+# @manual "fbsource//third-party/pypi/omegaconf:omegaconf"
 from omegaconf import MISSING
 from torch import nn, Tensor
 from torchrecipes.core.conf import ModuleConf
