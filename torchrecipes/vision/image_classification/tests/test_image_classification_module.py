@@ -34,6 +34,9 @@ class TestImageClassificationModule(testslide.TestCase):
             model=resnet18(),
             loss=torch.nn.CrossEntropyLoss(),
             optim=partial(torch.optim.SGD, lr=0.1),
+            # pyre-fixme[6]: For 4th param expected
+            #  `Optional[typing.Callable[[Optimizer], _LRScheduler]]` but got
+            #  `partial[StepLR]`.
             lr_scheduler=partial(torch.optim.lr_scheduler.StepLR, step_size=10),
             metrics={},
             lr_scheduler_interval="step",

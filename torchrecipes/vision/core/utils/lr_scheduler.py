@@ -22,4 +22,6 @@ def sequential_lr(
         milestones (List[int]): List of integers that reflects milestone points.
     """
     schedulers = [fn(optimizer) for fn in scheduler_fns]
+    # pyre-fixme[6]: For 2nd param expected `List[LRScheduler]` but got
+    #  `List[_LRScheduler]`.
     return lr_scheduler.SequentialLR(optimizer, schedulers, milestones)
