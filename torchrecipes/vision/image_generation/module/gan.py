@@ -74,6 +74,8 @@ class GAN(pl.LightningModule):
 
         self.save_hyperparameters()
 
+    # pyre-fixme[14]: `training_step` overrides method defined in `LightningModule`
+    #  inconsistently.
     def training_step(
         self,
         batch: Batch,
@@ -117,12 +119,16 @@ class GAN(pl.LightningModule):
 
     # pyre-fixme[15]: `test_step` overrides method defined in `LightningModule`
     #  inconsistently.
+    # pyre-fixme[14]: `test_step` overrides method defined in `LightningModule`
+    #  inconsistently.
     def test_step(
         self, batch: Batch, batch_idx: int, *args: Any, **kwargs: Any
     ) -> TestOutput:
         return self._evaluation_step(batch)
 
     # pyre-fixme[15]: `validation_step` overrides method defined in
+    #  `LightningModule` inconsistently.
+    # pyre-fixme[14]: `validation_step` overrides method defined in
     #  `LightningModule` inconsistently.
     def validation_step(
         self, batch: Batch, batch_idx: int, *args: Any, **kwargs: Any

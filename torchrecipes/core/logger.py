@@ -22,6 +22,9 @@ class JobStatus(AutoName):
     Training run job state.
     """
 
+    # pyre-fixme[20]: Argument `value` expected.
     RUNNING = auto()
+    # pyre-fixme[20]: Argument `value` expected.
     COMPLETED = auto()
+    # pyre-fixme[20]: Argument `value` expected.
     FAILED = auto()

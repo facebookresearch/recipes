@@ -36,9 +36,13 @@ MODE = "MODE"
 
 @unique
 class Mode(Enum):
+    # pyre-fixme[20]: Argument `value` expected.
     PROD = auto()
+    # pyre-fixme[20]: Argument `value` expected.
     TRAIN = auto()
+    # pyre-fixme[20]: Argument `value` expected.
     TEST = auto()
+    # pyre-fixme[20]: Argument `value` expected.
     PREDICT = auto()
 
 

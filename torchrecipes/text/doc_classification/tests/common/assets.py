@@ -17,6 +17,8 @@ _DATA_DIR_PATH: str = os.path.realpath(
 
 def get_asset_path(*paths: Union[str, Tuple[str]]) -> str:
     """Return full path of a test asset"""
+    # pyre-fixme[6]: For 2nd argument expected `Union[PathLike[str], str]` but got
+    #  `Union[Tuple[str], str]`.
     return os.path.join(_DATA_DIR_PATH, *paths)
 
 
