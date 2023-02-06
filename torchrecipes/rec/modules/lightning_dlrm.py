@@ -99,8 +99,6 @@ class LightningDLRM(pl.LightningModule):
 
         return loss
 
-    # pyre-fixme[14]: `training_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def training_step(
         self,
         dataloader_iter: Iterator[In],
@@ -110,8 +108,6 @@ class LightningDLRM(pl.LightningModule):
     ) -> torch.Tensor:
         return self._step(dataloader_iter, batch_idx, "train")
 
-    # pyre-fixme[14]: `validation_step` overrides method defined in
-    #  `LightningModule` inconsistently.
     def validation_step(
         self,
         dataloader_iter: Iterator[In],
@@ -121,8 +117,6 @@ class LightningDLRM(pl.LightningModule):
     ) -> torch.Tensor:
         return self._step(dataloader_iter, batch_idx, "val")
 
-    # pyre-fixme[14]: `test_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def test_step(
         self,
         dataloader_iter: Iterator[In],

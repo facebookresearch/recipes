@@ -50,8 +50,6 @@ class TestModule(LightningModule):
         # An arbitrary loss to have a loss that updates the model weights during `Trainer.fit` calls
         return torch.nn.functional.mse_loss(prediction, torch.ones_like(prediction))
 
-    # pyre-fixme[14]: `training_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def training_step(
         self, batch: torch.Tensor, batch_idx: int, *args: Any, **kwargs: Any
     ) -> TTrainOutput:
@@ -59,8 +57,6 @@ class TestModule(LightningModule):
         loss = self.loss(batch, output)
         return {"output": output.detach(), "loss": loss, "checkpoint_on": loss.detach()}
 
-    # pyre-fixme[14]: `validation_step` overrides method defined in
-    #  `LightningModule` inconsistently.
     def validation_step(
         self, batch: torch.Tensor, batch_idx: int, *args: Any, **kwargs: Any
     ) -> TTrainOutput:
@@ -68,8 +64,6 @@ class TestModule(LightningModule):
         loss = self.loss(batch, output)
         return {"output": output.detach(), "loss": loss, "checkpoint_on": loss.detach()}
 
-    # pyre-fixme[14]: `test_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def test_step(
         self, batch: torch.Tensor, batch_idx: int, *args: Any, **kwargs: Any
     ) -> TTestOutput:

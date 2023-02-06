@@ -98,8 +98,6 @@ class ImageClassificationModule(pl.LightningModule):
             for name, metric in self.metrics.items()
         }
 
-    # pyre-fixme[14]: `forward` overrides method defined in `LightningModule`
-    #  inconsistently.
     def forward(self, input: torch.Tensor, *args: Any, **kwargs: Any) -> torch.Tensor:
         return self.model(input)
 
@@ -123,20 +121,14 @@ class ImageClassificationModule(pl.LightningModule):
         else:
             return {"loss": loss}
 
-    # pyre-fixme[14]: `training_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def training_step(self, batch: Batch, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         return self._step(batch, "train")
 
-    # pyre-fixme[14]: `validation_step` overrides method defined in
-    #  `LightningModule` inconsistently.
     def validation_step(
         self, batch: Batch, *args: Any, **kwargs: Any
     ) -> Dict[str, Any]:
         return self._step(batch, "val")
 
-    # pyre-fixme[14]: `test_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def test_step(self, batch: Batch, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         return self._step(batch, "test")
 

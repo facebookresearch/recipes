@@ -88,8 +88,6 @@ class DocClassificationModule(pl.LightningModule):
     def configure_optimizers(self) -> Optimizer:
         return self.optim
 
-    # pyre-fixme[14]: `training_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def training_step(
         self,
         batch: Mapping[str, torch.Tensor],
@@ -102,8 +100,6 @@ class DocClassificationModule(pl.LightningModule):
         self.log("train_loss", loss)
         return loss
 
-    # pyre-fixme[14]: `validation_step` overrides method defined in
-    #  `LightningModule` inconsistently.
     def validation_step(
         self,
         batch: Mapping[str, torch.Tensor],
@@ -121,8 +117,6 @@ class DocClassificationModule(pl.LightningModule):
         self.log("val_acc", self.accuracy)
         self.log("val_f1", self.fbeta)
 
-    # pyre-fixme[14]: `test_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def test_step(
         self,
         batch: Mapping[str, torch.Tensor],

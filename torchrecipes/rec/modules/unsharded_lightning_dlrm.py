@@ -84,8 +84,6 @@ class UnshardedLightningDLRM(pl.LightningModule):
 
         return loss
 
-    # pyre-fixme[14]: `training_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def training_step(
         self,
         batch: Batch,
@@ -95,8 +93,6 @@ class UnshardedLightningDLRM(pl.LightningModule):
     ) -> torch.Tensor:
         return self._step(batch, batch_idx, "train")
 
-    # pyre-fixme[14]: `validation_step` overrides method defined in
-    #  `LightningModule` inconsistently.
     def validation_step(
         self,
         batch: Batch,
@@ -106,8 +102,6 @@ class UnshardedLightningDLRM(pl.LightningModule):
     ) -> torch.Tensor:
         return self._step(batch, batch_idx, "val")
 
-    # pyre-fixme[14]: `test_step` overrides method defined in `LightningModule`
-    #  inconsistently.
     def test_step(
         self,
         batch: Batch,
