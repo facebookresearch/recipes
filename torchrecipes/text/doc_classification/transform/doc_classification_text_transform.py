@@ -15,6 +15,9 @@ from torchtext.functional import to_tensor
 
 
 class DocClassificationTextTransform(nn.Module):
+    def __name__(self) -> str:
+        return "DocClassificationTextTransform"
+
     def __init__(
         self,
         vocab_path: str,
