@@ -101,6 +101,8 @@ if __name__ == "__main__":
         include_package_data=True,
         # Package info
         packages=find_packages(),
+        # pyre-fixme[6]: For 15th argument expected `Mapping[str, Type[Command]]`
+        #  but got `Mapping[str, Type[clean]]`.
         cmdclass={
             "clean": clean,
         },
