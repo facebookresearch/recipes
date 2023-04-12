@@ -35,7 +35,7 @@ class TrainerConfig:
 
 
 def get_raw_model(model: torch.nn.Module) -> torch.nn.Module:
-    return model.module if hasattr(model, "module") else model
+    return getattr(model, "module", model)
 
 
 class Trainer:
