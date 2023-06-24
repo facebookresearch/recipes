@@ -279,6 +279,7 @@ class TestLightningDLRM(unittest.TestCase):
             )
 
     @skip_if_asan
+    @skip("TODO: Fix flaky test T156681074")
     def test_checkpointing_function(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             lc = LaunchConfig(
