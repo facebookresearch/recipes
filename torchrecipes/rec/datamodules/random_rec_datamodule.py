@@ -38,6 +38,9 @@ class RandomRecDataModule(pl.LightningDataModule):
         ids_per_feature: int = 2,
         num_dense: int = 50,
         num_workers: int = 0,
+        *,
+        num_generated_batches: int = 10,
+        min_ids_per_features: Optional[int] = None,
     ) -> None:
         super().__init__()
         self.keys: List[str] = keys if keys else ["f1", "f3", "f2"]
@@ -47,6 +50,8 @@ class RandomRecDataModule(pl.LightningDataModule):
         self.hash_size = hash_size
         self.hash_sizes = hash_sizes
         self.ids_per_feature = ids_per_feature
+        self.min_ids_per_feature = min_ids_per_features
+        self.num_generated_batches = num_generated_batches
         self.num_dense = num_dense
         self.num_workers = num_workers
         self.init_loader: DataLoader = DataLoader(
@@ -57,7 +62,9 @@ class RandomRecDataModule(pl.LightningDataModule):
                 hash_sizes=self.hash_sizes,
                 manual_seed=self.manual_seed,
                 ids_per_feature=self.ids_per_feature,
+                min_ids_per_feature=self.min_ids_per_feature,
                 num_dense=self.num_dense,
+                num_generated_batches=self.num_generated_batches,
             ),
             batch_size=None,
             batch_sampler=None,
