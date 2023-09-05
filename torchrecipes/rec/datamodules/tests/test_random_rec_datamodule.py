@@ -13,9 +13,9 @@ from torchrecipes.rec.datamodules.random_rec_datamodule import RandomRecDataModu
 
 class TestRandomRecDataModule(testslide.TestCase):
     def test_manual_seed_generator(self) -> None:
-        dm1 = RandomRecDataModule(manual_seed=353434)
+        dm1 = RandomRecDataModule(manual_seed=353434, min_ids_per_features=2)
         iterator1 = iter(dm1.init_loader)
-        dm2 = RandomRecDataModule(manual_seed=353434)
+        dm2 = RandomRecDataModule(manual_seed=353434, min_ids_per_features=2)
         iterator2 = iter(dm2.init_loader)
 
         for _ in range(10):
@@ -35,9 +35,9 @@ class TestRandomRecDataModule(testslide.TestCase):
             self.assertTrue(torch.equal(batch1.labels, batch2.labels))
 
     def test_no_manual_seed_generator(self) -> None:
-        dm1 = RandomRecDataModule()
+        dm1 = RandomRecDataModule(min_ids_per_features=2)
         iterator1 = iter(dm1.init_loader)
-        dm2 = RandomRecDataModule()
+        dm2 = RandomRecDataModule(min_ids_per_features=2)
         iterator2 = iter(dm2.init_loader)
 
         for _ in range(10):

@@ -70,7 +70,9 @@ class TestLightningDLRM(unittest.TestCase):
                 over_arch_layer_sizes=[5, 1],
             )
 
-            datamodule = RandomRecDataModule(manual_seed=564733621, num_dense=num_dense)
+            datamodule = RandomRecDataModule(
+                manual_seed=564733621, num_dense=num_dense, num_generated_batches=1
+            )
 
             lit_models.append(lit_model)
             datamodules.append(datamodule)
