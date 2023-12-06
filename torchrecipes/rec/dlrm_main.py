@@ -250,5 +250,9 @@ def main(argv: List[str]) -> None:
     trainer.fit(sharded_model, datamodule=datamodule)
 
 
-if __name__ == "__main__":
+def invoke_main() -> None:
     main(sys.argv[1:])
+
+
+if __name__ == "__main__":
+    invoke_main()  # pragma: no cover

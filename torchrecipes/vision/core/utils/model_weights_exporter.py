@@ -16,7 +16,7 @@ from torchrecipes.vision.core.utils.model_weights import (
 )
 
 
-if __name__ == "__main__":
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--checkpoint-path",
@@ -43,3 +43,7 @@ if __name__ == "__main__":
         with g_pathmgr.open(args.model_weights_path, "wb") as f:
             torch.save(weights, f)
             logging.info(f"Saved model weights to {args.model_weights_path}.")
+
+
+if __name__ == "__main__":
+    main()  # pragma: no cover

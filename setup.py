@@ -80,8 +80,9 @@ class clean(distutils.command.clean.clean):
         distutils.command.clean.clean.run(self)
 
 
-if __name__ == "__main__":
-    version: str = get_version()
+def main() -> None:
+    global version
+    version = get_version()
     print("Building wheel {}-{}".format(_PACKAGE_NAME, version))
 
     setup(
@@ -118,3 +119,10 @@ if __name__ == "__main__":
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
         ],
     )
+
+
+version: str
+
+
+if __name__ == "__main__":
+    main()  # pragma: no cover
