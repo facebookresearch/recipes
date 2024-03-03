@@ -39,6 +39,7 @@ DDP_CUSTOMIZED_PLUGIN_CONF = {
     "ddp_fp16_compress": DDPStrategyConf(ddp_comm_hook=default.fp16_compress_hook),
 }
 
+
 # to allow flexible combination of different techniques, like whether to
 # find unused parameters or whether to apply communication hook etc.
 def merge_ddp_plugin_conf(

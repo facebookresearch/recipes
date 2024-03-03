@@ -43,7 +43,7 @@ def _transform(
 
     kjt_values: List[int] = []
     kjt_lengths: List[int] = []
-    for (col_idx, col_name) in enumerate(DEFAULT_CAT_NAMES):
+    for col_idx, col_name in enumerate(DEFAULT_CAT_NAMES):
         values = cast(Iterable[str], batch[col_name])
         for value in values:
             if value:
