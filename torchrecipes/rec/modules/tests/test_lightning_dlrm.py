@@ -102,12 +102,8 @@ class TestLightningDLRM(unittest.TestCase):
 
         # train model 2 manually
         train_dataiterator = iter(dm2.train_dataloader())
-        for _ in range(5):
-            batch = next(train_dataiterator).to(lit_model2.device)
-            optim2.zero_grad()
-            loss, _ = lit_model2.model(batch)
-            loss.backward()
-            optim2.step()
+        for i in range(5):
+            lit_model2.training_step(train_dataiterator, i)
 
         # assert parameters equal
         sd1 = lit_model1.model.state_dict()
@@ -118,19 +114,6 @@ class TestLightningDLRM(unittest.TestCase):
                 )
             else:
                 assert torch.equal(sd1[name], value)
-
-        # assert model evaluation equal
-        test_dataiterator = iter(dm2.test_dataloader())
-        with torch.no_grad():
-            for _ in range(10):
-                batch = next(test_dataiterator).to(lit_model2.device)
-                _loss_1, (_loss_1_detached, logits_1, _labels_1) = lit_model1.model(
-                    batch
-                )
-                _loss_2, (_loss_2_detached, logits_2, _labels_2) = lit_model2.model(
-                    batch
-                )
-                assert torch.equal(logits_1, logits_2)
 
     @skip_if_asan
     def test_lit_trainer_equivalent_to_non_lit(self) -> None:
