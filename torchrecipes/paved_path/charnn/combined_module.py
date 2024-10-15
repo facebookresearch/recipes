@@ -10,6 +10,7 @@ CombinedModule includes model and its corresponding transform.
 It's mainly used for inference from raw inputs, which will be converted
 to tensors by transform then pass to model.
 """
+
 from typing import Optional
 
 import torch

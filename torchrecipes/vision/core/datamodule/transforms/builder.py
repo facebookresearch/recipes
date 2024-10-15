@@ -29,7 +29,7 @@ def build_single_transform(config: Mapping[str, Any]) -> Callable[..., object]:
 
 
 def build_transforms_from_dataset_config(
-    dataset_conf: Dict[str, Any]
+    dataset_conf: Dict[str, Any],
 ) -> Dict[str, Any]:
     """
     This function converts transform config to transform callable,

@@ -13,6 +13,7 @@ replaced with the file located in ./fb/_internal_patches.py. This is to enable
 use to silenetly swap out symbols (such as Checkpoint, Logger, etc.) between
 internal-only implementations and external versions w/o requiring user involvement.
 """
+
 from functools import wraps
 from typing import Any
 

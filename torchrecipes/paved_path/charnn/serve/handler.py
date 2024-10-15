@@ -9,6 +9,7 @@
 Module for text generation with a torchscript module containing both transform and model
 IT DOES NOT SUPPORT BATCH!
 """
+
 import logging
 from abc import ABC
 
