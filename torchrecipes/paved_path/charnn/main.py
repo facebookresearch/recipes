@@ -17,7 +17,6 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 import torchsnapshot
-
 from char_dataset import CharDataset
 from combined_module import CombinedModule
 from model import GPT, GPTConfig, OptimizerConfig

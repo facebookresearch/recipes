@@ -19,9 +19,9 @@ def convert_to_one_hot(targets: torch.Tensor, num_classes: int) -> torch.Tensor:
     given the number of classes.
 
     """
-    assert (
-        torch.max(targets).item() < num_classes
-    ), "Class Index must be less than number of classes"
+    assert torch.max(targets).item() < num_classes, (
+        "Class Index must be less than number of classes"
+    )
     one_hot_targets = torch.zeros(
         (targets.shape[0], num_classes), dtype=torch.long, device=targets.device
     )
@@ -54,9 +54,9 @@ class MixupTransform(Callback):
         unused: Optional[int] = None,
     ) -> None:
         if batch["target"].ndim == 1:
-            assert (
-                self.num_classes is not None
-            ), f"num_classes is expected for 1D target: {batch['target']}"
+            assert self.num_classes is not None, (
+                f"num_classes is expected for 1D target: {batch['target']}"
+            )
             batch["target"] = convert_to_one_hot(
                 batch["target"].view(-1, 1), none_throws(self.num_classes)
             )

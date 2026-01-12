@@ -95,8 +95,7 @@ class GAN(pl.LightningModule):
             return self.discriminator_step(x)
 
         raise AssertionError(
-            "There should be two optimizers. "
-            f"Invalid optimizer_idx({optimizer_idx})."
+            f"There should be two optimizers. Invalid optimizer_idx({optimizer_idx})."
         )
 
     def generator_step(self, x: Tensor) -> Tensor:

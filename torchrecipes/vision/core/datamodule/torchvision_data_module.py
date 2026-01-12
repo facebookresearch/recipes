@@ -62,9 +62,9 @@ class TorchVisionDataModule(LightningDataModule):
     def setup(self, stage: Optional[str] = None) -> None:
         """Creates train, val and test dataset."""
         if stage == "fit" or stage is None:
-            assert self.datasets[
-                "train"
-            ], "In fit stage, the train dataset shouldn't be None!"
+            assert self.datasets["train"], (
+                "In fit stage, the train dataset shouldn't be None!"
+            )
             if not self.datasets["val"] and self.val_split:
                 dataset_train, dataset_val = self._split_dataset(
                     none_throws(self.datasets["train"])
@@ -123,9 +123,9 @@ class TorchVisionDataModule(LightningDataModule):
         self, *args: Any, **kwargs: Any
     ) -> Union[DataLoader, List[DataLoader]]:
         """The val dataloader"""
-        assert (
-            self.datasets["val"] is not None
-        ), "Validation dataset should be specified!"
+        assert self.datasets["val"] is not None, (
+            "Validation dataset should be specified!"
+        )
 
         return self._get_data_loader(
             dataset=none_throws(self.datasets["val"]), phase="val"

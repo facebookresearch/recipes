@@ -9,7 +9,6 @@
 from typing import List, Optional
 
 import hydra
-
 # @manual "fbsource//third-party/pypi/omegaconf:omegaconf"
 
 from pytorch_lightning import LightningDataModule

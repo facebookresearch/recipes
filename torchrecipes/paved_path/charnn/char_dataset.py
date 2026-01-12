@@ -8,7 +8,6 @@
 from typing import Tuple
 
 import torch
-
 from char_transform import CharTransform
 from torch.utils.data import Dataset
 

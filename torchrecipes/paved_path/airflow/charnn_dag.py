@@ -15,7 +15,6 @@ import uuid
 from datetime import datetime, timedelta
 
 import boto3.session
-
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator

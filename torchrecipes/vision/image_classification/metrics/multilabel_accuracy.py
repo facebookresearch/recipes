@@ -48,9 +48,9 @@ class MultilabelAccuracy(Metric):
             f"Got preds({preds.shape}) vs target({target.shape})."
         )
         num_classes = target.shape[1]
-        assert (
-            num_classes >= self._top_k
-        ), f"top-k({self._top_k}) is greater than the number of classes({num_classes})"
+        assert num_classes >= self._top_k, (
+            f"top-k({self._top_k}) is greater than the number of classes({num_classes})"
+        )
         preds, target = self._format_inputs(preds, target)
 
         _, top_idx = preds.topk(self._top_k, dim=1, largest=True, sorted=True)

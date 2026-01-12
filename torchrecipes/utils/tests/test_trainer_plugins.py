@@ -24,13 +24,13 @@ def check_training_type_plugin_attribute(
     attr_name: str,
     expected_val: Union[int, bool],
 ) -> None:
-    assert hasattr(
-        training_type_plugin, attr_name
-    ), f"{training_type_plugin} is supposed to have attribute {attr_name}."
+    assert hasattr(training_type_plugin, attr_name), (
+        f"{training_type_plugin} is supposed to have attribute {attr_name}."
+    )
 
-    assert (
-        getattr(training_type_plugin, attr_name) == expected_val
-    ), f"attribute {attr_name} of {training_type_plugin} is supposed to be {expected_val}."
+    assert getattr(training_type_plugin, attr_name) == expected_val, (
+        f"attribute {attr_name} of {training_type_plugin} is supposed to be {expected_val}."
+    )
 
 
 class TestTrainerParams(unittest.TestCase):

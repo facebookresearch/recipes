@@ -155,8 +155,7 @@ class InfoGAN(pl.LightningModule):
             return self.info_loss_step()
 
         raise AssertionError(
-            "There should be three optimizers. "
-            f"Invalid optimizer_idx({optimizer_idx})."
+            f"There should be three optimizers. Invalid optimizer_idx({optimizer_idx})."
         )
 
     # pyre-fixme[3]: Return annotation cannot contain `Any`.

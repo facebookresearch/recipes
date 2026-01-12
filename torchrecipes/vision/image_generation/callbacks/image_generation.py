@@ -91,9 +91,9 @@ class TensorboardGenerativeModelImageSampler(Callback):
     def setup(
         self, trainer: Trainer, pl_module: LightningModule, stage: Optional[str]
     ) -> None:
-        assert isinstance(
-            pl_module, HasInputOutputDimension
-        ), "Lightning module should define the dimension of latent and generated image."
+        assert isinstance(pl_module, HasInputOutputDimension), (
+            "Lightning module should define the dimension of latent and generated image."
+        )
 
     @rank_zero_only
     def on_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
