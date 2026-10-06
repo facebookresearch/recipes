@@ -6,6 +6,7 @@
 
 #!/usr/bin/env python3
 
+import os
 import unittest
 from tempfile import TemporaryDirectory
 
@@ -15,6 +16,39 @@ from pytorch_lightning.utilities.exceptions import MisconfigurationException
 from torchrecipes.vision.core.datamodule.mnist_data_module import MNISTDataModule
 from torchrecipes.vision.core.datamodule.transforms import build_transforms
 from torchvision.datasets import MNIST
+
+IMAGE_SIZE = (28, 28)
+NUM_TRAIN_IMAGES = 60000
+NUM_TEST_IMAGES = 10000
+UINT8_TYPE_CODE = 8
+
+
+def write_idx_file(path: str, data: torch.Tensor) -> None:
+    """Writes a tensor in the big-endian "Pascal Vincent" format MNIST uses."""
+    with open(path, "wb") as f:
+        f.write((UINT8_TYPE_CODE * 256 + data.dim()).to_bytes(4, "big"))
+        for dim in data.shape:
+            f.write(dim.to_bytes(4, "big"))
+        f.write(data.numpy().tobytes())
+
+
+def create_mnist_dataset(root: str) -> None:
+    """Creates a synthetic MNIST dataset on disk, avoiding a network download."""
+    raw_folder = os.path.join(root, MNIST.__name__, "raw")
+    os.makedirs(raw_folder, exist_ok=True)
+    generator = torch.Generator().manual_seed(42)
+    for prefix, num_images in (
+        ("train", NUM_TRAIN_IMAGES),
+        ("t10k", NUM_TEST_IMAGES),
+    ):
+        images = torch.randint(
+            256, (num_images, *IMAGE_SIZE), dtype=torch.uint8, generator=generator
+        )
+        labels = torch.randint(
+            10, (num_images,), dtype=torch.uint8, generator=generator
+        )
+        write_idx_file(os.path.join(raw_folder, f"{prefix}-images-idx3-ubyte"), images)
+        write_idx_file(os.path.join(raw_folder, f"{prefix}-labels-idx1-ubyte"), labels)
 
 
 class TestMNISTDataModule(unittest.TestCase):
@@ -26,9 +60,7 @@ class TestMNISTDataModule(unittest.TestCase):
         cls.addClassCleanup(data_path_ctx.cleanup)
         cls.data_path = data_path_ctx.name
 
-        # download the dataset
-        MNIST(cls.data_path, train=True, download=True)
-        MNIST(cls.data_path, train=False, download=True)
+        create_mnist_dataset(cls.data_path)
 
     def test_misconfiguration(self) -> None:
         """Tests init configuration validation."""
